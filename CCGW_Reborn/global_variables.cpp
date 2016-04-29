@@ -1,0 +1,1 @@
+int gWidth, gHeight;
