@@ -1,0 +1,40 @@
+#version 420 core
+
+in vec2 texOut;
+out vec4 finalColor;
+
+uniform sampler2D ambientT;
+uniform sampler2D diffuseT;
+uniform sampler2D specularT;
+uniform sampler2D normalT;
+uniform sampler2D depthT;
+
+uniform mat4 invViewPerspective;
+
+uniform vec3 cameraPos;
+
+void main (){
+	float depth = texture(depthT, texOut).r;
+	vec4 color = texture(ambientT, texOut);
+	
+	if (depth < 1.0)
+	{
+		vec3 lightPos = vec3(0, 15, 0);
+		vec3 normal = texture(normalT, texOut).rgb * 2 - 1;
+		float spec = texture(specularT, texOut).r;
+
+		vec4 pos = (invViewPerspective * (vec4(texOut.x, texOut.y, depth, 1)*2-1));
+		pos /= pos.w;
+
+
+		vec3 eyeDir = normalize(cameraPos - pos.xyz);
+		vec3 vHalfVector = normalize(reflect(lightPos - pos.xyz, normal));
+		vec3 specular = vec3(spec) * max(pow((dot(eyeDir,vHalfVector)), 20), 0.0);
+	
+		//finalColor = pos;
+		//finalColor = vec4(normal, 1.0);
+		finalColor =  0.5 * color  * max(dot(normalize(lightPos - pos.xyz), normal), 0.0) + specular;
+	}
+	else
+		finalColor = 0.5 * color;
+}

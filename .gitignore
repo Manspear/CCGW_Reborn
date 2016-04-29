@@ -11,7 +11,11 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
+*.exe
+*.ilk
+*.pdb
+*.tlog
+*.idb
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/

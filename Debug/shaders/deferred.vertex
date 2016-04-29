@@ -1,0 +1,17 @@
+#version 420 core
+
+in vec3 pos ;
+in vec2 texPos ;
+in vec3 normal ;
+
+out vec4 posOut;
+out vec2 colorOut;
+out vec3 normalOut;
+
+uniform mat4 world;
+
+void main(){
+	posOut = world * vec4(pos, 1.0);
+	colorOut = texPos;
+	normalOut = normal;
+}
