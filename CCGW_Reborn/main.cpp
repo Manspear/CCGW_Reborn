@@ -13,7 +13,13 @@ using namespace std;
 
 int main(int argc, char** argv) {
 	
-	MoleReader wololo;
+	int mongo = 3;
+	for (int i = 0; i < 3000; i++)
+	{
+		MoleReader* wololo = new MoleReader();
+		wololo->readFromBinary("simpleBox.mole");
+		delete(wololo);
+	}
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	SDL_Init(SDL_INIT_EVERYTHING);
