@@ -1,5 +1,6 @@
 #include "Weapon.h"
 
+//Hi Andy. Murder.
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation) 
 {
 	bool shot = false;
