@@ -7,9 +7,14 @@
 #include "Input.h"
 #include "global_variables.h"
 
+#include <Mole\MoleReader.h>
+
 using namespace std;
 
 int main(int argc, char** argv) {
+	
+	MoleReader wololo;
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
