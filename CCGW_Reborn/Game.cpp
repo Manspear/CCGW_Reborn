@@ -60,7 +60,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
 	data.pPlayer->load( playerModel, playerTexture, specMap, normalMap);
-	mGround.load(data.pAssets->load<tempMesh>("Models/game_terrain.obj"), groundTexture, specMap, nullptr);
+	mGround.load(data.pAssets->load<tempMesh>("Models/plane.obj"), groundTexture, specMap, nullptr);
 	mActionMarker.load(data.pAssets->load<tempMesh>("Models/marker.obj"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
 	mTacticalMarker.load(playerModel, groundTexture, specMap, nullptr);
 	mTacticalMarker.setScale(data.boxScale);
@@ -102,7 +102,7 @@ Game::~Game() {
 	delete data.pCamera;
 	delete data.pEmission;
 	delete data.pGrid;
-	delete data.pMenuProgram;
+	//delete data.pMenuProgram;
 	delete pActionState;
 	for (int i = 0; i < data.mpTowers.size(); i++) {
 		delete data.mpTowers[i];

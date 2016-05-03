@@ -1,0 +1,10 @@
+#version 420 core
+
+in vec2 texOut;
+out vec4 finalColor;
+
+uniform sampler2D texSampler;
+
+void main (){
+	finalColor = texture(texSampler, texOut);
+}

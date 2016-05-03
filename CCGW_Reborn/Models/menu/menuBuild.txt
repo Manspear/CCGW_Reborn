@@ -1,0 +1,3 @@
+-0.2 0.2 0.3 0.2 p Models/menu/startButton.png
+-0.2 -0.2 0.3 0.2 q Models/menu/quitButton.png
+-0.8 -0.8 1.6 1.6 d Models/menu/startButton.png

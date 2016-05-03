@@ -38,6 +38,7 @@
     <ClCompile Include="Joint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Marker.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Molebat.cpp" />
     <ClCompile Include="Moleratman.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -73,6 +74,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Joint.h" />
     <ClInclude Include="Marker.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Molebat.h" />
     <ClInclude Include="Moleratman.h" />
     <ClInclude Include="Particle.h" />
