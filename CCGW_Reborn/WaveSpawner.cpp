@@ -37,8 +37,8 @@ void WaveSpawner::spawn()
 		mDelay = 0.0f;
 
 		// TODO: Do something useful here
-		mSpawnMoleratmen = mWave % pGameData->mMoleratmen;
-		mSpawnMolebats = mWave % pGameData->mMolebats;
+		mSpawnMoleratmen = (mWave*mWave + 5) % pGameData->mMoleratmen;
+		mSpawnMolebats = (mWave * 2) % pGameData->mMolebats;
 
 		// DEBUG: Remove this
 		for( int i=0; i<pGameData->mMoleratmen; i++ )
@@ -47,6 +47,11 @@ void WaveSpawner::spawn()
 		for (int i = 0; i<pGameData->mMolebats; i++)
 			pGameData->pMolebats[i].setAlive(false);
 	}
+}
+
+
+bool WaveSpawner::hasWon() {
+	return this->mWave > 10;
 }
 
 void WaveSpawner::incrementWave()
@@ -84,6 +89,7 @@ void WaveSpawner::spawnMoleratman()
 	{
 		m->setPosition( mPosition );
 		m->setAlive( true );
+		m->setLife( 25.0f );
 		m->setPath( mpPath, mTargets );
 	}
 }
@@ -107,6 +113,7 @@ void WaveSpawner::spawnMolebat()
 		pos.y = MOLEBAT_HEIGHT;
 		m->setPosition( pos );
 		m->setAlive( true );
+		m->setLife( 1.0f );
 	}
 }
 
@@ -138,9 +145,9 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 	mpPath = new sNode[20*20];
 }
 
-WaveSpawner::WaveSpawner( GameData* data )
-	: pGameData( data ),
-	mWave( 0 ), mDelay( 0.0f ), mPosition( 0.0f ),
+WaveSpawner::WaveSpawner(GameData* data)
+	: pGameData(data),
+	mWave(0), mDelay(0.0f), mPosition(0.0f) ,
 	mCurMoleratmen( 0 ), mSpawnMoleratmen( 0 ),
 	mCurMolebats( 0 ), mSpawnMolebats( 0 ),
 	mMoleratmanIndex( 0 ), mMolebatIndex( 0 ),

@@ -6,7 +6,6 @@
 #include <vector>
 #include <sstream>
 #include <GLM\glm.hpp>
-#include <Mole\MoleReader.h>
 
 class tempMesh : public Asset
 {

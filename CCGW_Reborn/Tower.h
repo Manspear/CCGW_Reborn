@@ -9,7 +9,6 @@
 class Tower : public GameObject
 {
 public:
-	void update(Player* enemies, const float &dt);
 	void update(GameData* gameData, const float &dt);
 	void render(const GLuint &programID);
 	Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale);
@@ -26,5 +25,5 @@ private:
 	float mStrength;
 	Moleratman* targetEnemy;
 	
-	bool arrowShot(const float &dt);
+	bool arrowShot(const float &dt, GameData* data);
 };

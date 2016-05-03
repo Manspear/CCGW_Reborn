@@ -6,21 +6,12 @@
 #include "Game.h"
 #include "Input.h"
 #include "global_variables.h"
+#include "Menu.h"
 
-#include <Mole\MoleReader.h>
 
 using namespace std;
 
 int main(int argc, char** argv) {
-	
-	int mongo = 3;
-	for (int i = 0; i < 3000; i++)
-	{
-		MoleReader* wololo = new MoleReader();
-		wololo->readFromBinary("simpleBox.mole");
-		delete(wololo);
-	}
-
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
@@ -57,32 +48,50 @@ int main(int argc, char** argv) {
 	float dt = 0;
 	int timeStamp = SDL_GetTicks(); int temp;
 	bool actionMode = true;
-	input.setMouseVisible(false);
-	while (running)
+	input.setMouseVisible(true);
+	input.setMouseLock(false);
+
+	State gs = GAME_PLAYING;
+
+	Menu mainMenu("menuBuild.txt");
+	char menuAction = 0;
+
+	while (running && gs == GAME_PLAYING)
 	{
 		temp = SDL_GetTicks();
 		dt = (float)(temp - timeStamp) / 1000.f;
 		timeStamp = temp;
 		running = input.update();
-
-
-
-		if (input.keyPressed(SDLK_t)) {
-			actionMode = !actionMode;	
-			input.setMouseLock(actionMode);
-		}
-
-			
-		if (actionMode)
-			game.run(&input, dt);
+		
+		if (!game.tactical)
+			gs = game.run(&input, dt, !mainMenu.mActive);
 		else
-			game.tacticalRun(&input, dt);
+			game.tacticalRun(&input, dt, !mainMenu.mActive);
 
-
-		if( input.keyPressed( SDLK_ESCAPE ) )
-			running = false;
+		if (mainMenu.mActive) {
+			menuAction = mainMenu.update(&input);
+			mainMenu.render();
+			switch (menuAction) {
+			case 'q':
+				running = false;
+				break;
+			case'p':
+				mainMenu.mActive = !mainMenu.mActive;
+				input.setMouseVisible(mainMenu.mActive);
+				input.setMouseLock(actionMode && !mainMenu.mActive);
+				break;
+			}
+		}
+			
+		if (input.keyPressed(SDLK_ESCAPE))
+		{
+			mainMenu.mActive = !mainMenu.mActive;
+			input.setMouseVisible(mainMenu.mActive);
+			input.setMouseLock(actionMode && !mainMenu.mActive);
+		}
 		SDL_GL_SwapWindow(window);
 	}
+
 	Mix_CloseAudio();
 	SDL_Quit();
 	return 0;

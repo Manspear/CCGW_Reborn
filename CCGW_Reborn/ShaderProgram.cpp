@@ -3,7 +3,7 @@
 #include <sstream>
 #include <vector>
 
-ShaderProgram::ShaderProgram(): mProgramID(0), mVertexShader(0), mPixelShader(0), mTotalAttributes(0), mGeometryShader(0) {
+ShaderProgram::ShaderProgram(): mProgramID(0), mVertexShader(0), mPixelShader(0), mTotalAttributes(0), mGeometryShader(0), mClearScreen(true) {
 
 }
 
@@ -107,6 +107,11 @@ void ShaderProgram::linkShaders() {
 
 void ShaderProgram::addAttribute(const string &name) {
 	glBindAttribLocation(mProgramID, mTotalAttributes++, name.c_str());
+}
+
+void ShaderProgram::setClear(bool yesNo)
+{
+	mClearScreen = yesNo;
 }
 
 GLuint ShaderProgram::getProgramID() const {

@@ -173,6 +173,11 @@ int Grid::getHeight() const
 	return mHeight;
 }
 
+sNode* Grid::getPath() 
+{
+	return mPath2;
+}
+
 int Grid::heuristic( sNode* start, sNode* end )
 {
 	int difx = end->x - start->x;
@@ -211,6 +216,7 @@ Grid::Grid( int width, int height, tempMesh* debugMesh)
 	mGScore = new int[width*height];
 	mFScore = new int[width*height];
 	mPath = new sNode[width*height];
+	mPath2 = new sNode[width*height];
 	for( int i=0; i<width*height; i++ )
 	{
 		mpGrid[i] = TILE_EMPTY;
@@ -229,4 +235,5 @@ Grid::~Grid()
 	delete[] mGScore;
 	delete[] mFScore;
 	delete[] mPath;
+	delete[] mPath2;
 }

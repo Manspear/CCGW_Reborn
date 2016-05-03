@@ -17,8 +17,11 @@ public:
 
 	void imHit(float strength);
 	void setAlive( bool alive );
+	void setLife( float life );
 	bool getAlive() const;
+	float getLife() const;
 	const BoundingBox& getBoundingBox() const;
+	const BoundingBox& getHeadBox() const;
 
 	Enemy& operator=( const Enemy& ref );
 	Enemy( const Enemy& ref );
@@ -28,6 +31,7 @@ public:
 
 protected:
 	BoundingBox mBoundingBox;
+	BoundingBox mHeadBox;
 	float mBoundRadius;
 	sNode* pPath;
 	int mCurrent;

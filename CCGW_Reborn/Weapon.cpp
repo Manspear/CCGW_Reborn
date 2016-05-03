@@ -1,12 +1,11 @@
 #include "Weapon.h"
 
-//Hi Andy. Murder.
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation) 
 {
 	bool shot = false;
 	for (int i = 0; i < mMax && !shot; i++) {
 		if (!arrows[i].isAlive()) {
-			arrows[i].spawn(position, lookat,15*mStrength, { 0,-1,0 }, rotation);
+			arrows[i].spawn(playerOwned,position, lookat,15*mStrength, { 0,-1,0 }, rotation);
 			shot = true;
 		}
 	}
@@ -17,7 +16,7 @@ void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float s
 	bool shot = false;
 	for (int i = 0; i < mMax && !shot; i++) {
 		if (!arrows[i].isAlive()) {
-			arrows[i].spawn(position, lookat, 15 * strength, { 0,-1,0 }, rotation);
+			arrows[i].spawn(playerOwned, position, lookat, 15 * strength, { 0,-1,0 }, rotation);
 			shot = true;
 		}
 	}
@@ -47,8 +46,9 @@ float Weapon::getStrength() const
 	return mStrength;
 }
 
-Weapon::Weapon(GameData* data)
+Weapon::Weapon(bool owner, GameData* data)
 {
+	this->playerOwned = owner;
 	Texture* tex = data->pAssets->load<Texture>("Models/pns.png");
 	mMax = 100;
 	this->arrows = new Arrow[mMax];

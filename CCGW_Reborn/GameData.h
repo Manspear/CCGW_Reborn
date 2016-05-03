@@ -19,6 +19,7 @@ struct GameData
 	Camera* pCamera;
 	DeferredProgram* pDeferredProgram;
 	ForwardProgram* pForwardProgram;
+	ForwardProgram* pMenuProgram;
 	BillboardProgram* pBillboardProgram;
 	Player* pPlayer;
 	Emission* pEmission;
@@ -28,5 +29,7 @@ struct GameData
 	int mMolebats;
 	Moleratman* pMoleratmen;
 	int mMoleratmen;
+	int pScore;
+	int pGold;
 	std::vector<Tower*> mpTowers;
 };

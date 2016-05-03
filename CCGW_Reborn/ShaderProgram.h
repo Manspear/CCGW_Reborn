@@ -14,6 +14,7 @@ public:
 	void compileShaders(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
 	void linkShaders();
 	void addAttribute(const std::string& attributeName);
+	void setClear(bool yesNo);
 
 	virtual void use() = 0;
 	virtual void unUse() = 0;
@@ -23,6 +24,7 @@ protected:
 	GLuint mVertexShader;
 	GLuint mPixelShader;
 	GLuint mGeometryShader;
+	bool mClearScreen;
 
 	int mTotalAttributes;
 	void compileShader(const string& content, GLuint shaderID);

@@ -12,10 +12,11 @@ public:
 	void update(float dt);
 	float getStrength() const;
 	float getRange() const;
-	Weapon(GameData* data);
+	Weapon(bool owner, GameData* data);
 	~Weapon();
 
 private:
+	bool playerOwned;
 	Arrow *arrows;
 	float mStrength;
 	int mMax;

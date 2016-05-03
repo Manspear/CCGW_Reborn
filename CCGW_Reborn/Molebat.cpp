@@ -1,7 +1,8 @@
 #include "Molebat.h"
 
-void Molebat::update()
+void Molebat::update(float dt)
 {
+	mTimeSinceLastHit += dt;
 	glm::vec3 newPos = mPosition;
 	glm::vec3 movement;
 
@@ -18,8 +19,12 @@ void Molebat::update()
 		dir = -glm::normalize( dir );
 		movement += dir;
 	}
+	else if(mTimeSinceLastHit > 1){
+		pGameData->pPlayer->takeDamage(10);
+		mTimeSinceLastHit = 0;
+	}
 
-	newPos += movement * 0.1f;
+	newPos += movement * dt;
 
 	// stay above ground
 	if( newPos.y < MOLEBAT_HEIGHT )
@@ -62,7 +67,39 @@ void Molebat::update()
 	if (mLife <= 0)
 		mAlive = false;
 
-	mBoundingBox.center = mPosition;
+	mBoundingBox.center = mPosition - glm::vec3( 0.0f, 0.25f, 0.0f );
+	mHeadBox.center = mPosition + glm::vec3( 0.0f, 0.25f, 0.0f );
+}
+
+void Molebat::render( GLuint programID )
+{
+	Enemy::render( programID );
+
+	GLuint worldLocation = glGetUniformLocation(programID, "world");
+	glm::mat4 world;
+	world[3][0] = mBoundingBox.center.x;
+	world[3][1] = mBoundingBox.center.y;
+	world[3][2] = mBoundingBox.center.z;
+
+	world[0][0] = mBoundingBox.hWidth*2.0f;
+	world[1][1] = mBoundingBox.hHeight*2.0f;
+	world[2][2] = mBoundingBox.hDepth*2.0f;
+
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
+
+	mpMesh->draw();
+
+	world[3][0] = mHeadBox.center.x;
+	world[3][1] = mHeadBox.center.y;
+	world[3][2] = mHeadBox.center.z;
+
+	world[0][0] = mHeadBox.hWidth*2.0f;
+	world[1][1] = mHeadBox.hHeight*2.0f;
+	world[2][2] = mHeadBox.hDepth*2.0f;
+
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
+
+	mpMesh->draw();
 }
 
 void Molebat::setGameData( GameData* data )
@@ -80,12 +117,18 @@ Molebat& Molebat::operator=( const Molebat& ref )
 Molebat::Molebat( const Molebat& ref )
 	: Enemy( ref ), pGameData( ref.pGameData ), mSin( ref.mSin )
 {
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+	mBoundingBox.hHeight = 0.25f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
 }
 
 Molebat::Molebat()
 	: Enemy( glm::vec3( 0.0f ) ), mSin( rand() % 1000 )
 {
-	mBoundingBox.hWidth = mBoundingBox.hHeight = mBoundingBox.hDepth = 0.5f;
+	mTimeSinceLastHit = 0;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+	mBoundingBox.hHeight = 0.25f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
 }
 
 Molebat::~Molebat()

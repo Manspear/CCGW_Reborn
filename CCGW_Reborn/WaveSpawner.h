@@ -17,6 +17,8 @@ public:
 	//Adds 1 to the wave counter.
 	void incrementWave();
 
+	bool hasWon();
+
 	void setPosition( glm::vec3 position );
 	glm::vec3 getPosition() const;
 

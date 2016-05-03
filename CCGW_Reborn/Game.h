@@ -19,10 +19,19 @@
 #include "Molebat.h"
 #include "Moleratman.h"
 #include "Sound.h"
+
+enum State {
+	GAME_LOST, GAME_WON, GAME_PLAYING
+};
+
 class Game {
 public:
-	bool run(const Input* inputs, const float &dt);
-	void tacticalRun(const Input* inputs, const float &dt);
+	bool tactical;
+
+
+
+	State run(Input* inputs, const float &dt, bool menuActive);
+	void tacticalRun(Input* inputs, const float &dt, bool menuActive);
 
 	Game();
 	~Game();
@@ -39,9 +48,21 @@ private:
 	//std::vector<Tower*> mpTowers;
 	WaveSpawner* pWaveSpawner;
 
+	int mGold;
+	int mScore;
+
+	int mMaxWaves;
+	int mBabyCount;
+
+
+	float mCounter;
+	float mDelayCleared;
+	float mDelay2;
+
+
 	void createScreenQuad();
 	void drawOnScreenQuad();
 	void render();
 	void buildTowers();
-	void update(const Input* inputs, float dt);
+	void update(Input* inputs, float dt);
 };

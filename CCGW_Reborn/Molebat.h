@@ -3,8 +3,8 @@
 #include "Enemy.h"
 #include "Player.h"
 
-#define MOLEBAT_FAR_DISTANCE 5.0f
-#define MOLEBAT_NEAR_DISTANCE 3.0f
+#define MOLEBAT_FAR_DISTANCE 4.0f
+#define MOLEBAT_NEAR_DISTANCE 2.0f
 #define MOLEBAT_HEIGHT 3.0f
 #define MOLEBAT_ALLY_DISTANCE 1.5f
 
@@ -13,7 +13,8 @@ class Molebat : public Enemy
 {
 public:
 	//Chases the player, stays off the ground and updates position.
-	void update();
+	void render( GLuint programID );
+	void update(float dt);
 
 	void setGameData( GameData* data );
 
@@ -25,4 +26,5 @@ public:
 private:
 	GameData* pGameData;
 	int mSin;
+	float mTimeSinceLastHit;
 };

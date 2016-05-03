@@ -2,35 +2,6 @@
 #define GLM_FORCE_RADIANS
 #include <glm\gtx\vector_angle.hpp>
 
-void Tower::update(Player* enemies, const float & dt)
-{
-	if (mWeaponReady)
-	{	
-			glm::vec3 direction = enemies->getPosition() - mPosition;
-			mDistanceToTarget = glm::length(direction);
-			direction = glm::normalize(direction);
-			if (mDistanceToTarget < mRange)
-			{
-				glm::vec3 rtf = { direction.x, 0, direction.z };
-				float rot = glm::angle(rtf, mLookat);
-				if (rtf.z > 0.0f)
-					rot *= -1.0f;
-				mWeaponReady = false;
-				mShooting = true;
-				mReloadTime = 3;
-				mpWeapon->shoot(mPosition, direction, rot + glm::pi<float>() * 0.5, mStrength);
-			}	
-	}
-	else {
-		mReloadTime -= mFireRate * dt;
-		if (mReloadTime < 0.0)
-			mWeaponReady = true;
-	}
-	if (mShooting) {
-		mpWeapon->update(dt);
-		mShooting = arrowShot(dt);
-	}
-}
 
 void Tower::update(GameData* gameData, const float & dt)
 {
@@ -60,17 +31,26 @@ void Tower::update(GameData* gameData, const float & dt)
 	}
 	if (mShooting) {
 		mpWeapon->update(dt);
-		mShooting = arrowShot(dt);
+		mShooting = arrowShot(dt, gameData);
 	}
 }
 
-bool Tower::arrowShot(const float &dt) {
+bool Tower::arrowShot(const float &dt, GameData* data) {
 	bool targetHit = true;
 	mDistanceToTarget -= mStrength * 15 * dt;
 	if (mDistanceToTarget <= 0.0f)
 	{
 		targetHit = false;	
-		targetEnemy->imHit(mStrength);
+		if (targetEnemy->getAlive())
+		{
+			targetEnemy->imHit(mStrength);
+			if (!targetEnemy->getAlive())
+			{
+				data->pGold++;
+				std::cout << "du fick peng " << data->pGold << std::endl;
+				data->pScore++;
+			}
+		}
 	}
 	return targetHit;
 }
@@ -87,7 +67,7 @@ Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, floa
 	this->mpTexture = towerRef.mpTexture;
 	this->mpSpecularMap = towerRef.mpSpecularMap;
 	this->mpNormalMap = towerRef.mpNormalMap;
-	this->mpWeapon = new Weapon(gameData);
+	this->mpWeapon = new Weapon(false, gameData);
 	this->mWeaponReady = true;
 	mLookat = { 1 ,0, 0 };
 	mReloadTime = 5;

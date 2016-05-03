@@ -40,6 +40,7 @@ public:
 	int getWidth() const;
 	//Returns the height of the grid.
 	int getHeight() const;
+	sNode* getPath();
 
 	void debugRender( GLuint programID );
 
@@ -54,6 +55,7 @@ private:
 	uchar* mpGrid;
 	int *mGScore, *mFScore;
 	sNode* mPath;
+	sNode* mPath2;
 
 	tempMesh* DEBUG_mesh;
 };
