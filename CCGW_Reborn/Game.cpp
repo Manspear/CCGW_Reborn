@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "BinaryReader.h"
+#include "Mole\MoleReader.h"
 
 struct ScreenVertex 
 {
@@ -44,6 +45,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGold = 5;
 
 	//tempMesh* playerModel = data.pAssets->load<tempMesh>( "Models/highreztear.obj" );
+	//tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/threeCubes.mole");
 	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");
 	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
 	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
