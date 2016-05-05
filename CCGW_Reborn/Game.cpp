@@ -45,13 +45,14 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pScore = 0;
 	data.pGold = 5;
 
+	Model* pmod = data.pAssets->load<Model>("Models/testBox2.mole");
 	//tempMesh* playerModel = data.pAssets->load<tempMesh>( "Models/highreztear.obj" );
-	Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/simpleBox.mole");
+	Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/wallBox.mole");
 	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");	  
 	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
 	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
 	Texture* specMap = data.pAssets->load<Texture>("Models/specMap.png");
-	Texture* normalMap = data.pAssets->load<Texture>("Models/tegelNormal.png");
+	Texture* normalMap = data.pAssets->load<Texture>("Models/tegelNormal.png");	
 
 	data.pGrid = new Grid(36, 100, playerModel);
 
@@ -160,12 +161,12 @@ void Game::render()
 {
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
-	//data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
+	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
 	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );
-
+	
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
@@ -189,13 +190,11 @@ void Game::render()
 	data.pBillboardProgram->unUse();
 	data.pDeferredProgram->unUse();
 
-	data.pShader2->use();
+	/*data.pShader2->use();
 	data.pPlayer->render2(data.pShader2->getProgramID());
-	data.pShader2->unUse();
+	data.pShader2->unUse();*/
 
-	//drawOnScreenQuad();	
-
-
+	drawOnScreenQuad();	
 }
 
 void Game::update(Input* inputs, float dt) 

@@ -10,7 +10,7 @@ class Sound : public Asset
 {
 public:
 	/* Load a sound from a file. Returns true if the load was successful.*/
-	bool load( std::string file );
+	bool load( Assets* assets, std::string file );
 	/* Unloads the sound. */
 	void unload();
 	/* Plays the sound. */
@@ -47,7 +47,7 @@ class Music : public Asset
 {
 public:
 	/* Load music from a file. Returns true if the load was successful. */
-	bool load( std::string file );
+	bool load( Assets* assets, std::string file );
 	/* Unloads the music. */
 	void unload();
 	/* Plays the music. */
