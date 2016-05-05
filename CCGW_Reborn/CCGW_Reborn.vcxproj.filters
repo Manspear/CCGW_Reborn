@@ -114,6 +114,9 @@
     <ClCompile Include="Weapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionState.h">
@@ -221,5 +224,49 @@
     <ClInclude Include="Weapon.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\billboard.geometry">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\billboard.pixel">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\billboard.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\deferred.geometry">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\deferred.pixel">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\deferred.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\forward.pixel">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\forward.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\menu.pixel">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\menu.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\molevertices.geometry">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\molevertices.pixel">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\molevertices.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

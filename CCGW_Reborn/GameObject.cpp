@@ -1,6 +1,20 @@
 #include "GameObject.h"
 #include <iostream>
 
+bool GameObject::load(Mesh * assets, Texture * diffuseTex, Texture * specularMap, Texture * normalMap)
+{
+	if (assets != nullptr)
+		mpMesh2 = assets;
+	if (diffuseTex != nullptr)
+		mpTexture = diffuseTex;
+	if (specularMap != nullptr)
+		mpSpecularMap = specularMap;
+	if (normalMap != nullptr)
+		mpNormalMap = normalMap;
+
+	return (mpMesh != nullptr);
+}
+
 bool GameObject::load(tempMesh* assets, Texture* diffuseTex, Texture* specularMap, Texture* normalMap)
 {
 	if (assets != nullptr)
@@ -40,6 +54,15 @@ void GameObject::render(const GLuint & programID, const glm::mat4 &viewMat)
 
 	activateTextures(programID);
 	mpMesh->draw();
+	deactivateTextures();
+}
+
+void GameObject::render2(const GLuint & programID)
+{
+	GLuint world = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
+	activateTextures(programID);
+	mpMesh2->draw();
 	deactivateTextures();
 }
 

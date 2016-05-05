@@ -38,6 +38,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
+	data.pShader2 = new ForwardProgram("molevertices.vertex", "molevertices.pixel", "molevertices.geometry");
 	data.pEmission = new Emission(&data, 10000);
 	data.pPlayer = new Player(&data);
 	data.boxScale = 2;
@@ -45,8 +46,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGold = 5;
 
 	//tempMesh* playerModel = data.pAssets->load<tempMesh>( "Models/highreztear.obj" );
-	//tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/threeCubes.mole");
-	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");
+	Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/simpleBox.mole");
+	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");	  
 	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
 	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
 	Texture* specMap = data.pAssets->load<Texture>("Models/specMap.png");
@@ -61,9 +62,11 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
-	data.pPlayer->load( playerModel, playerTexture, specMap, normalMap);
+	data.pPlayer->load( playerModel2, playerTexture, specMap, normalMap);
 	mGround.load(data.pAssets->load<tempMesh>("Models/plane.obj"), groundTexture, specMap, nullptr);
+	//mGround.load(data.pAssets->load<tempMesh>("Models/groundPlane.mole"), groundTexture, specMap, nullptr);
 	mActionMarker.load(data.pAssets->load<tempMesh>("Models/marker.obj"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
+	//mActionMarker.load(data.pAssets->load<tempMesh>("Models/Marker.mole"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
 	mTacticalMarker.load(playerModel, groundTexture, specMap, nullptr);
 	mTacticalMarker.setScale(data.boxScale);
 	mTowerModel.load(playerModel, groundTexture, nullptr, nullptr);
@@ -157,7 +160,7 @@ void Game::render()
 {
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
-	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
+	//data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
 	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
@@ -186,9 +189,13 @@ void Game::render()
 	data.pBillboardProgram->unUse();
 	data.pDeferredProgram->unUse();
 
+	data.pShader2->use();
+	data.pPlayer->render2(data.pShader2->getProgramID());
+	data.pShader2->unUse();
 
-	
-	drawOnScreenQuad();	
+	//drawOnScreenQuad();	
+
+
 }
 
 void Game::update(Input* inputs, float dt) 
@@ -260,6 +267,7 @@ void Game::drawOnScreenQuad()
 {
 	data.pForwardProgram->use();
 	data.pDeferredProgram->enableTextures(data.pForwardProgram->getProgramID());
+	//data.pShader2->enableTextures(data.pForwardProgram->getProgramID());
 
 	GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
 	glUniform3fv(cameraPos, 1, &data.pCamera->getPosition()[0]);
@@ -273,5 +281,6 @@ void Game::drawOnScreenQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	data.pDeferredProgram->disableTextures();
+	//data.pShader2->disableTextures();
 	data.pForwardProgram->unUse();
 }

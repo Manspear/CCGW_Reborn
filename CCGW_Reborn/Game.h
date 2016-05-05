@@ -3,6 +3,7 @@
 #include "DeferredProgram.h"
 #include "ForwardProgram.h"
 #include "tempMesh.h"
+#include "Mesh.h"
 #include "Player.h"
 #include "Input.h"
 #include "Camera.h"

@@ -55,8 +55,8 @@ Weapon::Weapon(bool owner, GameData* data)
 	for (int i = 0; i < mMax; i++)
 	{
  		this->arrows[i].loadTex(tex);
-		this->arrows[i].load(data, "Models/threeCubes.mole");
-		//this->arrows[i].load( data, "Models/arrow_best3.obj"); // arrow_liten4_one	
+		//this->arrows[i].load(data, "Models/threeCubes.mole");
+		this->arrows[i].load( data, "Models/arrow_best3.obj"); // arrow_liten4_one	
 	}
 	this->mStrength = 5;
 }

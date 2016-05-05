@@ -39,6 +39,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Marker.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Molebat.cpp" />
     <ClCompile Include="Moleratman.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Joint.h" />
     <ClInclude Include="Marker.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Molebat.h" />
     <ClInclude Include="Moleratman.h" />
     <ClInclude Include="Particle.h" />
@@ -89,6 +91,21 @@
     <ClInclude Include="Tower.h" />
     <ClInclude Include="WaveSpawner.h" />
     <ClInclude Include="Weapon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\billboard.geometry" />
+    <None Include="shaders\billboard.pixel" />
+    <None Include="shaders\billboard.vertex" />
+    <None Include="shaders\deferred.geometry" />
+    <None Include="shaders\deferred.pixel" />
+    <None Include="shaders\deferred.vertex" />
+    <None Include="shaders\forward.pixel" />
+    <None Include="shaders\forward.vertex" />
+    <None Include="shaders\menu.pixel" />
+    <None Include="shaders\menu.vertex" />
+    <None Include="shaders\molevertices.geometry" />
+    <None Include="shaders\molevertices.pixel" />
+    <None Include="shaders\molevertices.vertex" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC8315FC-C91F-40C9-ABB0-7D559CF64A85}</ProjectGuid>

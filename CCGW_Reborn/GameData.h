@@ -20,6 +20,7 @@ struct GameData
 	DeferredProgram* pDeferredProgram;
 	ForwardProgram* pForwardProgram;
 	ForwardProgram* pMenuProgram;
+	ForwardProgram* pShader2;
 	BillboardProgram* pBillboardProgram;
 	Player* pPlayer;
 	Emission* pEmission;
