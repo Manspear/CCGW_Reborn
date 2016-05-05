@@ -90,6 +90,18 @@
     <ClInclude Include="WaveSpawner.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\billboard.geometry" />
+    <None Include="shaders\billboard.pixel" />
+    <None Include="shaders\billboard.vertex" />
+    <None Include="shaders\deferred.geometry" />
+    <None Include="shaders\deferred.pixel" />
+    <None Include="shaders\deferred.vertex" />
+    <None Include="shaders\forward.pixel" />
+    <None Include="shaders\forward.vertex" />
+    <None Include="shaders\menu.pixel" />
+    <None Include="shaders\menu.vertex" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC8315FC-C91F-40C9-ABB0-7D559CF64A85}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
