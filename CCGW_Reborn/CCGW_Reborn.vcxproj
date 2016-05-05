@@ -40,6 +40,7 @@
     <ClCompile Include="Marker.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Molebat.cpp" />
     <ClCompile Include="Moleratman.cpp" />
     <ClCompile Include="Particle.cpp" />

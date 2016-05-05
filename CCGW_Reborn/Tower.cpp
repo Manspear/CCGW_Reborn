@@ -18,8 +18,12 @@ void Tower::update(GameData* gameData, const float & dt)
 					mShooting = true;
 					mReloadTime = 3;
 					targetEnemy = &gameData->pMoleratmen[i];
-					
-					mpWeapon->shoot(mPosition, direction, rotX, mStrength);
+					glm::vec3 tempDir = glm::normalize(glm::vec3(direction.x, 0, direction.z));
+					float angle = glm::angle(tempDir, glm::vec3(1, 0, 0));
+					if (tempDir.z < 0)
+						angle *= -1;
+
+					mpWeapon->shoot(mPosition, direction, angle, mStrength);
 					break;
 				}
 			}

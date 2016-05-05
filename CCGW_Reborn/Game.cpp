@@ -219,13 +219,15 @@ void Game::update(Input* inputs, float dt)
 	if (waveDone)
 	{
 		mCounter += dt;
-		if (mCounter > mDelayCleared) 
+		if (mCounter > mDelayCleared)
 		{
 			inputs->setMouseLock(false);
 			tactical = true;
 			mCounter = 0;
 		}
 	}
+	else
+		mCounter = 0;
 	
 	for (int i = 0; i < data.mpTowers.size(); i++)
 	{
