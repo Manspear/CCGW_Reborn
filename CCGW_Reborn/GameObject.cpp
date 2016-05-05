@@ -118,7 +118,10 @@ void GameObject::setPosition( glm::vec3 position )
 
 void GameObject::setScale(int scale)
 {
-	mWorld = { scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1 };
+	//mWorld = { scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1 };
+	mWorld[0][0] = scale;
+	mWorld[1][1] = scale;
+	mWorld[2][2] = scale;
 }
 
 GameObject::GameObject(const GameObject& ref)

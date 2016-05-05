@@ -20,7 +20,8 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->buttonDown(0))
 		this->mStrength += dt;
-	mWeapon->update(dt);
+	//mWeapon->update(dt);
+	mWeapon.update( dt );
 	speedY -= 25 * dt;
 	mSpeed *= 1- 15*dt;
 	if (mSpeed < 0)
@@ -151,7 +152,8 @@ void Player::update(const Input* inputs, const float &dt)
 		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0))/4.f;
 		glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
 		float rotation = rotX  - glm::angle(glm::normalize(glm::vec3(la.x,0,la.z)), tempLookat);
-		mWeapon->shoot(tempPos, la, rotation, mStrength);
+		//mWeapon->shoot(tempPos, la, rotation, mStrength);
+		mWeapon.shoot( tempPos, la, rotation, mStrength );
 		mStrength = 0;
 	}
 }
@@ -224,7 +226,8 @@ Player::Player()
 Player::Player(GameData* data) : GameObject()
 {
 	this->pGameData = data;
-	mWeapon = new Weapon(true, data);
+	//mWeapon = new Weapon(true, data);
+	mWeapon.load( data, true );
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;
@@ -235,5 +238,5 @@ Player::Player(GameData* data) : GameObject()
 
 Player::~Player()
 {
-	delete mWeapon;
+	//delete mWeapon;
 }

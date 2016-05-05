@@ -31,5 +31,7 @@ struct GameData
 	int mMoleratmen;
 	int pScore;
 	int pGold;
-	std::vector<Tower*> mpTowers;
+	//std::vector<Tower*> mpTowers;
+	Tower* pTowers;
+	int mTowers;
 };

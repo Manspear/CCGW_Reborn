@@ -25,7 +25,8 @@ private:
 	float mSpeed;
 	float mStrength;
 	glm::vec3 mDirection;
-	Weapon* mWeapon;
+	//Weapon* mWeapon;
+	Weapon mWeapon;
 	GameData* pGameData;
 
 	float mHealth;

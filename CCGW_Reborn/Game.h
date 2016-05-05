@@ -43,7 +43,7 @@ private:
 	Terrain mGround;
 	Marker mActionMarker;
 	Marker mTacticalMarker;
-	Tower mTowerModel;
+	//Tower mTowerModel;
 	GameData data;
 	sNode* mpPath;
 	int mTargets;
