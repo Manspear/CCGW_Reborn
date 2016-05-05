@@ -89,7 +89,7 @@ void WaveSpawner::spawnMoleratman()
 	{
 		m->setPosition( mPosition );
 		m->setAlive( true );
-		m->setLife( 1000.0f );
+		m->setLife( 500.0f );
 		m->setPath( mpPath, mTargets );
 	}
 }

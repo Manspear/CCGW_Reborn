@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{f325d04c-e422-4786-9a3b-6333c3d1d7dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionState.cpp">
@@ -185,9 +188,6 @@
     <ClInclude Include="Menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Molebat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -230,49 +230,43 @@
     <ClInclude Include="Weapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\billboard.geometry">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\billboard.pixel">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\billboard.vertex">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="shaders\deferred.geometry">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\deferred.pixel">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\deferred.vertex">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\forward.pixel">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\forward.vertex">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\menu.pixel">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\menu.vertex">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\molevertices.geometry">
-      <Filter>Resource Files</Filter>
+    <None Include="shaders\billboard.geometry">
+      <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\molevertices.pixel">
-      <Filter>Resource Files</Filter>
+    <None Include="shaders\billboard.pixel">
+      <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\molevertices.vertex">
-      <Filter>Resource Files</Filter>
+    <None Include="shaders\billboard.vertex">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

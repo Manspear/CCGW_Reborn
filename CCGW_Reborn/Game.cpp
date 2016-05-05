@@ -34,7 +34,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 
 	data.pAssets = new Assets();
-	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 50.0f );
+	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
 	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
@@ -52,6 +52,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* specMap = data.pAssets->load<Texture>("Models/specMap.png");
 	Texture* normalMap = data.pAssets->load<Texture>("Models/tegelNormal.png");*/
 	Model* playerModel = data.pAssets->load<Model>( "Models/wallBox.mole" );
+	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 
 	data.pGrid = new Grid(36, 100);
 
@@ -70,8 +72,9 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mTowerModel.load(playerModel, groundTexture, nullptr, nullptr);
 	mTowerModel.setScale(data.boxScale);*/
 
-	data.pPlayer->load( playerModel );
-	mGround.load( playerModel );
+	data.pPlayer->load(enemyModel);
+	mGround.load(terrainModel);
+	mGround.setPosition({ 0,-0.5f,0 });
 	mActionMarker.load( playerModel );
 	mTacticalMarker.load( playerModel );
 	mTacticalMarker.setScale( data.boxScale );
@@ -80,7 +83,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
-	for( int i=0; i<data.mMolebats; i++ )
+	for( int i=0; i < data.mMolebats; i++ )
 	{
 		data.pMolebats[i].load( playerModel );
 		data.pMolebats[i].setGameData( &data );
@@ -89,7 +92,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mMoleratmen = 50;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
-		data.pMoleratmen[i].load(playerModel );
+		data.pMoleratmen[i].load(enemyModel);
 		data.pMoleratmen[i].pGameData = &data;
 	}
 

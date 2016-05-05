@@ -25,8 +25,10 @@ bool Model::load( Assets* assets, std::string file )
 		mpSpecularMaps[i] = assets->load<Texture>( material->specularTexture );
 		mpNormalMaps[i] = assets->load<Texture>( material->normalTexture );
 
-		if(mpDiffuseMaps[i] == nullptr )
-			result = false;
+		if (mpDiffuseMaps[i] == nullptr)
+		{
+			mpDiffuseMaps[i] = assets->load<Texture>("Models/cube.png");
+		}
 	}
 
 	return result;
