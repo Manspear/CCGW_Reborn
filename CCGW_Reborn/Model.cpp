@@ -8,18 +8,24 @@ bool Model::load( Assets* assets, std::string file )
 	moleReader.readFromBinary( file.c_str() );
 
 	mMeshes = moleReader.getMeshList()->size();
-	mTextures = moleReader.getMaterialList()->size();
+	mMaps = moleReader.getMaterialList()->size();
 
 	mpMeshes = new Mesh[mMeshes];
-	mpTextures = new Texture*[mTextures];
+	mpDiffuseMaps = new Texture*[mMaps];
+	mpSpecularMaps = new Texture*[mMaps];
+	mpNormalMaps = new Texture*[mMaps];
 
 	for( int i=0; i<mMeshes && result; i++ )
 		result = result && mpMeshes[i].load( &moleReader, i );
 
-	for( int i=0; i<mTextures && result; i++ )
+	for( int i=0; i<mMaps && result; i++ )
 	{
-		mpTextures[i] = assets->load<Texture>( moleReader.getMaterial(i)->diffuseTexture );
-		if( mpTextures[i] == nullptr )
+		const sMaterial* material = moleReader.getMaterial(i);
+		mpDiffuseMaps[i] = assets->load<Texture>( material->diffuseTexture );
+		mpSpecularMaps[i] = assets->load<Texture>( material->specularTexture );
+		mpNormalMaps[i] = assets->load<Texture>( material->normalTexture );
+
+		if(mpDiffuseMaps[i] == nullptr )
 			result = false;
 	}
 
@@ -32,9 +38,11 @@ void Model::unload()
 		mpMeshes[i].unload();
 
 	delete[] mpMeshes;
-	delete[] mpTextures;
+	delete[] mpDiffuseMaps;
+	delete[] mpSpecularMaps;
+	delete[] mpNormalMaps;
 
-	mMeshes = mTextures = 0;
+	mMeshes = mMaps = 0;
 
 	// No need to unload the textures, Assets will take care of that
 }
@@ -43,12 +51,45 @@ void Model::draw()
 {
 	for( int i=0; i<mMeshes; i++ )
 	{
-		int tex = mpMeshes[i].getTextureIndex();
-		if( tex < mTextures )
-			mpTextures[tex]->bind();
+		int material = mpMeshes[i].getMaterialIndex();
+
+		mpDiffuseMaps[material]->bind( GL_TEXTURE0 );
+
+		Texture* spec = mpSpecularMaps[material];
+		if( spec )
+			spec->bind( GL_TEXTURE1 );
+		else
+		{
+			glActiveTexture( GL_TEXTURE1 );
+			glBindTexture( GL_TEXTURE_2D, 0 );
+		}
+
+		Texture* norm = mpNormalMaps[material];
+		if( norm )
+			norm->bind( GL_TEXTURE2 );
+		else
+		{
+			glActiveTexture( GL_TEXTURE2 );
+			glBindTexture( GL_TEXTURE_2D, 0 ); 
+		}
 
 		mpMeshes[i].draw();
 	}
+}
+
+Texture* Model::getDiffuseMap( int index ) const 
+{
+	return mpDiffuseMaps[index];
+}
+
+Texture* Model::getSpecularMap( int index ) const
+{
+	return mpSpecularMaps[index];
+}
+
+Texture* Model::getNormalMap( int index ) const
+{
+	return mpNormalMaps[index];
 }
 
 Model& Model::operator=( const Model& ref )

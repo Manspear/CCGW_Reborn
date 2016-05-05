@@ -61,12 +61,12 @@ void Tower::render(const GLuint & programID)
 		mpWeapon->draw(programID);
 }
 
-Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale): GameObject(position, scale)
-{
-	this->mpMesh = towerRef.mpMesh;
+Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale): GameObject(position, scale){
+	/*this->mpMesh = towerRef.mpMesh;
 	this->mpTexture = towerRef.mpTexture;
 	this->mpSpecularMap = towerRef.mpSpecularMap;
-	this->mpNormalMap = towerRef.mpNormalMap;
+	this->mpNormalMap = towerRef.mpNormalMap;*/
+	this->mpModel = towerRef.mpModel;
 	this->mpWeapon = new Weapon(false, gameData);
 	this->mWeaponReady = true;
 	mLookat = { 1 ,0, 0 };

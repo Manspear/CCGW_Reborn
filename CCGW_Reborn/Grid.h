@@ -42,9 +42,10 @@ public:
 	int getHeight() const;
 	sNode* getPath();
 
-	void debugRender( GLuint programID );
+	//void debugRender( GLuint programID );
 
-	Grid( int width, int height, tempMesh* debugMesh);
+	//Grid( int width, int height, tempMesh* mesh);
+	Grid( int width, int height );
 	Grid();
 	~Grid();
 
@@ -57,5 +58,5 @@ private:
 	sNode* mPath;
 	sNode* mPath2;
 
-	tempMesh* DEBUG_mesh;
+	//tempMesh* DEBUG_mesh;
 };

@@ -289,7 +289,7 @@ bool Mesh::load( MoleReader* reader, int index )
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 11));
 
 		mSize = vertexList->size();
-		mTextureIndex = mesh->materialID;
+		mMaterialIndex = mesh->materialID;
 		result = true;
 	}
 	else if( mesh->skelAnimVertexCount > 0 )
@@ -323,9 +323,9 @@ void Mesh::draw()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-int Mesh::getTextureIndex() const
+int Mesh::getMaterialIndex() const
 {
-	return mTextureIndex;
+	return mMaterialIndex;
 }
 
 Mesh& Mesh::operator=(const Mesh& ref)

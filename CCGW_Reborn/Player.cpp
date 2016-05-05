@@ -177,11 +177,11 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 	return dir;
 }
 
-void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
+/*void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
 {
 	GameObject::render2(programID);
 	this->mWeapon->draw(programID);
-}
+}*/
 
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
 	glm::vec3 result = glm::normalize(v1 + v2);

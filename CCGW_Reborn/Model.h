@@ -11,6 +11,10 @@ public:
 	void unload();
 	void draw();
 
+	Texture* getDiffuseMap( int index ) const;
+	Texture* getSpecularMap( int index ) const;
+	Texture* getNormalMap( int index ) const;
+
 	Model& operator=( const Model& ref );
 	Model( const Model& ref );
 	Model();
@@ -20,6 +24,6 @@ private:
 	Mesh* mpMeshes;
 	int mMeshes;
 
-	Texture** mpTextures;
-	int mTextures;
+	Texture **mpDiffuseMaps, **mpSpecularMaps, **mpNormalMaps;
+	int mMaps;
 };

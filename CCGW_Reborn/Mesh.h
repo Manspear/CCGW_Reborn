@@ -19,7 +19,7 @@ public:
 	void unload();
 	void draw();
 
-	int getTextureIndex() const;
+	int getMaterialIndex() const;
 	
 	Mesh& operator=(const Mesh& ref);
 	Mesh(const Mesh& ref);
@@ -31,5 +31,5 @@ private:
 	GLuint mVertexBuffer;
 	GLuint mIndexBuffer;
 	int mSize;
-	int mTextureIndex;
+	int mMaterialIndex;
 };

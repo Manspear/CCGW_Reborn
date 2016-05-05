@@ -185,7 +185,7 @@ int Grid::heuristic( sNode* start, sNode* end )
 	return ( difx*difx + dify*dify );
 }
 
-void Grid::debugRender( GLuint programID )
+/*void Grid::debugRender( GLuint programID )
 {
 	for( int z=0, i=0; z<mHeight; z++ )
 	{
@@ -207,9 +207,9 @@ void Grid::debugRender( GLuint programID )
 			}
 		}
 	}
-}
+}*/
 
-Grid::Grid( int width, int height, tempMesh* debugMesh)
+Grid::Grid( int width, int height)
 	: mWidth( width ), mHeight( height )
 {
 	mpGrid = new uchar[width*height];
@@ -221,7 +221,6 @@ Grid::Grid( int width, int height, tempMesh* debugMesh)
 	{
 		mpGrid[i] = TILE_EMPTY;
 	}
-	DEBUG_mesh = debugMesh;
 }
 
 Grid::Grid()

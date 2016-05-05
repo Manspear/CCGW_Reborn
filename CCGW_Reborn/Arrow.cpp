@@ -7,8 +7,11 @@
  
 bool Arrow::load(GameData* data, string mesh)
 {
-	mpMesh = data->pAssets->load<tempMesh>(mesh);
-	bool result = ( mpMesh != nullptr );
+	//mpMesh = data->pAssets->load<tempMesh>(mesh);
+
+	// TODO: Should move this out into Game
+	mpModel = data->pAssets->load<Model>(mesh);
+	bool result = ( mpModel != nullptr );
 
 	//mpEmitter.load( data, "Models/pns.png" );
 	//data->mEmitters.push_back( &mpEmitter );
@@ -183,8 +186,9 @@ Arrow::Arrow() : GameObject({0,-10,0}, 1.0f)
 	mLookat = {1,0,0};
 	mSpeed = 1.f;
 	mGravitation = {0,-1,0};
-	mpSpecularMap = nullptr;
-	mpNormalMap = nullptr;
+	mpModel = nullptr;
+	//mpSpecularMap = nullptr;
+	//mpNormalMap = nullptr;
 	pGameData = nullptr;
 	mAlive = false;
 	playerOwned = false;
