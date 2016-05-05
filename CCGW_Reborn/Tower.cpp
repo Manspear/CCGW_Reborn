@@ -18,6 +18,7 @@ void Tower::update(GameData* gameData, const float & dt)
 					mShooting = true;
 					mReloadTime = 3;
 					targetEnemy = &gameData->pMoleratmen[i];
+					
 					mpWeapon->shoot(mPosition, direction, rotX, mStrength);
 					break;
 				}
