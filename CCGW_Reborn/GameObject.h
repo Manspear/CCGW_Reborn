@@ -9,17 +9,20 @@
 #include "GameData.h"
 #include "global_variables.h"
 #include "BoundingBox.h"
+#include "Mesh.h"
 
 class GameObject
 {
 public:
 	/*Abstract method. Don't call.*/
+	bool load(Mesh* assets, Texture* diffuseTex, Texture* specularMap, Texture* normalMap);
 	bool load(tempMesh* assets, Texture* diffuseTex, Texture* specularMap, Texture* normalMap);
 	bool loadTex(Texture* texture);
 	/*Abstract method. Don't call.*/
 	virtual void update(const float &dt);
 	/*Abstract method. Don't call.*/
 	virtual void render(const GLuint &programID);
+	virtual void render2(const GLuint &programID);
 	virtual void render(const GLuint &programID, const glm::mat4 &viewMat);
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
@@ -40,6 +43,7 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	BoundingBox mBB;
 
 	tempMesh* mpMesh;
+	Mesh* mpMesh2;
 	Texture* mpTexture;
 	Texture* mpSpecularMap;
 	Texture* mpNormalMap;

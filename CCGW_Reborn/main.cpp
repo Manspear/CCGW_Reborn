@@ -8,10 +8,20 @@
 #include "global_variables.h"
 #include "Menu.h"
 
-
 using namespace std;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) 
+{
+
+	//for (int i = 0; i < 3000; i++)
+	//{
+	//	MoleReader lolo;
+	//	lolo.readFromBinary("Models/threeCubes.mole");
+	//	const sMainHeader* popo = lolo.getMainHeader();
+	//	int meshCount = popo->meshCount;
+	//}
+
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );

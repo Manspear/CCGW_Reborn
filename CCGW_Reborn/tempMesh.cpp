@@ -18,7 +18,7 @@ struct objVertex
 bool tempMesh::load(string file)
 {
 	bool result = false;
-
+	
 	std::ifstream stream(file);
 	if (stream.is_open())
 	{

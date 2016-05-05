@@ -9,7 +9,7 @@
 
 #include "Mole\MoleReader.h"
 
-class tempMesh : public Asset
+class Mesh : public Asset
 {
 public:
 	/*Load a mesh from a file. Returns true if the load was successful.*/
@@ -18,10 +18,10 @@ public:
 	void unload();
 	void draw();
 
-	tempMesh& operator=(const tempMesh& ref);
-	tempMesh(const tempMesh& ref);
-	tempMesh();
-	~tempMesh();
+	Mesh& operator=(const Mesh& ref);
+	Mesh(const Mesh& ref);
+	Mesh();
+	~Mesh();
 
 private:
 	GLuint mVertexArray;
