@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 
 	State gs = GAME_PLAYING;
 
-	Menu mainMenu("menuBuild.txt");
+	Menu mainMenu;
 	char menuAction = 0;
 
 	while (running && gs == GAME_PLAYING)

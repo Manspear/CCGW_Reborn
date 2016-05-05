@@ -12,6 +12,11 @@ struct Vertex {
 	float u, v;
 };
 
+struct Number {
+	float x, y;
+	float number;
+};
+
 enum MENU {
 	MAIN_MENU, ACTION_HUD, TACTICAL_HUD
 };
@@ -43,7 +48,6 @@ public:
 	bool update(Input* inputs);
 	void render();
 	void addButton(float startX, float startY, float width, float height, char type, std::string texPath, std::vector<Button> &theVector);
-	Menu(std::string filePath);
 	Menu();
 	~Menu();
 private:
@@ -54,6 +58,7 @@ private:
 	std::vector<Button> mButtonsHUDaction;
 	std::vector<Button> mButtonsHUDtactical;
 	std::vector<std::vector<Button>> mMenuHolder;
+
 	bool mRunning;
 	ForwardProgram* menuShader;
 };

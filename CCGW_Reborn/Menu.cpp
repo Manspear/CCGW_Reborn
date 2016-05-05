@@ -104,7 +104,7 @@ void Menu::addButton(float startX, float startY, float width, float height, char
 	theVector.push_back(Button(startX, startY, width, height, type, loadTex(texPath), vboID));
 }
 
-Menu::Menu(std::string filePath)
+Menu::Menu()
 {
 	menuShader = new ForwardProgram("menu.vertex", "menu.pixel", " ");
 	menuShader->setClear(false);
@@ -112,7 +112,7 @@ Menu::Menu(std::string filePath)
 	activeMenu = MAIN_MENU;
 	mRunning = true;
 	istringstream s;
-	s.str(readBuild(filePath));
+	s.str(readBuild("menuBuild.txt"));
 	float x, y, w, h;
 	string temp, texPath;
 	char type;
@@ -133,13 +133,6 @@ Menu::Menu(std::string filePath)
 		addButton(x, y, w, h, type, texPath, mMenuHolder[ACTION_HUD]);
 		s2.clear();
 	}
-}
-
-Menu::Menu()
-{
-	menuShader = new ForwardProgram("menu.vertex", "menu.pixel", " ");
-	menuShader->setClear(false);
-	mActive = true;
 }
 
 Menu::~Menu()
