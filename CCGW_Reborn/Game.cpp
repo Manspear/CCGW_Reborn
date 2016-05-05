@@ -45,15 +45,19 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pScore = 0;
 	data.pGold = 5;
 
-	/*Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/testBox2.mole");
-	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");	  
-	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
-	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
-	Texture* specMap = data.pAssets->load<Texture>("Models/specMap.png");
-	Texture* normalMap = data.pAssets->load<Texture>("Models/tegelNormal.png");*/
 	Model* playerModel = data.pAssets->load<Model>( "Models/wallBox.mole" );
 
 	data.pGrid = new Grid(36, 100);
+	data.mTowers = 36*100;
+	data.pTowers = new Tower[data.mTowers];
+
+	for( int i=0; i<data.mTowers; i++ )
+	{
+		int x = i % data.pGrid->getWidth();
+		int y = i / data.pGrid->getWidth();
+		data.pTowers[i].load( &data, glm::vec3( x, 0, y ), playerModel );
+		data.pTowers[i].setAlive( false );
+	}
 
 	sNode start = { 0, 0 };
 	sNode end = { 2, 2 };
@@ -62,21 +66,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
-	/*data.pPlayer->load( playerModel2, playerTexture, specMap, normalMap);
-	mGround.load(data.pAssets->load<tempMesh>("Models/plane.obj"), groundTexture, specMap, nullptr);
-	mActionMarker.load(data.pAssets->load<tempMesh>("Models/marker.obj"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
-	mTacticalMarker.load(playerModel, groundTexture, specMap, nullptr);
-	mTacticalMarker.setScale(data.boxScale);
-	mTowerModel.load(playerModel, groundTexture, nullptr, nullptr);
-	mTowerModel.setScale(data.boxScale);*/
-
 	data.pPlayer->load( playerModel );
 	mGround.load( playerModel );
 	mActionMarker.load( playerModel );
 	mTacticalMarker.load( playerModel );
 	mTacticalMarker.setScale( data.boxScale );
-	mTowerModel.load( playerModel );
-	mTowerModel.setScale( data.boxScale );
+	//mTowerModel.load( playerModel );
+	//mTowerModel.setScale( data.boxScale );
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
@@ -116,9 +112,10 @@ Game::~Game() {
 	delete data.pShader2;
 	//delete data.pMenuProgram;
 	delete pActionState;
-	for (int i = 0; i < data.mpTowers.size(); i++) {
+	/*for (int i = 0; i < data.mpTowers.size(); i++) {
 		delete data.mpTowers[i];
-	}
+	}*/
+	delete[] data.pTowers;
 	delete[] mpPath;
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
@@ -151,7 +148,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 		 else {
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 20);
 			 if (mTacticalMarker.update(inputs, data))
-				 buildTowers();
+				buildTowers();
 		 }
 	 }
 	 if (inputs->keyPressed(SDLK_t))
@@ -177,9 +174,12 @@ void Game::render()
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
 
-	for (int i = 0; i < data.mpTowers.size(); i++) {
+	/*for (int i = 0; i < data.mpTowers.size(); i++) {
 		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
-	}
+	}*/
+	for( int i=0; i<data.mTowers; i++ )
+		if( data.pTowers[i].getAlive() )
+			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );
 	if(data.pCamera->getPosition().y < 15)
 		mActionMarker.render(data.pDeferredProgram->getProgramID());
 	else
@@ -234,17 +234,15 @@ void Game::update(Input* inputs, float dt)
 		}
 	}
 	
-	for (int i = 0; i < data.mpTowers.size(); i++)
+	/*for (int i = 0; i < data.mpTowers.size(); i++)
 	{
 		data.mpTowers[i]->update(&data, dt);
-	}
+	}*/
+	for( int i=0; i<data.mTowers; i++ )
+		if( data.pTowers[i].getAlive() )
+			data.pTowers[i].update( &data, dt );
 
 	mActionMarker.update(data.pPlayer);
-	
-	// NOTE: Debug
-	float x = (float)( rand() % 100 - 50 );
-	float z = (float)( rand() % 100 - 50 );
-	glm::vec3 v = glm::normalize( glm::vec3( x, 50.0f, z ) ) * 0.25f;
 
 	pWaveSpawner->update( dt );
 
@@ -259,7 +257,13 @@ void Game::update(Input* inputs, float dt)
 void Game::buildTowers() {
 	std::vector<glm::vec2> tempVec = mTacticalMarker.getMarkedTiles();
 	for (int i = 0; i < tempVec.size(); i++) {
-		data.mpTowers.push_back(new Tower(&data, glm::vec3(tempVec[i].x, 1, tempVec[i].y), mTowerModel, data.boxScale));
+		//data.mpTowers.push_back(new Tower(&data, glm::vec3(tempVec[i].x, 1, tempVec[i].y), mTowerModel, data.boxScale));
+
+		int x = (int)tempVec[i].x;
+		int y = (int)tempVec[i].y;
+		int w = data.pGrid->getWidth();
+		data.pTowers[y*w+x].setAlive( true );
+
 		glm::vec3 ppos = data.pPlayer->getPosition();
 		if (!data.pPlayer->checkMove(ppos))
 		{
