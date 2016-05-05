@@ -19,6 +19,8 @@ public:
 	void unload();
 	void draw();
 
+	int getTextureIndex() const;
+	
 	Mesh& operator=(const Mesh& ref);
 	Mesh(const Mesh& ref);
 	Mesh();
@@ -29,4 +31,5 @@ private:
 	GLuint mVertexBuffer;
 	GLuint mIndexBuffer;
 	int mSize;
+	int mTextureIndex;
 };
