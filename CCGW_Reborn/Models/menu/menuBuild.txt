@@ -1,3 +1,5 @@
--0.2 0.2 0.3 0.2 p Models/menu/startButton.png
--0.2 -0.2 0.3 0.2 q Models/menu/quitButton.png
--0.8 -0.8 1.6 1.6 d Models/menu/startButton.png
+-0.16 -0.4 0.3 0.15 p Models/menu/begin.png
+-0.16 -0.57 0.3 0.15 d Models/menu/score.png
+-0.16 -0.74 0.3 0.15 d Models/menu/help.png
+-0.16 -0.91 0.3 0.15 q Models/menu/exit.png
+-1.0 -1.0 2 2 d Models/menu/mainMenu.png

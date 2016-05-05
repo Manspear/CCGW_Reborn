@@ -12,16 +12,6 @@ using namespace std;
 
 int main(int argc, char** argv) 
 {
-
-	//for (int i = 0; i < 3000; i++)
-	//{
-	//	MoleReader lolo;
-	//	lolo.readFromBinary("Models/threeCubes.mole");
-	//	const sMainHeader* popo = lolo.getMainHeader();
-	//	int meshCount = popo->meshCount;
-	//}
-
-
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
@@ -44,8 +34,6 @@ int main(int argc, char** argv)
 	if (error != GLEW_OK)
 		std::cout << "GlewFel!";
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	//SDL_SetWindowPosition( window, 0, 0 );
 
 	glClearColor(0.7f, 0.7f, 1.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -71,34 +59,16 @@ int main(int argc, char** argv)
 		temp = SDL_GetTicks();
 		dt = (float)(temp - timeStamp) / 1000.f;
 		timeStamp = temp;
-		running = input.update();
+		input.update();
 		
 		if (!game.tactical)
 			gs = game.run(&input, dt, !mainMenu.mActive);
 		else
 			game.tacticalRun(&input, dt, !mainMenu.mActive);
 
-		if (mainMenu.mActive) {
-			menuAction = mainMenu.update(&input);
-			mainMenu.render();
-			switch (menuAction) {
-			case 'q':
-				running = false;
-				break;
-			case'p':
-				mainMenu.mActive = !mainMenu.mActive;
-				input.setMouseVisible(mainMenu.mActive);
-				input.setMouseLock(actionMode && !mainMenu.mActive);
-				break;
-			}
-		}
-			
-		if (input.keyPressed(SDLK_ESCAPE))
-		{
-			mainMenu.mActive = !mainMenu.mActive;
-			input.setMouseVisible(mainMenu.mActive);
-			input.setMouseLock(actionMode && !mainMenu.mActive);
-		}
+		running = mainMenu.update(&input);
+		mainMenu.render();
+		
 		SDL_GL_SwapWindow(window);
 	}
 

@@ -50,6 +50,7 @@ public:
 
 	bool getMouseLock() const;
 	bool getMouseVisible() const;
+	bool getQuit() const;
 
 	Input& operator=(const Input& ref);
 	Input(const Input& ref);
@@ -62,6 +63,7 @@ private:
 	bool mCurButtons[MAX_BUTTONS];
 	bool mPrevButtons[MAX_BUTTONS];
 	bool mMouseLock, mMouseVisible;
+	bool mQuit;
 	glm::vec2 mCurMouse;
 	glm::vec2 mPrevMouse;
 

@@ -12,15 +12,11 @@ struct Vertex {
 	float u, v;
 };
 
+enum MENU {
+	MAIN_MENU, ACTION_HUD, TACTICAL_HUD
+};
+
 class Menu {
-public:
-	bool mActive;
-	char update(Input* inputs);
-	void render();
-	void addButton(float startX, float startY, float width, float height, char type, std::string texPath);
-	Menu(std::string filePath);
-	Menu();
-	~Menu();
 private:
 	class Button {
 	public:
@@ -41,9 +37,23 @@ private:
 		GLuint mTexture;
 		GLuint mVboID;
 	};
-
+public:
+	bool mActive;
+	MENU activeMenu;
+	bool update(Input* inputs);
+	void render();
+	void addButton(float startX, float startY, float width, float height, char type, std::string texPath, std::vector<Button> &theVector);
+	Menu(std::string filePath);
+	Menu();
+	~Menu();
+private:
+	void buttonAction(char type, Input* inputs);
 	GLuint loadTex(std::string filePath);
 	std::string readBuild(std::string filePath);
-	std::vector<Button> mButtons;
+	std::vector<Button> mButtonsMain;
+	std::vector<Button> mButtonsHUDaction;
+	std::vector<Button> mButtonsHUDtactical;
+	std::vector<std::vector<Button>> mMenuHolder;
+	bool mRunning;
 	ForwardProgram* menuShader;
 };

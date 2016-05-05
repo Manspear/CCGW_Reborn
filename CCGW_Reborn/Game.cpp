@@ -46,7 +46,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGold = 5;
 
 	//tempMesh* playerModel = data.pAssets->load<tempMesh>( "Models/highreztear.obj" );
-	Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/simpleBox.mole");
+	//Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/simpleBox.mole");
 	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");	  
 	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
 	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
@@ -62,7 +62,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
-	data.pPlayer->load( playerModel2, playerTexture, specMap, normalMap);
+	data.pPlayer->load( playerModel, playerTexture, specMap, normalMap);
 	mGround.load(data.pAssets->load<tempMesh>("Models/plane.obj"), groundTexture, specMap, nullptr);
 	//mGround.load(data.pAssets->load<tempMesh>("Models/groundPlane.mole"), groundTexture, specMap, nullptr);
 	mActionMarker.load(data.pAssets->load<tempMesh>("Models/marker.obj"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
@@ -107,6 +107,7 @@ Game::~Game() {
 	delete data.pCamera;
 	delete data.pEmission;
 	delete data.pGrid;
+	delete data.pShader2;
 	//delete data.pMenuProgram;
 	delete pActionState;
 	for (int i = 0; i < data.mpTowers.size(); i++) {
@@ -160,7 +161,7 @@ void Game::render()
 {
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
-	//data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
+	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
 	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
@@ -189,11 +190,11 @@ void Game::render()
 	data.pBillboardProgram->unUse();
 	data.pDeferredProgram->unUse();
 
-	data.pShader2->use();
+	/*data.pShader2->use();
 	data.pPlayer->render2(data.pShader2->getProgramID());
-	data.pShader2->unUse();
+	data.pShader2->unUse();*/
 
-	//drawOnScreenQuad();	
+	drawOnScreenQuad();	
 
 
 }
