@@ -87,7 +87,8 @@ void Molebat::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	mpMesh->draw();
+	//mpMesh->draw();
+	mpModel->draw();
 
 	world[3][0] = mHeadBox.center.x;
 	world[3][1] = mHeadBox.center.y;
@@ -99,7 +100,8 @@ void Molebat::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	mpMesh->draw();
+	//mpMesh->draw();
+	mpModel->draw();
 }
 
 void Molebat::setGameData( GameData* data )

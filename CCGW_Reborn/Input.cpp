@@ -18,7 +18,7 @@ bool Input::update()
 	while (SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_QUIT) // user pressed the X button of the window
-			result = false;
+			mQuit = true;
 		else if (e.type == SDL_KEYDOWN) // user pressed a key
 		{
 			int key = e.key.keysym.sym;
@@ -170,6 +170,11 @@ bool Input::getMouseVisible() const
 	return mMouseVisible;
 }
 
+bool Input::getQuit() const
+{
+	return mQuit;
+}
+
 Input& Input::operator=(const Input& ref)
 {
 	// copy values from reference
@@ -220,7 +225,7 @@ Input::Input(SDL_Window* w)
 
 	for (int i = 0; i<MAX_BUTTONS; i++)
 		mCurButtons[i] = mPrevButtons[i] = false;
-
+	this->mQuit = false;
 	this->mpWindow = w;
 }
 

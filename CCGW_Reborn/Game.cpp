@@ -45,15 +45,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pScore = 0;
 	data.pGold = 5;
 
-	//tempMesh* playerModel = data.pAssets->load<tempMesh>( "Models/highreztear.obj" );
-	Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/testBox2.mole");
+	/*Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/testBox2.mole");
 	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");	  
 	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
 	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
 	Texture* specMap = data.pAssets->load<Texture>("Models/specMap.png");
-	Texture* normalMap = data.pAssets->load<Texture>("Models/tegelNormal.png");
+	Texture* normalMap = data.pAssets->load<Texture>("Models/tegelNormal.png");*/
+	Model* playerModel = data.pAssets->load<Model>( "Models/wallBox.mole" );
 
-	data.pGrid = new Grid(36, 100, playerModel);
+	data.pGrid = new Grid(36, 100);
 
 	sNode start = { 0, 0 };
 	sNode end = { 2, 2 };
@@ -62,28 +62,34 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
-	data.pPlayer->load( playerModel2, playerTexture, specMap, normalMap);
+	/*data.pPlayer->load( playerModel2, playerTexture, specMap, normalMap);
 	mGround.load(data.pAssets->load<tempMesh>("Models/plane.obj"), groundTexture, specMap, nullptr);
-	//mGround.load(data.pAssets->load<tempMesh>("Models/groundPlane.mole"), groundTexture, specMap, nullptr);
 	mActionMarker.load(data.pAssets->load<tempMesh>("Models/marker.obj"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
-	//mActionMarker.load(data.pAssets->load<tempMesh>("Models/Marker.mole"), data.pAssets->load<Texture>("Models/pns.png"), specMap, nullptr);
 	mTacticalMarker.load(playerModel, groundTexture, specMap, nullptr);
 	mTacticalMarker.setScale(data.boxScale);
 	mTowerModel.load(playerModel, groundTexture, nullptr, nullptr);
-	mTowerModel.setScale(data.boxScale);
+	mTowerModel.setScale(data.boxScale);*/
+
+	data.pPlayer->load( playerModel );
+	mGround.load( playerModel );
+	mActionMarker.load( playerModel );
+	mTacticalMarker.load( playerModel );
+	mTacticalMarker.setScale( data.boxScale );
+	mTowerModel.load( playerModel );
+	mTowerModel.setScale( data.boxScale );
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i<data.mMolebats; i++ )
 	{
-		data.pMolebats[i].load( playerModel, playerTexture, specMap, normalMap );
+		data.pMolebats[i].load( playerModel );
 		data.pMolebats[i].setGameData( &data );
 	}
 
 	data.mMoleratmen = 50;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
-		data.pMoleratmen[i].load(playerModel, playerTexture, specMap, normalMap);
+		data.pMoleratmen[i].load(playerModel );
 		data.pMoleratmen[i].pGameData = &data;
 	}
 
@@ -107,6 +113,7 @@ Game::~Game() {
 	delete data.pCamera;
 	delete data.pEmission;
 	delete data.pGrid;
+	delete data.pShader2;
 	//delete data.pMenuProgram;
 	delete pActionState;
 	for (int i = 0; i < data.mpTowers.size(); i++) {

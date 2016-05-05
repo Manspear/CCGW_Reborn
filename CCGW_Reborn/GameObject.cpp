@@ -1,7 +1,7 @@
 #include "GameObject.h"
 #include <iostream>
 
-bool GameObject::load(Mesh * assets, Texture * diffuseTex, Texture * specularMap, Texture * normalMap)
+/*bool GameObject::load(Mesh * assets, Texture * diffuseTex, Texture * specularMap, Texture * normalMap)
 {
 	if (assets != nullptr)
 		mpMesh2 = assets;
@@ -32,6 +32,12 @@ bool GameObject::load(tempMesh* assets, Texture* diffuseTex, Texture* specularMa
 bool GameObject::loadTex(Texture* texture) {
 	mpTexture = texture;
 	return (mpTexture != nullptr);
+}*/
+
+bool GameObject::load( Model* model )
+{
+	mpModel = model;
+	return true;
 }
 
 void GameObject::update(const float &dt) {
@@ -42,9 +48,10 @@ void GameObject::render(const GLuint & programID)
 	GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
 
-	activateTextures(programID);
-	mpMesh->draw();
-	deactivateTextures();
+	//activateTextures(programID);
+	//mpMesh->draw();
+	mpModel->draw();
+	//deactivateTextures();
 }
 
 void GameObject::render(const GLuint & programID, const glm::mat4 &viewMat)
@@ -52,21 +59,23 @@ void GameObject::render(const GLuint & programID, const glm::mat4 &viewMat)
 	GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
 
-	activateTextures(programID);
-	mpMesh->draw();
-	deactivateTextures();
+	//activateTextures(programID);
+	//mpMesh->draw();
+	mpModel->draw();
+	//deactivateTextures();
 }
 
-void GameObject::render2(const GLuint & programID)
+/*void GameObject::render2(const GLuint & programID)
 {
 	GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
 	activateTextures(programID);
-	mpMesh2->draw();
+	//mpMesh2->draw();
+	mpModel->draw();
 	deactivateTextures();
-}
+}*/
 
-void GameObject::activateTextures(const GLuint &programID) {
+/*void GameObject::activateTextures(const GLuint &programID) {
 	GLuint texLocation = glGetUniformLocation(programID, "texSampler");
 	glUniform1i(texLocation, 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -92,7 +101,7 @@ void GameObject::deactivateTextures() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, 0);
-}
+}*/
 
 glm::vec3 GameObject::getPosition() const
 {
@@ -113,7 +122,7 @@ void GameObject::setScale(int scale)
 }
 
 GameObject::GameObject(const GameObject& ref)
-	: mWorld(ref.mWorld), rotX(0),rotY(0), mpMesh(ref.mpMesh), mpTexture(ref.mpTexture)
+	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )
 {
 
 }
@@ -132,7 +141,7 @@ GameObject::GameObject(glm::vec3 position = { 0, 0, 0 }, float scale = 1.0f)
 }
 
 GameObject::GameObject()
-	:scale(1.0f), rotX(0), rotY(0), mpMesh(nullptr), mpTexture(nullptr), mpSpecularMap(nullptr), mpNormalMap(nullptr)
+	:scale(1.0f), rotX(0), rotY(0), mpModel( nullptr )
 {
 	mPosition = { 0, 0, 0 };
 	mLookat = { 0, 0, -1 };

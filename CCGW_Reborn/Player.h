@@ -11,7 +11,7 @@ public:
 	glm::vec3 getMovingDirection(glm::vec3 v1, glm::vec3 v2);
 	glm::vec3 getLookAt() const;
 	float getRot() const;
-	void render(const GLuint & programID, const glm::mat4 &viewMat);
+	//void render(const GLuint & programID, const glm::mat4 &viewMat);
 	bool checkMove(glm::vec3 coord);
 	void takeDamage(float damage);
 	bool isAlive();
