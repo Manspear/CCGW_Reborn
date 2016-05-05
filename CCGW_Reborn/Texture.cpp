@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-bool Texture::load(string file)
+bool Texture::load( Assets* assets, string file )
 {
 	bool result = false;
 

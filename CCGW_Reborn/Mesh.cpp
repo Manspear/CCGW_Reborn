@@ -15,7 +15,7 @@ struct objVertex
 	float nx, ny, nz;
 };
 
-bool Mesh::load(string file)
+bool Mesh::load( Assets* assets, string file )
 {
 	/**
 	What will happen when you've more than one mesh in the same mesh-thing?
@@ -265,6 +265,73 @@ bool Mesh::load(string file)
 	//	result = true;
 	//}
 	return result;
+}
+
+bool Mesh::load( MoleReader* reader, int index )
+{
+	const std::vector<sVertex>* vertices;
+
+	const sMainHeader* header = reader->getMainHeader();
+	const int meshCount = header->meshCount;
+
+	bool isDynamicModel = false;
+
+	for (int meshCounter = 0; meshCounter < meshCount; meshCounter++)
+	{
+		const sMesh* checkM = reader->getMesh(meshCounter);
+		if (checkM->isAnimated)
+		{
+			isDynamicModel = true;
+			break;
+		}
+	}
+
+	if (isDynamicModel)
+	{
+		/**
+		If the model is dynamic, i.e. animated, it will get it's own draw call.
+		Meaning that the contents of THIS FILE will have it's own draw call,
+		and not get mashed together into a "global vertex list".
+
+		Hmm... We do need to separate between models to make many things work,
+		but we'll need their vertices to be unified when putting them into the
+		vertex buffer, or else we'll need one draw call for every single mesh.
+		**/
+	}
+
+	std::vector<sVertex> vertexList;
+
+	if (isDynamicModel == false)
+	{
+		/**
+		If the model is static, it's okay to mash it into a lump of vertices.
+		Basically a static model is one with no joint animation.
+		**/
+
+		for (int meshCounter = 0; meshCounter < meshCount; meshCounter++)
+		{
+			const std::vector<sVertex>* vHolder = reader->getVertexList(meshCounter);
+			for (int vC = 0; vC < vHolder[0].size(); vC++) {
+				vertexList.push_back(vHolder[0][vC]);
+			}
+		}
+
+	}
+	vertexList;
+	int pp = 5;
+
+	mSize = vertexList.size();
+	glGenBuffers(1, &mVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(sVertex)*vertexList.size(), vertexList.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 6));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 8));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 11));
+
+	return true;
 }
 
 void Mesh::unload()

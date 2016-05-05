@@ -5,7 +5,7 @@ layout(triangle_strip, max_vertices = 3) out;
 
 in vec4 posOut[];
 in vec3 normalOut[];
-in vec2 colorOut[];
+in vec2 uvOut[];
 
 out vec3 normalOut2;
 out vec2 uvOut2;
@@ -25,7 +25,7 @@ void main()
 		for (int i = 0; i < 3; i++)
 		{
 			gl_Position = viewProjection * vec4(posOut[i]);
-			uvOut2 = colorOut[i];
+			uvOut2 = uvOut[i];
 			normalOut2 = normalize(vec3(world * vec4(normalOut[i], 0.0)));
 			EmitVertex();
 		}
