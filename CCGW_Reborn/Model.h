@@ -9,6 +9,7 @@ class Model : public Asset
 public:
 	bool load( Assets* assets, std::string file );
 	void unload();
+	void draw();
 
 	Model& operator=( const Model& ref );
 	Model( const Model& ref );

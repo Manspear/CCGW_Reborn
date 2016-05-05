@@ -2,6 +2,8 @@
 
 bool Model::load( Assets* assets, std::string file )
 {
+	bool result = true;
+
 	MoleReader moleReader;
 	moleReader.readFromBinary( file.c_str() );
 
@@ -11,17 +13,42 @@ bool Model::load( Assets* assets, std::string file )
 	mpMeshes = new Mesh[mMeshes];
 	mpTextures = new Texture*[mTextures];
 
-	for( int i=0; i<mMeshes; i++ )
-		mpMeshes[i].load( &moleReader, i );
+	for( int i=0; i<mMeshes && result; i++ )
+		result = result && mpMeshes[i].load( &moleReader, i );
 
-	for( int i=0; i<mTextures; i++ )
+	for( int i=0; i<mTextures && result; i++ )
+	{
 		mpTextures[i] = assets->load<Texture>( moleReader.getMaterial(i)->diffuseTexture );
+		if( mpTextures[i] == nullptr )
+			result = false;
+	}
 
-	return true;
+	return result;
 }
 
 void Model::unload()
 {
+	for( int i=0; i<mMeshes; i++ )
+		mpMeshes[i].unload();
+
+	delete[] mpMeshes;
+	delete[] mpTextures;
+
+	mMeshes = mTextures = 0;
+
+	// No need to unload the textures, Assets will take care of that
+}
+
+void Model::draw()
+{
+	for( int i=0; i<mMeshes; i++ )
+	{
+		int tex = mpMeshes[i].getTextureIndex();
+		if( tex < mTextures )
+			mpTextures[tex]->bind();
+
+		mpMeshes[i].draw();
+	}
 }
 
 Model& Model::operator=( const Model& ref )
