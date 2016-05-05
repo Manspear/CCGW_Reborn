@@ -15,7 +15,7 @@ struct objVertex
 	float nx, ny, nz;
 };
 
-bool tempMesh::load(string file)
+bool tempMesh::load( Assets* assets, string file )
 {
 	bool result = false;
 	

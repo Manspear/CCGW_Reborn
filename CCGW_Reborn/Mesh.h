@@ -13,11 +13,14 @@ class Mesh : public Asset
 {
 public:
 	/*Load a mesh from a file. Returns true if the load was successful.*/
-	bool load(string file);
+	bool load( Assets* assets, string file );
+	bool load( MoleReader* reader, int index );
 	/*Unloads the mesh and frees the memory on the GPU.*/
 	void unload();
 	void draw();
 
+	int getTextureIndex() const;
+	
 	Mesh& operator=(const Mesh& ref);
 	Mesh(const Mesh& ref);
 	Mesh();
@@ -28,4 +31,5 @@ private:
 	GLuint mVertexBuffer;
 	GLuint mIndexBuffer;
 	int mSize;
+	int mTextureIndex;
 };

@@ -20,6 +20,7 @@
 #include "Molebat.h"
 #include "Moleratman.h"
 #include "Sound.h"
+#include "Model.h"
 
 enum State {
 	GAME_LOST, GAME_WON, GAME_PLAYING

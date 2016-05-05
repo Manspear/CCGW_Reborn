@@ -3,7 +3,7 @@
 //
 // Sound
 //
-bool Sound::load(string file)
+bool Sound::load( Assets* assets, string file)
 {
 	mpChunk = Mix_LoadWAV( file.c_str() );
 	return ( mpChunk != nullptr );
@@ -90,7 +90,7 @@ Sound::~Sound()
 //
 // Music
 //
-bool Music::load( string file )
+bool Music::load( Assets* assets, string file )
 {
 	mpMusic = Mix_LoadMUS( file.c_str() );
 	return ( mpMusic != nullptr );

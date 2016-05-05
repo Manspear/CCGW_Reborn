@@ -5,11 +5,12 @@
 using std::map;
 using std::string;
 
+class Assets;
 class Asset
 {
 public:
 	/*Abstract function, don't call */
-	virtual bool load(string file) = 0;
+	virtual bool load(Assets* assets, string file) = 0;
 	/*Abstract function, don't call */
 	virtual void unload() = 0;
 };
@@ -30,7 +31,7 @@ public:
 		else
 		{
 			result = new T();
-			if( result->load( file ) )
+			if( result->load( this, file ) )
 			{
 				mAssets.insert( std::pair<string,Asset*>( file, result ) );
 			}

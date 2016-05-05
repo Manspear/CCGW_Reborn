@@ -46,7 +46,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGold = 5;
 
 	//tempMesh* playerModel = data.pAssets->load<tempMesh>( "Models/highreztear.obj" );
-	//Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/simpleBox.mole");
+	Mesh* playerModel2 = data.pAssets->load<Mesh>("Models/testBox2.mole");
 	tempMesh* playerModel = data.pAssets->load<tempMesh>("Models/box2.obj");	  
 	Texture* groundTexture = data.pAssets->load<Texture>( "Models/ground.png" );
 	Texture* playerTexture = data.pAssets->load<Texture>( "Models/cube.png" );
@@ -166,7 +166,7 @@ void Game::render()
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );
-
+	
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
@@ -182,6 +182,7 @@ void Game::render()
 		mTacticalMarker.render(data.pDeferredProgram->getProgramID());
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
 
@@ -195,8 +196,6 @@ void Game::render()
 	data.pShader2->unUse();*/
 
 	drawOnScreenQuad();	
-
-
 }
 
 void Game::update(Input* inputs, float dt) 
