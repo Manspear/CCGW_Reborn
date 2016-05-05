@@ -5,13 +5,11 @@
 #include "Molebat.h"
 #include "Tower.h"
  
-bool Arrow::load(GameData* data, string mesh)
+bool Arrow::load(GameData* data, Model* model)
 {
+	bool result = true;
 	//mpMesh = data->pAssets->load<tempMesh>(mesh);
-
-	// TODO: Should move this out into Game
-	mpModel = data->pAssets->load<Model>(mesh);
-	bool result = ( mpModel != nullptr );
+	mpModel = model;
 
 	//mpEmitter.load( data, "Models/pns.png" );
 	//data->mEmitters.push_back( &mpEmitter );

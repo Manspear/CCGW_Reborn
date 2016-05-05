@@ -2,6 +2,16 @@
 #define GLM_FORCE_RADIANS
 #include <glm\gtx\vector_angle.hpp>
 
+bool Tower::load( GameData* data, glm::vec3 position, Model* model )
+{
+	//mpWeapon = new Weapon( false, data );
+	mWeapon.load( data, false );
+	setPosition( position );
+	setScale( data->boxScale );
+	mpModel = model;
+
+	return true;
+}
 
 void Tower::update(GameData* gameData, const float & dt)
 {
@@ -35,7 +45,8 @@ void Tower::update(GameData* gameData, const float & dt)
 			mWeaponReady = true;
 	}
 	if (mShooting) {
-		mpWeapon->update(dt);
+		//mpWeapon->update(dt);
+		mWeapon.update( dt );
 		mShooting = arrowShot(dt, gameData);
 	}
 }
@@ -63,14 +74,21 @@ void Tower::render(const GLuint & programID)
 {
 	GameObject::render(programID);
 	if (mShooting)
-		mpWeapon->draw(programID);
+		//mpWeapon->draw(programID);
+		mWeapon.draw( programID );
 }
 
-Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale): GameObject(position, scale){
-	/*this->mpMesh = towerRef.mpMesh;
-	this->mpTexture = towerRef.mpTexture;
-	this->mpSpecularMap = towerRef.mpSpecularMap;
-	this->mpNormalMap = towerRef.mpNormalMap;*/
+void Tower::setAlive( bool alive )
+{
+	mAlive = alive;
+}
+
+bool Tower::getAlive() const
+{
+	return mAlive;
+}
+
+/*Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale): GameObject(position, scale){
 	this->mpModel = towerRef.mpModel;
 	this->mpWeapon = new Weapon(false, gameData);
 	this->mWeaponReady = true;
@@ -80,15 +98,26 @@ Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, floa
 	mShooting = false;
 	mRange = 10;
 	mStrength = 2;
-}
+}*/
 
 Tower::Tower()
 {
-	mpWeapon = nullptr;
+	//mpWeapon = nullptr;
+	mWeaponReady = true;
+	mLookat = { 1 ,0, 0 };
+	mReloadTime = 5;
+	mFireRate = 3;
+	mShooting = false;
+	mRange = 10;
+	mStrength = 2;
 }
 
+/*Tower::Tower()
+{
+	mpWeapon = nullptr;
+}*/
 
 Tower::~Tower()
 {
-	delete mpWeapon;
+	//delete mpWeapon;
 }
