@@ -6,7 +6,8 @@
 #include "Input.h"
 #include "ForwardProgram.h"
 #include "global_variables.h"
-
+#include "GameData.h"
+#include "Game.h"
 struct Vertex {
 	float x, y;
 	float u, v;
@@ -14,11 +15,12 @@ struct Vertex {
 
 struct Number {
 	glm::vec2 pos;
-	float number;
+	int number;
 };
 
+
 enum MENU {
-	MAIN_MENU, ACTION_HUD, TACTICAL_HUD
+	MAIN_MENU, ACTION_HUD, LOSING_SCREEN
 };
 
 class Menu {
@@ -43,11 +45,17 @@ private:
 		GLuint mVboID;
 	};
 public:
+	struct AMenu {
+		std::vector<Button> theMenu;
+		std::vector<Number> theNumbers;
+	};
+
 	bool mActive;
 	MENU activeMenu;
-	bool update(Input* inputs);
+	bool update(Input* inputs, GameData* data, State state);
+	void updateNumbers(GameData* data);
 	void render();
-	void addButton(float startX, float startY, float width, float height, char type, std::string texPath, std::vector<Button> &theVector);
+	Button addButton(float startX, float startY, float width, float height, char type, std::string texPath);
 	
 	Menu();
 	~Menu();
@@ -57,16 +65,14 @@ private:
 	std::string readBuild(std::string filePath);
 	void addNumber(float width, float height);
 	void renderNumbers();
+	void buildAMenu(std::string build, MENU menu);
 
-	std::vector<Button> mButtonsMain;
-	std::vector<Button> mButtonsHUDaction;
-	std::vector<Button> mButtonsHUDtactical;
-	std::vector<std::vector<Button>> mMenuHolder;
-	std::vector<Number> mNumberHolder;
-
+	std::vector<AMenu> mAllMenu;
 	bool mRunning;
 	ForwardProgram* menuShader;
 	ForwardProgram* numberShader;
 	GLuint numberVbo;
 	GLuint numberTex;
+	GLuint posLocation;
+	GLuint numberLocation;
 };

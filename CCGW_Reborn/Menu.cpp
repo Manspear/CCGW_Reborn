@@ -1,8 +1,10 @@
 #include "Menu.h"
 #include <fstream>
 
-bool Menu::update(Input * inputs)
+bool Menu::update(Input * inputs, GameData* data, State state)
 {
+	if (inputs->getQuit())
+		return false;
 	if (inputs->keyPressed(SDLK_ESCAPE))
 	{
 		mActive = true;
@@ -10,35 +12,53 @@ bool Menu::update(Input * inputs)
 		inputs->setMouseVisible(true);
 		inputs->setMouseLock(false);
 	}
-	if (inputs->getQuit())
-		mRunning = false;
+	if (state == GAME_LOST) {
+		activeMenu = LOSING_SCREEN;
+		mActive = true;
+		inputs->setMouseVisible(true);
+		inputs->setMouseLock(false);
+	}
 	if (inputs->buttonReleased(0)) {
 		int x = inputs->mousePosition().x;
 		int y = (inputs->mousePosition().y * -1) + gHeight;
-		for (int i = 0; i < mMenuHolder[activeMenu].size(); i++) {
-			if (mMenuHolder[activeMenu][i].checkMouseIntersection(x, y)) {
-				buttonAction(mMenuHolder[activeMenu][i].mType, inputs);
+		for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
+			if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
+				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs);
 				break;
 			};
 		}
 	}
 	render();
+	if (activeMenu != MAIN_MENU)
+		updateNumbers(data);
 	return mRunning;
+}
+
+void Menu::updateNumbers(GameData * data)
+{
+	int gold = data->pGold;
+	int divider = 100;
+	for (int i = 0; i < 3; i++)
+	{
+		mAllMenu[activeMenu].theNumbers[i].number = gold / divider;
+		divider /= 10;
+	}
 }
 
 void Menu::render()
 {
-	menuShader->use();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
-	for (int i = mMenuHolder[activeMenu].size() - 1; i > -1; i--) {
+	menuShader->use();
+	
+	for (int i = mAllMenu[activeMenu].theMenu.size() - 1; i > -1; i--) {
 		GLuint texLocation = glGetUniformLocation(menuShader->getProgramID(), "texSampler");
 		glUniform1i(texLocation, 0);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mMenuHolder[activeMenu][i].mTexture);
+		glBindTexture(GL_TEXTURE_2D, mAllMenu[activeMenu].theMenu[i].mTexture);
 
-		glBindBuffer(GL_ARRAY_BUFFER, mMenuHolder[activeMenu][i].mVboID);
+		glBindBuffer(GL_ARRAY_BUFFER, mAllMenu[activeMenu].theMenu[i].mVboID);
 
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
@@ -50,7 +70,7 @@ void Menu::render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	menuShader->unUse();
-	if (activeMenu == MAIN_MENU)
+	if (activeMenu != MAIN_MENU)
 		renderNumbers();
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -59,19 +79,16 @@ void Menu::render()
 void Menu::renderNumbers()
 {
 	numberShader->use();
-	GLuint posLocation;
-	GLuint numberLocation;
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
 	GLuint texLocation = glGetUniformLocation(numberShader->getProgramID(), "texSampler");
 	glUniform1i(texLocation, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, numberTex);
-	for (int i = 0; i < mNumberHolder.size(); i++) {
-		posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");
-		glUniform2fv(posLocation, 1, &mNumberHolder[i].pos[0]);
-
-		numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");
-		glUniform1f(numberLocation, mNumberHolder[i].number);
-
+	for (int i = 0; i < mAllMenu[activeMenu].theNumbers.size(); i++) {
+		glUniform2fv(posLocation, 1, &mAllMenu[activeMenu].theNumbers[i].pos[0]);
+		glUniform1f(numberLocation, mAllMenu[activeMenu].theNumbers[i].number);
 		glBindBuffer(GL_ARRAY_BUFFER, numberVbo);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
@@ -83,7 +100,27 @@ void Menu::renderNumbers()
 	numberShader->unUse();
 }
 
-void Menu::addButton(float startX, float startY, float width, float height, char type, std::string texPath, std::vector<Button> &theVector)
+void Menu::buildAMenu(std::string build, MENU menu)
+{
+	istringstream s;
+	s.str(readBuild(build));
+	float x, y, w, h;
+	string temp, texPath;
+	char type, nrOrButt;
+	istringstream s2;
+	mAllMenu.push_back(AMenu{});
+	while (getline(s, temp)) {
+		s2.str(temp);
+		s2 >> nrOrButt >> x >> y >> w >> h >> type >> texPath;
+		if (nrOrButt == 'b')
+			mAllMenu[menu].theMenu.push_back(addButton(x, y, w, h, type, texPath));
+		else
+			mAllMenu[menu].theNumbers.push_back(Number{ glm::vec2(x, y), 0 });
+		s2.clear();
+	}
+}
+
+Menu::Button Menu::addButton(float startX, float startY, float width, float height, char type, std::string texPath)
 {
 	GLuint vboID;
 	glGenBuffers(1, &vboID);
@@ -128,7 +165,7 @@ void Menu::addButton(float startX, float startY, float width, float height, char
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	theVector.push_back(Button(startX, startY, width, height, type, loadTex(texPath), vboID));
+	return Button(startX, startY, width, height, type, loadTex(texPath), vboID);
 }
 
 void Menu::addNumber(float width, float height)
@@ -140,34 +177,34 @@ void Menu::addNumber(float width, float height)
 
 	vertexData[0].x = width;
 	vertexData[0].y = height;
-	vertexData[0].u = 1;
-	vertexData[0].v = 0;
+	vertexData[0].u = 0.1f;
+	vertexData[0].v = 1;
 
 	vertexData[1].x = 0;
 	vertexData[1].y = height;
 	vertexData[1].u = 0;
-	vertexData[1].v = 0;
+	vertexData[1].v = 1;
 
 	vertexData[2].x = 0;
 	vertexData[2].y = 0;
 	vertexData[2].u = 0;
-	vertexData[2].v = 1;
+	vertexData[2].v = 0;
 
 	//second triangle
 	vertexData[3].x = 0;
 	vertexData[3].y = 0;
 	vertexData[3].u = 0;
-	vertexData[3].v = 1;
+	vertexData[3].v = 0;
 
 	vertexData[4].x = width;
 	vertexData[4].y = 0;
-	vertexData[4].u = 1;
-	vertexData[4].v = 1;
+	vertexData[4].u = 0.1f;
+	vertexData[4].v = 0;
 
 	vertexData[5].x = width;
 	vertexData[5].y = height;
-	vertexData[5].u = 1;
-	vertexData[5].v = 0;
+	vertexData[5].u = 0.1f;
+	vertexData[5].v = 1;
 
 	glGenBuffers(1, &numberVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, numberVbo);
@@ -185,30 +222,14 @@ Menu::Menu()
 	mActive = true;
 	activeMenu = MAIN_MENU;
 	mRunning = true;
-	istringstream s;
-	s.str(readBuild("menuBuild.txt"));
-	float x, y, w, h;
-	string temp, texPath;
-	char type;
-	istringstream s2;
-	mMenuHolder.push_back(mButtonsMain);
-	while (getline(s, temp)) {
-		s2.str(temp);
-		s2 >> x >> y >> w >> h >> type >> texPath;
-		addButton(x, y, w, h, type, texPath, mMenuHolder[MAIN_MENU]);
-		s2.clear();
-	}
-	s.clear();
-	mMenuHolder.push_back(mButtonsHUDaction);
-	s.str(readBuild("actionBuild.txt"));
-	while (getline(s, temp)) {
-		s2.str(temp);
-		s2 >> x >> y >> w >> h >> type >> texPath;
-		addButton(x, y, w, h, type, texPath, mMenuHolder[ACTION_HUD]);
-		s2.clear();
-	}
-	addNumber(0.2, 0.2);
-	mNumberHolder.push_back(Number{ glm::vec2(-0.5, -0.3), 1 });
+	posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");;
+	numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");;
+
+	buildAMenu("menuBuild.txt", MAIN_MENU);
+	buildAMenu("actionBuild.txt", ACTION_HUD);
+	buildAMenu("losingBuild.txt", LOSING_SCREEN);
+
+	addNumber(0.05, 0.1);
 }
 
 Menu::~Menu()
@@ -227,6 +248,9 @@ void Menu::buttonAction(char type, Input* inputs)
 		inputs->setMouseVisible(false);
 		break;
 	case'q':
+		mRunning = false;
+		break;
+	case'r':
 		mRunning = false;
 		break;
 	case'd':
