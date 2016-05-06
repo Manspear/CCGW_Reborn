@@ -13,7 +13,7 @@ struct Vertex {
 };
 
 struct Number {
-	float x, y;
+	glm::vec2 pos;
 	float number;
 };
 
@@ -48,17 +48,25 @@ public:
 	bool update(Input* inputs);
 	void render();
 	void addButton(float startX, float startY, float width, float height, char type, std::string texPath, std::vector<Button> &theVector);
+	
 	Menu();
 	~Menu();
 private:
 	void buttonAction(char type, Input* inputs);
 	GLuint loadTex(std::string filePath);
 	std::string readBuild(std::string filePath);
+	void addNumber(float width, float height);
+	void renderNumbers();
+
 	std::vector<Button> mButtonsMain;
 	std::vector<Button> mButtonsHUDaction;
 	std::vector<Button> mButtonsHUDtactical;
 	std::vector<std::vector<Button>> mMenuHolder;
+	std::vector<Number> mNumberHolder;
 
 	bool mRunning;
 	ForwardProgram* menuShader;
+	ForwardProgram* numberShader;
+	GLuint numberVbo;
+	GLuint numberTex;
 };

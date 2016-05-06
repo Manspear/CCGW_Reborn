@@ -40,7 +40,7 @@ void Menu::render()
 
 		glBindBuffer(GL_ARRAY_BUFFER, mMenuHolder[activeMenu][i].mVboID);
 
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -49,9 +49,38 @@ void Menu::render()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+	menuShader->unUse();
+	if (activeMenu == MAIN_MENU)
+		renderNumbers();
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	menuShader->unUse();
+}
+
+void Menu::renderNumbers()
+{
+	numberShader->use();
+	GLuint posLocation;
+	GLuint numberLocation;
+	GLuint texLocation = glGetUniformLocation(numberShader->getProgramID(), "texSampler");
+	glUniform1i(texLocation, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, numberTex);
+	for (int i = 0; i < mNumberHolder.size(); i++) {
+		posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");
+		glUniform2fv(posLocation, 1, &mNumberHolder[i].pos[0]);
+
+		numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");
+		glUniform1f(numberLocation, mNumberHolder[i].number);
+
+		glBindBuffer(GL_ARRAY_BUFFER, numberVbo);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	numberShader->unUse();
 }
 
 void Menu::addButton(float startX, float startY, float width, float height, char type, std::string texPath, std::vector<Button> &theVector)
@@ -96,18 +125,63 @@ void Menu::addButton(float startX, float startY, float width, float height, char
 	glGenBuffers(1, &vboID);
 	glBindBuffer(GL_ARRAY_BUFFER, vboID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)offsetof(Vertex, x));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)offsetof(Vertex, u));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 	theVector.push_back(Button(startX, startY, width, height, type, loadTex(texPath), vboID));
 }
 
+void Menu::addNumber(float width, float height)
+{
+	numberTex = loadTex("Models/menu/numbers.png");
+	glGenBuffers(1, &numberVbo);
+	
+	Vertex vertexData[6];
+
+	vertexData[0].x = width;
+	vertexData[0].y = height;
+	vertexData[0].u = 1;
+	vertexData[0].v = 0;
+
+	vertexData[1].x = 0;
+	vertexData[1].y = height;
+	vertexData[1].u = 0;
+	vertexData[1].v = 0;
+
+	vertexData[2].x = 0;
+	vertexData[2].y = 0;
+	vertexData[2].u = 0;
+	vertexData[2].v = 1;
+
+	//second triangle
+	vertexData[3].x = 0;
+	vertexData[3].y = 0;
+	vertexData[3].u = 0;
+	vertexData[3].v = 1;
+
+	vertexData[4].x = width;
+	vertexData[4].y = 0;
+	vertexData[4].u = 1;
+	vertexData[4].v = 1;
+
+	vertexData[5].x = width;
+	vertexData[5].y = height;
+	vertexData[5].u = 1;
+	vertexData[5].v = 0;
+
+	glGenBuffers(1, &numberVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, numberVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 Menu::Menu()
 {
 	menuShader = new ForwardProgram("menu.vertex", "menu.pixel", " ");
+	numberShader = new ForwardProgram("numbers.vertex", "numbers.pixel", " ");
 	menuShader->setClear(false);
+	numberShader->setClear(false);
 	mActive = true;
 	activeMenu = MAIN_MENU;
 	mRunning = true;
@@ -133,11 +207,14 @@ Menu::Menu()
 		addButton(x, y, w, h, type, texPath, mMenuHolder[ACTION_HUD]);
 		s2.clear();
 	}
+	addNumber(0.2, 0.2);
+	mNumberHolder.push_back(Number{ glm::vec2(-0.5, -0.3), 1 });
 }
 
 Menu::~Menu()
 {
 	delete menuShader;
+	delete numberShader;
 }
 
 void Menu::buttonAction(char type, Input* inputs)
