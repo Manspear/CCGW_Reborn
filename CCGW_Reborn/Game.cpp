@@ -74,8 +74,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 
 	sNode start = { 0, 0 };
-	sNode end = { 2, 2 };
-	mpPath = new sNode[18*100];
+	sNode end = { 0, 10 };
+	mpPath = new sNode[36*100];
 	mTargets = 0;
 
 	data.pGrid->findPath( start, end, mpPath, &mTargets );

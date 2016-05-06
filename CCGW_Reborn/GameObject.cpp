@@ -116,7 +116,7 @@ void GameObject::setPosition( glm::vec3 position )
 	mWorld[3][2] = position.z;
 }
 
-void GameObject::setScale(int scale)
+void GameObject::setScale(float scale)
 {
 	//mWorld = { scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1 };
 	mWorld[0][0] = scale;
