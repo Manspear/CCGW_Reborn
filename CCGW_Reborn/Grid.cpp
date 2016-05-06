@@ -157,7 +157,7 @@ uchar Grid::getTile( int x, int y ) const
 {
 	if( x >= 0 && x < mWidth && y >= 0 && y < mHeight )
 		return mpGrid[y*mWidth+x];
-	return 0;
+	return TILE_OUT_OF_BOUNDS;
 }
 
 uchar* Grid::getGrid() const

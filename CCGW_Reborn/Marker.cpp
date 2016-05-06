@@ -17,6 +17,19 @@ void Marker::update(const Player* player) {
 bool Marker::update(const Input * inputs, GameData &gameData)
 {
 	selectedTile = mousePicking(inputs->mousePosition(), gameData) * (float)gameData.boxScale;
+
+	int gridWidth = gameData.pGrid->getWidth();
+	int gridHeight = gameData.pGrid->getHeight();
+
+	if( selectedTile.x < 0 )
+		selectedTile.x = 0;
+	else if( selectedTile.x >= gridWidth * gameData.boxScale )
+		selectedTile.x = gridWidth * gameData.boxScale;
+	if( selectedTile.y < 0 )
+		selectedTile.y = 0;
+	else if( selectedTile.y >= gridHeight * gameData.boxScale )
+		selectedTile.y = gridHeight * gameData.boxScale;
+
 	uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
 	bool buildTowers = false;
 	if (inputs->buttonDown(0) && gameData.pGold > 0)
