@@ -12,8 +12,8 @@ uniform sampler2D texSampler;
 void main (){
 	//ambienT = vec4( 1.0, 0.0, 0.0, 1.0 );
 	ambienT = texture( texSampler, UV0 );
-	if(ambienT.a > 0.5)
-		ambienT.a = 1;
+	if(ambienT.a < 0.5)
+		discard;
 	specularTex = vec3(0,0,0);
 	diffuseTex = vec3(0,0,0);
 	normalTex = vec4(0,-1,0,0);

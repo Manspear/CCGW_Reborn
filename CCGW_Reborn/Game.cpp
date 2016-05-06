@@ -69,7 +69,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
 	data.pPlayer->load( playerModel );
-	mGround.load( playerModel );
+	mGround.load(terrainModel);
 	mActionMarker.load( playerModel );
 	mTacticalMarker.load( playerModel );
 	mTacticalMarker.setScale( data.boxScale );

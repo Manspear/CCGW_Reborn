@@ -33,7 +33,7 @@ void Tower::update(GameData* gameData, const float & dt)
 					if (tempDir.z < 0)
 						angle *= -1;
 
-					mpWeapon->shoot(mPosition, direction, angle, mStrength);
+					mWeapon.shoot(mPosition, direction, angle, mStrength);
 					break;
 				}
 			}
