@@ -11,7 +11,7 @@ class Emitter
 
 public:
 	//Load the specified texture for all the particles in this Emitter.
-	bool load( GameData* data, std::string texture );
+	bool load( Texture* texture );
 	//Spawn a new particle.
 	void spawn( glm::vec3 position, glm::vec3 velocity, float lifetime, float drag = 0.5f, glm::vec2 startScale = glm::vec2(1.0f), glm::vec2 endScale = glm::vec2(1.0f) );
 

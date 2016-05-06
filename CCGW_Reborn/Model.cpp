@@ -1,11 +1,17 @@
 #include "Model.h"
 
+#define SLOW_LAUNCH 1
+
 bool Model::load( Assets* assets, std::string file )
 {
 	bool result = true;
 
 	MoleReader moleReader;
+#if SLOW_LAUNCH
 	moleReader.readFromBinary( file.c_str() );
+#else
+	moleReader.readFromBinary( "Models/wallBox.mole" );
+#endif
 
 	mMeshes = moleReader.getMeshList()->size();
 	mMaps = moleReader.getMaterialList()->size();

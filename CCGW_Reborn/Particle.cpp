@@ -1,9 +1,9 @@
 #include "Particle.h"
 
-bool Particle::load( GameData* data, string texture )
+bool Particle::load( Texture* texture )
 {
-	mpTexture = data->pAssets->load<Texture>( texture );
-	return ( mpTexture != nullptr );
+	mpTexture = texture;
+	return true;
 }
 
 void Particle::spawn( glm::vec3 position, glm::vec3 velocity, float lifetime, float drag, glm::vec2 startScale, glm::vec2 endScale )
