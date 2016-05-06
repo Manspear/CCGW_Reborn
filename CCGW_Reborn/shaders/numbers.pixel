@@ -4,8 +4,7 @@ in vec2 texOut;
 out vec4 finalColor;
 
 uniform sampler2D texSampler;
-uniform float number;
 
 void main(){
-	finalColor = texture(texSampler, texOut);
+	finalColor = texture(texSampler, vec2(texOut.x, 1 - texOut.y));
 }

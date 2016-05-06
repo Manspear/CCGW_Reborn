@@ -55,7 +55,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* playerModel = data.pAssets->load<Model>( "Models/klara.mole" );
 	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
-	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 
 	data.pGrid = new Grid(36, 100);
 	data.mTowers = 36*100;
@@ -81,9 +81,9 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pGrid->findPath( start, end, mpPath, &mTargets );
 
 	data.pPlayer->load( playerModel );
-	mGround.load(terrainModel);
-	mActionMarker.load( boxModel );
-	mTacticalMarker.load( boxModel );
+	//mGround.load(terrainModel);
+	mActionMarker.load( playerModel );
+	mTacticalMarker.load( playerModel );
 	mTacticalMarker.setScale( data.boxScale );
 	//mTowerModel.load( playerModel );
 	//mTowerModel.setScale( data.boxScale );
@@ -123,11 +123,7 @@ Game::~Game() {
 	delete data.pCamera;
 	delete data.pEmission;
 	delete data.pGrid;
-	//delete data.pMenuProgram;
 	delete pActionState;
-	/*for (int i = 0; i < data.mpTowers.size(); i++) {
-		delete data.mpTowers[i];
-	}*/
 	delete[] data.pTowers;
 	delete[] mpPath;
 	delete pWaveSpawner;
@@ -138,7 +134,11 @@ Game::~Game() {
 	delete data.pAssets;
 }
 int a = 0;
-State Game::run(Input* inputs, const float &dt, bool menuActive) 
+GameData * Game::getGameData()
+{
+	return &data;
+}
+State Game::run(Input* inputs, const float &dt, bool menuActive)
 {
 	if(menuActive)
 		update(inputs, dt);
@@ -179,7 +179,7 @@ void Game::render()
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
-	mGround.render( data.pDeferredProgram->getProgramID() );
+	//mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );

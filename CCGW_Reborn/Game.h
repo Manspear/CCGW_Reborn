@@ -29,7 +29,7 @@ enum State {
 class Game {
 public:
 	bool tactical;
-
+	GameData* getGameData();
 
 
 	State run(Input* inputs, const float &dt, bool menuActive);
