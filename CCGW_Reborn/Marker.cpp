@@ -17,23 +17,32 @@ void Marker::update(const Player* player) {
 bool Marker::update(const Input * inputs, GameData &gameData)
 {
 	selectedTile = mousePicking(inputs->mousePosition(), gameData) * (float)gameData.boxScale;
-	uchar currrentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
+	uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
 	bool buildTowers = false;
-	if (inputs->buttonDown(0) && currrentTile == TILE_EMPTY && gameData.pGold > 0)
-	{		
-		gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
-		mMarkedIndex.push_back(selectedTile);
-		sNode start = { 0, 0 };
-		sNode end = { 10, 10 };
-		int mTargets = 0;
-		if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
-			mMarkedIndex.erase(mMarkedIndex.end() - 1);
-			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+	if (inputs->buttonDown(0) && gameData.pGold > 0)
+	{
+		if( currentTile == TILE_EMPTY )
+		{
+			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
+			mMarkedIndex.push_back(selectedTile);
+			sNode start = { 0, 0 };
+			sNode end = { 10, 10 };
+			int mTargets = 0;
+			if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
+				mMarkedIndex.erase(mMarkedIndex.end() - 1);
+				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+			}
+			else
+				gameData.pGold--;
 		}
-		else
+		else if( currentTile == TILE_BOX )
+		{
+			gameData.pGrid->setTile( selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX | TILE_HOLD );
+			mMarkedIndex.push_back( selectedTile );
 			gameData.pGold--;
+		}
 	}
-	if (inputs->buttonDown(2) && currrentTile == TILE_HOLD)
+	if (inputs->buttonDown(2) && currentTile == TILE_HOLD)
 	{
 		gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
 		for (int i = 0; i < mMarkedIndex.size(); i++) {
@@ -52,14 +61,24 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			int x = mMarkedIndex[i].x / gameData.boxScale;
 			int y = mMarkedIndex[i].y / gameData.boxScale;
 			int gridWidth = gameData.pGrid->getWidth();
-			gameData.pGrid->setTile( x, y, TILE_BOX );
-			gameData.pTowers[y*gridWidth+x].setAlive( true );
-			gameData.pTowers[y*gridWidth+x].setHasBallista( true );
 
-			glm::vec3 ppos = gameData.pPlayer->getPosition();
-			if (!gameData.pPlayer->checkMove(ppos))
+			uchar tile = gameData.pGrid->getTile( x, y );
+			if( tile == TILE_HOLD )
 			{
-				gameData.pPlayer->setPosition({ ppos.x, 5, ppos.z });
+				gameData.pGrid->setTile( x, y, TILE_BOX );
+				gameData.pTowers[y*gridWidth+x].setAlive( true );
+				//gameData.pTowers[y*gridWidth+x].setHasBallista( true );
+
+				glm::vec3 ppos = gameData.pPlayer->getPosition();
+				if (!gameData.pPlayer->checkMove(ppos))
+				{
+					gameData.pPlayer->setPosition({ ppos.x, 5, ppos.z });
+				}
+			}
+			else if( tile == TILE_BOX | TILE_HOLD )
+			{
+				gameData.pGrid->setTile( x, y, TILE_BALLISTA );
+				gameData.pTowers[y*gridWidth+x].setHasBallista( true );
 			}
 		}
 
