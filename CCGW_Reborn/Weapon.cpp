@@ -7,7 +7,7 @@ bool Weapon::load( GameData* data, bool playerOwned )
 	Model* arrowModel = data->pAssets->load<Model>( "Models/wallBox.mole" );
 
 	mPlayerOwned = playerOwned;
-	for( int i=0; i<WEAPON_MAX_ARROWS && result; i++ )
+	for( int i=0; i<WEAPON_MAX_ARROWS; i++ )
 		result = result && mpArrows[i].load( data, arrowModel );
 
 	return result;
@@ -31,7 +31,7 @@ void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float s
 	{
 		if (!mpArrows[i].isAlive())
 		{
-			mpArrows[i].spawn(mPlayerOwned, position, lookat, 15 * mStrength, { 0, -1, 0 }, rotation);
+			mpArrows[i].spawn(mPlayerOwned, position, lookat, 15 * strength, { 0, -1, 0 }, rotation);
 			shot = true;
 		}
 	}

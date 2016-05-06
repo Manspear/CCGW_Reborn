@@ -38,7 +38,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
-	data.pShader2 = new ForwardProgram("molevertices.vertex", "molevertices.pixel", "molevertices.geometry");
 	data.pEmission = new Emission(&data, 10000);
 	data.pPlayer = new Player(&data);
 	data.boxScale = 2;
@@ -57,7 +56,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	{
 		int x = i % data.pGrid->getWidth();
 		int y = i / data.pGrid->getWidth();
-		data.pTowers[i].load( &data, glm::vec3( x, 0, y ), playerModel );
+		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), playerModel );
 		data.pTowers[i].setAlive( false );
 	}
 
@@ -111,7 +110,6 @@ Game::~Game() {
 	delete data.pCamera;
 	delete data.pEmission;
 	delete data.pGrid;
-	delete data.pShader2;
 	//delete data.pMenuProgram;
 	delete pActionState;
 	/*for (int i = 0; i < data.mpTowers.size(); i++) {

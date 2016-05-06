@@ -16,7 +16,7 @@ bool Arrow::load(GameData* data, Model* model)
 	
 	//pEmitter = data->pEmitter;
 
-	if( data->pEmission->allocEmitter( &mEmitter, 50 ) )
+	if( data->pEmission->allocEmitter( &mEmitter, 5 ) )
 		result = result && mEmitter.load( data, "Models/pns.png" );
 	else
 		result = false;
@@ -206,6 +206,7 @@ void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float tra
 	mVelocity = direction * travelSpeed;
 	mAlive = true;
 	mPiercing = true;
+	
 }
 Arrow::~Arrow() 
 {
