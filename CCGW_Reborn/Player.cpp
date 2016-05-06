@@ -140,6 +140,7 @@ void Player::update(const Input* inputs, const float &dt)
 	//this->mRotation.z = 
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
 	mWorld = rotatematrix * mWorld;
+	
 
 	mWorld[3][0] = mPosition.x;
 	mWorld[3][1] = mPosition.y;
