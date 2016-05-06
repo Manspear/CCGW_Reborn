@@ -38,13 +38,22 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
-	data.pEmission = new Emission(&data, 10000);
-	data.pPlayer = new Player(&data);
+	//data.pShader2 = new ForwardProgram("molevertices.vertex", "molevertices.pixel", "molevertices.geometry");
+	data.pEmission = new Emission(&data, 1100);
+
+	Texture* particleTexture = data.pAssets->load<Texture>( "Models/pns.png" );
+
+	Emitter playerEmitter;
+	data.pEmission->allocEmitter(&playerEmitter, 100);
+	playerEmitter.load( particleTexture );
+
+	data.pPlayer = new Player(&data, &playerEmitter);
 	data.boxScale = 2;
 	data.pScore = 0;
 	data.pGold = 5;
 
-	Model* playerModel = data.pAssets->load<Model>( "Models/wallBox.mole" );
+	Model* playerModel = data.pAssets->load<Model>( "Models/klara.mole" );
+	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 
@@ -52,11 +61,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mTowers = 36*100;
 	data.pTowers = new Tower[data.mTowers];
 
+	Emitter towerEmitter;
+	data.pEmission->allocEmitter( &towerEmitter, 1000 );
+	towerEmitter.load( particleTexture );
+
 	for( int i=0; i<data.mTowers; i++ )
 	{
-		int x = i % data.pGrid->getWidth();
-		int y = i / data.pGrid->getWidth();
-		data.pTowers[i].load( &data, glm::vec3( x, 0, y ), playerModel );
+		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
+		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
+		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, enemyModel, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
 
@@ -147,8 +160,9 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 		 }
 		 else {
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 20);
-			 if (mTacticalMarker.update(inputs, data))
-				buildTowers();
+			 //if (mTacticalMarker.update(inputs, data))
+				//buildTowers();
+			 mTacticalMarker.update( inputs, data );
 		 }
 	 }
 	 if (inputs->keyPressed(SDLK_t))
@@ -256,15 +270,10 @@ void Game::update(Input* inputs, float dt)
 }
 
 
-void Game::buildTowers() {
+/*void Game::buildTowers() {
 	std::vector<glm::vec2> tempVec = mTacticalMarker.getMarkedTiles();
 	for (int i = 0; i < tempVec.size(); i++) {
-		//data.mpTowers.push_back(new Tower(&data, glm::vec3(tempVec[i].x, 1, tempVec[i].y), mTowerModel, data.boxScale));
-
-		int x = (int)tempVec[i].x;
-		int y = (int)tempVec[i].y;
-		int w = data.pGrid->getWidth();
-		data.pTowers[y*w+x].setAlive( true );
+		data.mpTowers.push_back(new Tower(&data, glm::vec3(tempVec[i].x, 1, tempVec[i].y), mTowerModel, data.boxScale));
 
 		glm::vec3 ppos = data.pPlayer->getPosition();
 		if (!data.pPlayer->checkMove(ppos))
@@ -273,7 +282,7 @@ void Game::buildTowers() {
 		}
 	}
 	mTacticalMarker.resetMarkedTiles();
-}
+}*/
 
 void Game::drawOnScreenQuad()
 {

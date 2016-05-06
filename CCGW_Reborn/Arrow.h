@@ -5,12 +5,15 @@
 #include "GameData.h"
 #include "BoundingBox.h"
 
+#define ARROW_MAX_PIERCING_DEPTH 3
+
+class Enemy;
 class Moleratman;
 class Molebat;
 class Tower;
 class Arrow : public GameObject{
 public:
-	bool load(GameData* data, Model* model );
+	bool load(GameData* data, Model* model, Emitter* emitter );
 
 	bool isAlive();
 	void update(float dt);
@@ -21,7 +24,7 @@ public:
 protected:
 	GameData* pGameData;
 
-	bool playerOwned;
+	bool mPlayerOwned;
 
 	float mSpeed;
 	glm::vec3 mGravitation;
@@ -30,6 +33,9 @@ protected:
 
 	glm::vec3 mVelocity;
 	bool mAlive, mPlayerArrow, mPiercing;
+
+	Enemy *mpPiercedEnemies[ARROW_MAX_PIERCING_DEPTH];
+	int mPiercings;
 
 	Emitter mEmitter;
 };

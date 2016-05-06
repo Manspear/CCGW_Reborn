@@ -5,7 +5,7 @@
 #include "Molebat.h"
 #include "Tower.h"
  
-bool Arrow::load(GameData* data, Model* model)
+bool Arrow::load(GameData* data, Model* model, Emitter* emitter )
 {
 	bool result = true;
 	//mpMesh = data->pAssets->load<tempMesh>(mesh);
@@ -16,10 +16,12 @@ bool Arrow::load(GameData* data, Model* model)
 	
 	//pEmitter = data->pEmitter;
 
-	if( data->pEmission->allocEmitter( &mEmitter, 50 ) )
+	/*if( data->pEmission->allocEmitter( &mEmitter, 50 ) )
 		result = result && mEmitter.load( data, "Models/pns.png" );
 	else
-		result = false;
+		result = false;*/
+
+	mEmitter = *emitter;
 
 	pGameData = data;
 
@@ -107,31 +109,48 @@ void Arrow::update(float dt)
 	}
 
 	// check collision against moleratmen
-	if (playerOwned)
+	if (mPlayerOwned)
 	{
 		for (int i = 0; i < pGameData->mMoleratmen && mAlive; i++)
 		{
 			if (pGameData->pMoleratmen[i].getAlive())
 			{
-				float damage = 0.0f;
-				// check headshot
-				if (pGameData->pMoleratmen[i].getHeadBox().intersect(lastPos, mPosition))
-					damage = mSpeed * 2.0f;
-				// check bodyshot
-				else if (pGameData->pMoleratmen[i].getBoundingBox().intersect(lastPos, mPosition))
-					damage = mSpeed;
-
-				if (damage > 0.0f)
+				bool unique = true;
+				for( int i=0; i<mPiercings && unique; i++ )
 				{
-					pGameData->pMoleratmen[i].imHit(damage);
+					if( mpPiercedEnemies[i] == &pGameData->pMoleratmen[i] )
+						unique = false;
+				}
 
-					mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
-					if (!pGameData->pMoleratmen[i].getAlive()) {
-						pGameData->pGold++;
-						pGameData->pScore++;
+				if( unique )
+				{
+					float damage = 0.0f;
+					// check headshot
+					if (pGameData->pMoleratmen[i].getHeadBox().intersect(lastPos, mPosition))
+						damage = mSpeed * 2.0f;
+					// check bodyshot
+					else if (pGameData->pMoleratmen[i].getBoundingBox().intersect(lastPos, mPosition))
+						damage = mSpeed;
+
+					if (damage > 0.0f)
+					{
+						pGameData->pMoleratmen[i].imHit(damage);
+
+						mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+						if (!pGameData->pMoleratmen[i].getAlive()) {
+							pGameData->pGold++;
+							pGameData->pScore++;
+						}
+
+						if (mPiercing)
+						{
+							mpPiercedEnemies[mPiercings++] = &pGameData->pMoleratmen[i];
+							if( mPiercings >= ARROW_MAX_PIERCING_DEPTH )
+								mAlive = false;
+						}
+						else
+							mAlive = false;
 					}
-					if (!mPiercing)
-						mAlive = false;
 				}
 			}
 		}
@@ -141,22 +160,38 @@ void Arrow::update(float dt)
 		{
 			if (pGameData->pMolebats[i].getAlive())
 			{
-				float damage = 0.0f;
-				if (pGameData->pMolebats[i].getHeadBox().intersect(lastPos, mPosition))
-					damage = mSpeed * 2.0f;
-				else if (pGameData->pMolebats[i].getBoundingBox().intersect(lastPos, mPosition))
-					damage = mSpeed;
-
-				if (damage > 0.0f)
+				bool unique = true;
+				for( int i=0; i<mPiercings; i++ )
 				{
-					pGameData->pMolebats[i].imHit(damage);
-					mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
-					if (!pGameData->pMolebats[i].getAlive()) {
-						pGameData->pGold++;
-						pGameData->pScore++;
+					if( mpPiercedEnemies[i] == &pGameData->pMolebats[i] )
+						unique = false;
+				}
+
+				if( unique )
+				{
+					float damage = 0.0f;
+					if (pGameData->pMolebats[i].getHeadBox().intersect(lastPos, mPosition))
+						damage = mSpeed * 2.0f;
+					else if (pGameData->pMolebats[i].getBoundingBox().intersect(lastPos, mPosition))
+						damage = mSpeed;
+
+					if (damage > 0.0f)
+					{
+						pGameData->pMolebats[i].imHit(damage);
+						mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+						if (!pGameData->pMolebats[i].getAlive()) {
+							pGameData->pGold++;
+							pGameData->pScore++;
+						}
+						if (mPiercing)
+						{
+							mpPiercedEnemies[mPiercings++] = &pGameData->pMolebats[i];
+							if( mPiercings >= ARROW_MAX_PIERCING_DEPTH )
+								mAlive = false;
+						}
+						else
+							mAlive = false;
 					}
-					if (!mPiercing)
-						mAlive = false;
 				}
 			}
 		}
@@ -189,13 +224,17 @@ Arrow::Arrow() : GameObject({0,-10,0}, 1.0f)
 	//mpNormalMap = nullptr;
 	pGameData = nullptr;
 	mAlive = false;
-	playerOwned = false;
+	mPlayerOwned = false;
 	mPiercing = true;
+
+	mPiercings = 0;
+	for (int i = 0; i<ARROW_MAX_PIERCING_DEPTH; i++)
+		mpPiercedEnemies[i] = nullptr;
 }
 
 void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float travelSpeed, glm::vec3 downVector, float rotation)
 {
-	playerOwned = owner;
+	mPlayerOwned = owner;
 	rotY = 0;
 	rotX = rotation;
 	mPosition = position;
@@ -206,6 +245,11 @@ void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float tra
 	mVelocity = direction * travelSpeed;
 	mAlive = true;
 	mPiercing = true;
+
+	mPiercings = 0;
+	for (int i = 0; i<ARROW_MAX_PIERCING_DEPTH; i++)
+		mpPiercedEnemies[i] = nullptr;
+	
 }
 Arrow::~Arrow() 
 {

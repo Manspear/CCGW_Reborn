@@ -1,6 +1,6 @@
 #include "Weapon.h"
 
-bool Weapon::load( GameData* data, bool playerOwned )
+bool Weapon::load( GameData* data, bool playerOwned, Emitter* emitter )
 {
 	bool result = true;
 
@@ -8,16 +8,17 @@ bool Weapon::load( GameData* data, bool playerOwned )
 
 	mPlayerOwned = playerOwned;
 	for( int i=0; i<WEAPON_MAX_ARROWS && result; i++ )
-		result = result && mpArrows[i].load( data, arrowModel );
+		result = result && mpArrows[i].load( data, arrowModel, emitter );
 
 	return result;
 }
 
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation) 
 {
-	mStrength = 5;
 	shoot( position, lookat, rotation, mStrength );
+	mStrength = 5;
 }
+
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength)
 {
 	bool shot = false;
@@ -31,10 +32,11 @@ void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float s
 	{
 		if (!mpArrows[i].isAlive())
 		{
-			mpArrows[i].spawn(mPlayerOwned, position, lookat, 15 * mStrength, { 0, -1, 0 }, rotation);
+			mpArrows[i].spawn(mPlayerOwned, position, lookat, 15 * strength, { 0, -1, 0 }, rotation);
 			shot = true;
 		}
 	}
+	mStrength = strength;
 }
 void Weapon::update(float dt) {
 	/*for (int i = 0; i < mMax; i++) {

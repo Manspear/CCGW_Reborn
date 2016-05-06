@@ -8,7 +8,7 @@ class Particle
 {
 public:
 	/*Loads a texture for the particle.*/
-	bool load( GameData* data, string texture );
+	bool load( Texture* texture );
 	/*Spawns the particle at the supplied position.*/
 	void spawn( glm::vec3 position, glm::vec3 velocity, float lifetime, float drag = 0.5f, glm::vec2 startScale = glm::vec2( 1.0f ), glm::vec2 endScale = glm::vec2( 1.0f ) );
 	/*Updates the position, velocity, scale and lifetime of the particle.*/

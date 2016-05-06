@@ -140,6 +140,7 @@ void Player::update(const Input* inputs, const float &dt)
 	//this->mRotation.z = 
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
 	mWorld = rotatematrix * mWorld;
+	
 
 	mWorld[3][0] = mPosition.x;
 	mWorld[3][1] = mPosition.y;
@@ -223,11 +224,11 @@ bool Player::isAlive() {
 Player::Player() 
 {}
 
-Player::Player(GameData* data) : GameObject()
+Player::Player(GameData* data, Emitter* emitter) : GameObject()
 {
 	this->pGameData = data;
 	//mWeapon = new Weapon(true, data);
-	mWeapon.load( data, true );
+	mWeapon.load( data, true, emitter);
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;
