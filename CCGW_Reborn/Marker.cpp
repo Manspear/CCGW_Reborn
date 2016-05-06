@@ -47,14 +47,23 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 	{
 		buildTowers = true;
 		for (int i = 0; i < mMarkedIndex.size(); i++) {
-			gameData.pGrid->setTile(mMarkedIndex[i].x / gameData.boxScale, mMarkedIndex[i].y / gameData.boxScale, TILE_BOX);
+			//gameData.pGrid->setTile(mMarkedIndex[i].x / gameData.boxScale, mMarkedIndex[i].y / gameData.boxScale, TILE_BOX);
 
-			/*int x = mMarkedIndex[i].x / gameData.boxScale;
+			int x = mMarkedIndex[i].x / gameData.boxScale;
 			int y = mMarkedIndex[i].y / gameData.boxScale;
 			int gridWidth = gameData.pGrid->getWidth();
 			gameData.pGrid->setTile( x, y, TILE_BOX );
-			gameData.pTowers[y*gridWidth+x].setAlive( true );*/
+			gameData.pTowers[y*gridWidth+x].setAlive( true );
+			gameData.pTowers[y*gridWidth+x].setHasBallista( true );
+
+			glm::vec3 ppos = gameData.pPlayer->getPosition();
+			if (!gameData.pPlayer->checkMove(ppos))
+			{
+				gameData.pPlayer->setPosition({ ppos.x, 5, ppos.z });
+			}
 		}
+
+		mMarkedIndex.clear();
 	}
 	mWorld[3][0] = selectedTile.x;
 	mWorld[3][1] = 1.0f;

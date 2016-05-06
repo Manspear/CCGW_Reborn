@@ -17,7 +17,7 @@ public:
 	bool isAlive();
 	
 	Player();
-	Player(GameData* data);
+	Player(GameData* data, Emitter* emitter);
 	~Player();
 private: 
 	float speedY;

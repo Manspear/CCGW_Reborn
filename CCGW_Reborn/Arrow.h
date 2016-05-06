@@ -10,7 +10,7 @@ class Molebat;
 class Tower;
 class Arrow : public GameObject{
 public:
-	bool load(GameData* data, Model* model );
+	bool load(GameData* data, Model* model, Emitter* emitter );
 
 	bool isAlive();
 	void update(float dt);

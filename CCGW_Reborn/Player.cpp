@@ -223,11 +223,11 @@ bool Player::isAlive() {
 Player::Player() 
 {}
 
-Player::Player(GameData* data) : GameObject()
+Player::Player(GameData* data, Emitter* emitter) : GameObject()
 {
 	this->pGameData = data;
 	//mWeapon = new Weapon(true, data);
-	mWeapon.load( data, true );
+	mWeapon.load( data, true, emitter);
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;

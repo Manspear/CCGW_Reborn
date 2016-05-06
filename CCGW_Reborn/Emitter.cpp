@@ -1,13 +1,11 @@
 #include "Emitter.h"
 
-bool Emitter::load( GameData* data, std::string texture )
+bool Emitter::load( Texture* texture )
 {
-	bool result = true;
+	for( int i=0; i<mMax; i++ )
+		pParticles[i].load( texture );
 
-	for( int i=0; i<mMax && result; i++ )
-		result = result && pParticles[i].load( data, texture );
-
-	return result;
+	return true;
 }
 
 void Emitter::spawn( glm::vec3 position, glm::vec3 velocity, float lifetime, float drag, glm::vec2 startScale, glm::vec2 endScale )
