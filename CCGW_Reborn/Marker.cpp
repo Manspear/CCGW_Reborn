@@ -85,7 +85,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 		mMarkedIndex.clear();
 	}
 	mWorld[3][0] = selectedTile.x;
-	mWorld[3][1] = 1.0f;
+	mWorld[3][1] = 1.5f;
 	mWorld[3][2] = selectedTile.y;
 	return buildTowers;
 }

@@ -155,7 +155,9 @@ void Grid::setTile( int x, int y, uchar flags )
 
 uchar Grid::getTile( int x, int y ) const
 {
-	return mpGrid[y*mWidth+x];
+	if( x >= 0 && x < mWidth && y >= 0 && y < mHeight )
+		return mpGrid[y*mWidth+x];
+	return 0;
 }
 
 uchar* Grid::getGrid() const
