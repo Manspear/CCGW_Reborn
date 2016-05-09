@@ -173,7 +173,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 			 this->data.pCamera->follow(data.pCamera->getPosition() + dPosition - glm::vec3(0, 1, 0), { 0,-1,0 }, 1, { 0,0,-1 });
 		 }
 		 else {
-			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 20);
+			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 30);
 			 mTacticalMarker.update( inputs, data );
 		 }
 	 }

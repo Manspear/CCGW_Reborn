@@ -96,10 +96,10 @@ void Arrow::update(float dt)
 	
 	float p = glm::pi<float>() * 0.5f;
 	this->mWorld = {
-					cosf(rotY)* cosf(rotX-p),		sinf(rotY),		cosf(rotY) * sinf(rotX-p),	0,
-					-sinf(rotY) * cosf(rotX-p),	cosf(rotY),		-sinf(rotY) * sinf(rotX-p),	0,
-					-sinf(rotX-p),				0,				cosf(rotX-p),				0,
-					mPosition.x,				mPosition.y,	mPosition.z,				1
+					cosf(rotY)* cosf(rotX-p),		sinf(rotY),			cosf(rotY) * sinf(rotX-p),			0,
+					-sinf(rotY) * cosf(rotX-p),		cosf(rotY),			-sinf(rotY) * sinf(rotX-p),			0,
+					-sinf(rotX-p),					0,					cosf(rotX-p),						0,
+					mPosition.x,					mPosition.y,		mPosition.z,						1
 	};
 
 	if (mTimeSinceLastEmmit > mEmmitInterval)
@@ -200,7 +200,8 @@ void Arrow::update(float dt)
 		int x = (int)((int)(mPosition.x + 1.0f) / pGameData->boxScale);
 		int y = (int)((int)(mPosition.z + 1.0f) / pGameData->boxScale);
 		if (!(y < 0 || x < 0 || y >= (int)pGameData->pGrid->getHeight() || x >= (int)pGameData->pGrid->getWidth())) {
-			if (pGameData->pGrid->getTile(x, y) != TILE_EMPTY) {
+			uchar b = pGameData->pGrid->getTile(x, y);
+			if ( b != TILE_EMPTY && b!=TILE_BLOCKED) {
 				if( mPosition.y < pGameData->boxScale ){
 					mAlive = false;
 				}

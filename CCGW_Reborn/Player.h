@@ -15,6 +15,7 @@ public:
 	bool checkMove(glm::vec3 coord);
 	void takeDamage(float damage);
 	bool isAlive();
+	float getYOffset();
 	
 	Player();
 	Player(GameData* data, Emitter* emitter);
