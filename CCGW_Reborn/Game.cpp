@@ -24,7 +24,6 @@ void Game::createScreenQuad()
 
 Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)*/
 {
-	mBabyCount = 25;
 	pActionState = nullptr;
 	mDelayCleared = 2.0f;
 	mCounter = 0;
@@ -32,7 +31,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	
 	createScreenQuad();
 
-
+	data.mBabyCount = 25;
 	data.pAssets = new Assets();
 	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
 	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
@@ -217,7 +216,7 @@ void Game::update(Input* inputs, float dt)
 	{
 		if (data.pMoleratmen[i].getAlive())
 		{
-			data.pMoleratmen[i].update(dt);
+			data.pMoleratmen[i].update(dt, &data);
 			waveDone = false;
 		}
 	}

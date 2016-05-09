@@ -54,8 +54,6 @@ private:
 	int mScore;
 
 	int mMaxWaves;
-	int mBabyCount;
-
 
 	float mCounter;
 	float mDelayCleared;

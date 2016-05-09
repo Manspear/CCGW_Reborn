@@ -1,6 +1,7 @@
 #include "Moleratman.h"
+#include "Player.h"
 
-void Moleratman::update(float dt)
+void Moleratman::update(float dt, GameData* data)
 {
 	if (mCurrent >= 0)
 	{
@@ -30,6 +31,11 @@ void Moleratman::update(float dt)
 		rotY = -glm::angle(mLookat, glm::vec3(1.0f, 0.0f, 0.0f));
 		if (mLookat.z < 0.0f)
 			rotY *= -1.0f;		
+	}
+	else if (mAlive && mCurrent <= 0){
+		if (--data->mBabyCount <= 0)
+			data->pPlayer->takeDamage(1000);
+		mAlive = false;
 	}
 	if (mLife <= 0) {
 		mAlive = false;

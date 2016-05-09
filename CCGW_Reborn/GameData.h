@@ -27,6 +27,7 @@ struct GameData
 	Molebat* pMolebats;
 	int boxScale;
 	int mMolebats;
+	int mBabyCount;
 	Moleratman* pMoleratmen;
 	int mMoleratmen;
 	int pScore;
