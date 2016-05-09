@@ -38,7 +38,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
-	//data.pShader2 = new ForwardProgram("molevertices.vertex", "molevertices.pixel", "molevertices.geometry");
 	data.pEmission = new Emission(&data, 1100);
 
 	Texture* particleTexture = data.pAssets->load<Texture>( "Models/pns.png" );
@@ -87,8 +86,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mActionMarker.load(markerModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
-	//mTowerModel.load( playerModel );
-	//mTowerModel.setScale( data.boxScale );
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
@@ -104,7 +101,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMoleratmen[i].load(enemyModel);
 		data.pMoleratmen[i].pGameData = &data;
 	}
-	
+
 	pWaveSpawner = new WaveSpawner( &data );
 	pWaveSpawner->setPosition({ 14,0,-10 });
 	Sound* sound = data.pAssets->load<Sound>( "Sounds/chant.wav" );
@@ -162,8 +159,6 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 		 }
 		 else {
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 20);
-			 //if (mTacticalMarker.update(inputs, data))
-				//buildTowers();
 			 mTacticalMarker.update( inputs, data );
 		 }
 	 }
@@ -190,9 +185,6 @@ void Game::render()
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
 
-	/*for (int i = 0; i < data.mpTowers.size(); i++) {
-		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
-	}*/
 	for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );
@@ -200,9 +192,7 @@ void Game::render()
 		mActionMarker.render(data.pDeferredProgram->getProgramID());
 	else
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		mTacticalMarker.render(data.pDeferredProgram->getProgramID());
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	data.pBillboardProgram->use();
@@ -212,10 +202,6 @@ void Game::render()
 	data.pBillboardProgram->end();
 	data.pBillboardProgram->unUse();
 	data.pDeferredProgram->unUse();
-
-	/*data.pShader2->use();
-	data.pPlayer->render2(data.pShader2->getProgramID());
-	data.pShader2->unUse();*/
 
 	drawOnScreenQuad();	
 }
@@ -256,10 +242,6 @@ void Game::update(Input* inputs, float dt)
 	else
 		mCounter = 0;
 	
-	/*for (int i = 0; i < data.mpTowers.size(); i++)
-	{
-		data.mpTowers[i]->update(&data, dt);
-	}*/
 	for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].update( &data, dt );
@@ -275,26 +257,10 @@ void Game::update(Input* inputs, float dt)
 		int a = 0;
 }
 
-
-/*void Game::buildTowers() {
-	std::vector<glm::vec2> tempVec = mTacticalMarker.getMarkedTiles();
-	for (int i = 0; i < tempVec.size(); i++) {
-		data.mpTowers.push_back(new Tower(&data, glm::vec3(tempVec[i].x, 1, tempVec[i].y), mTowerModel, data.boxScale));
-
-		glm::vec3 ppos = data.pPlayer->getPosition();
-		if (!data.pPlayer->checkMove(ppos))
-		{
-			data.pPlayer->setPosition({ ppos.x, 5, ppos.z });
-		}
-	}
-	mTacticalMarker.resetMarkedTiles();
-}*/
-
 void Game::drawOnScreenQuad()
 {
 	data.pForwardProgram->use();
 	data.pDeferredProgram->enableTextures(data.pForwardProgram->getProgramID());
-	//data.pShader2->enableTextures(data.pForwardProgram->getProgramID());
 
 	GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
 	glUniform3fv(cameraPos, 1, &data.pCamera->getPosition()[0]);
@@ -308,6 +274,5 @@ void Game::drawOnScreenQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	data.pDeferredProgram->disableTextures();
-	//data.pShader2->disableTextures();
 	data.pForwardProgram->unUse();
 }
