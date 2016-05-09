@@ -35,7 +35,7 @@ private:
 			mHighlighted = false;
 		};
 		~Button() {
-
+	
 		};
 		bool checkMouseIntersection(int x, int y) {
 			return !(x < mX || y < mY || x > mW || y > mH);

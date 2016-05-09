@@ -20,6 +20,7 @@ public:
 	bool hasWon();
 
 	void setPosition( glm::vec3 position );
+	void restart();
 	glm::vec3 getPosition() const;
 
 	WaveSpawner& operator=( const WaveSpawner& ref );

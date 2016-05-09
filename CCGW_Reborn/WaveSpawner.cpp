@@ -64,6 +64,13 @@ void WaveSpawner::setPosition( glm::vec3 position )
 	mPosition = position;
 }
 
+void WaveSpawner::restart()
+{
+	mWave = 0;  mDelay = 0; mCurMoleratmen = 0; mSpawnMoleratmen = 0;
+	mCurMolebats = 0; mSpawnMolebats = 0;  mMoleratmanIndex = 0; mMolebatIndex = 0;
+	mTargets = 0;
+}
+
 glm::vec3 WaveSpawner::getPosition() const
 {
 	return mPosition;

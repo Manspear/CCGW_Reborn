@@ -28,9 +28,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mDelayCleared = 2.0f;
 	mCounter = 0;
 	tactical = false;
-	
 	createScreenQuad();
-
+	data.pGame = this;
 	data.mBabyCount = 25;
 	data.pAssets = new Assets();
 	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
@@ -78,13 +77,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, enemyModel, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
-	/*
-	sNode start = { 0, 0 };
-	sNode end = { 0, 10 };
-	mpPath = new sNode[36*100];
-	mTargets = 0;
-
-	data.pGrid->findPath( start, end, mpPath, &mTargets );*/
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
@@ -92,8 +84,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mActionMarker.load(markerModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
-	//mTowerModel.load( playerModel );
-	//mTowerModel.setScale( data.boxScale );
 	mMoleratman.load( enemyModel );
 	mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
@@ -138,7 +128,6 @@ Game::~Game() {
 	delete data.pGrid;
 	delete pActionState;
 	delete[] data.pTowers;
-	//delete[] mpPath;
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
@@ -146,11 +135,32 @@ Game::~Game() {
 	data.pAssets->unload();
 	delete data.pAssets;
 }
-int a = 0;
+
 GameData * Game::getGameData()
 {
 	return &data;
 }
+
+void Game::restartGame()
+{
+	mCounter = 0;
+	data.pScore = 0;
+	data.pGold = 5;
+	
+	for (int i = 0; i<16; i++)
+		data.pGrid->setTile(i, 0, TILE_BLOCKED);
+	for (int i = 0; i<data.mTowers; i++)
+		data.pTowers[i].setAlive(false);
+	delete data.pGrid;
+	data.pGrid = new Grid(16, 50);
+	for (int i = 0; i<16; i++)
+		data.pGrid->setTile(i, 0, TILE_BLOCKED);
+	data.pPlayer->setPosition(glm::vec3(14.0f, 0.0f, 14.0f));
+
+	pWaveSpawner->restart();
+	pWaveSpawner->spawn();
+}
+
 State Game::run(Input* inputs, const float &dt, bool menuActive)
 {
 	if(menuActive)
