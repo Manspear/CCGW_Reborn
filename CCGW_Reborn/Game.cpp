@@ -202,9 +202,6 @@ void Game::render()
 	mMoleratman.render( data.pDeferredProgram->getProgramID());
 	mMolebat.render( data.pDeferredProgram->getProgramID() );
 
-	/*for (int i = 0; i < data.mpTowers.size(); i++) {
-		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
-	}*/
 	for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );
@@ -232,7 +229,7 @@ void Game::update(Input* inputs, float dt)
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
 
-	mMoleratman.update( 0.0f );
+	mMoleratman.update( 0.0f , &data);
 	mMolebat.update( 0.0f );
 	
 	bool waveDone = true;

@@ -53,8 +53,6 @@ void Moleratman::update(float dt, GameData* data)
 			sinf(rotY),		0,		cosf(rotY),		0,
 			mPosition.x,	mPosition.y,	mPosition.z, 1
 		};
-	}
-
 	mBoundingBox.center = mPosition + glm::vec3( 0, 0.75f, 0 );
 
 	glm::vec3 headOffset = mLookat*0.5f;
