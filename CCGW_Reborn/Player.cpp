@@ -209,6 +209,14 @@ bool Player::checkMove(glm::vec3 coord) {
 			}
 		}
 	}
+
+	if( !intersect )
+	{
+		int w = pGameData->pGrid->getWidth();
+		int h = pGameData->pGrid->getHeight();
+
+		intersect = ( coord.x < 0.0f || coord.x >= w || coord.z < 0.0f || coord.z >= h );
+	}
 	return !intersect;
 }
 
@@ -229,13 +237,15 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	this->pGameData = data;
 	//mWeapon = new Weapon(true, data);
 	mWeapon.load( data, true, emitter);
-	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-	setScale(1.f / 10.f);
+	mPosition = glm::vec3( 1, 1, 1 );
+	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
 	mHealth = 100;
+
+	setScale( 0.1f );
 }
 
 Player::~Player()

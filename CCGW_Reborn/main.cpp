@@ -53,8 +53,7 @@ int main(int argc, char** argv)
 
 	Menu mainMenu;
 	char menuAction = 0;
-
-	while (running && gs == GAME_PLAYING)
+	while (running)
 	{
 		temp = SDL_GetTicks();
 		dt = (float)(temp - timeStamp) / 1000.f;
@@ -66,7 +65,7 @@ int main(int argc, char** argv)
 		else
 			game.tacticalRun(&input, dt, !mainMenu.mActive);
 
-		running = mainMenu.update(&input);
+		running = mainMenu.update(&input, game.getGameData(), gs);
 		mainMenu.render();
 		
 		SDL_GL_SwapWindow(window);

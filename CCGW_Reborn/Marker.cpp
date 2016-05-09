@@ -17,6 +17,19 @@ void Marker::update(const Player* player) {
 bool Marker::update(const Input * inputs, GameData &gameData)
 {
 	selectedTile = mousePicking(inputs->mousePosition(), gameData) * (float)gameData.boxScale;
+
+	int gridWidth = gameData.pGrid->getWidth();
+	int gridHeight = gameData.pGrid->getHeight();
+
+	if( selectedTile.x < 0 )
+		selectedTile.x = 0;
+	else if( selectedTile.x >= gridWidth * gameData.boxScale )
+		selectedTile.x = gridWidth * gameData.boxScale;
+	if( selectedTile.y < 0 )
+		selectedTile.y = 0;
+	else if( selectedTile.y >= gridHeight * gameData.boxScale )
+		selectedTile.y = gridHeight * gameData.boxScale;
+
 	uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
 	bool buildTowers = false;
 	if (inputs->buttonDown(0) && gameData.pGold > 0)
@@ -26,7 +39,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
 			mMarkedIndex.push_back(selectedTile);
 			sNode start = { 0, 0 };
-			sNode end = { 10, 10 };
+			sNode end = { 20, 99 };
 			int mTargets = 0;
 			if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
 				mMarkedIndex.erase(mMarkedIndex.end() - 1);
@@ -85,17 +98,22 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 		mMarkedIndex.clear();
 	}
 	mWorld[3][0] = selectedTile.x;
-	mWorld[3][1] = 1.0f;
+	mWorld[3][1] = 1.5f;
 	mWorld[3][2] = selectedTile.y;
 	return buildTowers;
 }
 
 void Marker::render(const GLuint & programID)
 {
+	mWorld[0][0] = 1.0f;
+	mWorld[1][1] = 1.0f;
+	mWorld[2][2] = 1.0f;
 	GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
 	//activateTextures(programID);
 	//mpMesh->draw();
+	
+
 	mpModel->draw();
 	for (int i = 0; i < mMarkedIndex.size(); i++) {
 		mWorld[3][0] = mMarkedIndex[i].x;

@@ -7,7 +7,13 @@ out vec2 texOut;
 
 uniform vec2 position;
 
+uniform float number;
+
 void main(){
 	gl_Position = vec4(pos + position, -0.4,1);
 	texOut = texPos;
+	if (pos.x > 0)
+		texOut.x = texPos.x + number / 10;
+	else
+		texOut.x = texPos.x + number / 10;
 }

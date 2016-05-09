@@ -7,7 +7,7 @@ bool Tower::load( GameData* data, glm::vec3 position, Model* boxModel, Model* ba
 	//mpWeapon = new Weapon( false, data );
 	mWeapon.load( data, false, emitter );
 	setPosition( position );
-	setScale( data->boxScale/2 );
+	setScale( data->boxScale / 2 );
 	mpModel = mpBoxModel = boxModel;
 	mpBallistaModel = ballistaModel;
 
