@@ -13,6 +13,9 @@ float Player::getRot() const
 {
 	return rotX;
 }
+float Player::getYOffset() {
+	return this->yoffset;
+}
 
 void Player::update(const Input* inputs, const float &dt)
 {
@@ -200,7 +203,8 @@ bool Player::checkMove(glm::vec3 coord) {
 			int x = (int)((int)(coord.x + 1.0f) / pGameData->boxScale) + i;
 			int y = (int)((int)(coord.z + 1.0f) / pGameData->boxScale) + j;
 			if (!(y < 0 || x < 0 || y >= (int)pGameData->pGrid->getHeight() || x >= (int)pGameData->pGrid->getWidth())) {
-				if (pGameData->pGrid->getTile(x, y) != TILE_EMPTY) {
+				uchar b = pGameData->pGrid->getTile(x, y);
+				if (b != TILE_BLOCKED && b != TILE_EMPTY) {
 					if (this->mBB.intersect(glm::vec3(x*pGameData->boxScale, 1, y*pGameData->boxScale), pGameData->boxScale / 2)) {
 						intersect = true;
 					}
