@@ -55,9 +55,12 @@ void Molebat::update(float dt)
 	float rotY = -glm::angle( mLookat, glm::vec3( 1.0f, 0.0f, 0.0f ) );
 	float p = glm::pi<float>()*0.5f;
 	float scale = 0.2f;
-	rotY -= p;
+	
 	if( mLookat.z < 0.0f )
 		rotY *= -1.0f;
+
+	rotY -= p;
+	float sinOffset = sin( mSin++*0.1f ) * 0.1f;
 
 	// set data for rendering
 	mPosition = newPos;
@@ -65,19 +68,28 @@ void Molebat::update(float dt)
 		cosf( rotY ) * scale,	0,		-sinf( rotY ) * scale,	0,
 		0,				1 * scale,		0,				0,
 		sinf(rotY) * scale,		0,		cosf(rotY) * scale,		0,
-		mPosition.x,	mPosition.y+sin(mSin++*0.1f )*0.1f,	mPosition.z, 1
+		mPosition.x,	mPosition.y+sinOffset,	mPosition.z, 1
 	};
 	if (mLife <= 0)
 		mAlive = false;
 
-	mBoundingBox.center = mPosition - glm::vec3( 0.0f, 0.25f, 0.0f );
-	mHeadBox.center = mPosition + glm::vec3( 0.0f, 0.25f, 0.0f );
+	glm::vec3 bodyOffset = -mLookat*0.5f;
+	bodyOffset.y = -0.5f + sinOffset;
+
+	glm::vec3 headOffset = mLookat*0.25f;
+	headOffset.y = sinOffset;
+
+	mBoundingBox.center = mPosition + bodyOffset;
+	mHeadBox.center = mPosition + headOffset;
 }
 
 void Molebat::render( GLuint programID )
 {
 	Enemy::render( programID );
-	/*
+	
+#if ENEMY_RENDER_HITBOX
+	glPolygonMode( GL_FRONT, GL_LINE );
+
 	GLuint worldLocation = glGetUniformLocation(programID, "world");
 	glm::mat4 world;
 	world[3][0] = mBoundingBox.center.x;
@@ -90,8 +102,7 @@ void Molebat::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	//mpMesh->draw();
-	mpModel->draw();
+	pBoundingBoxModel->draw();
 
 	world[3][0] = mHeadBox.center.x;
 	world[3][1] = mHeadBox.center.y;
@@ -103,8 +114,10 @@ void Molebat::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	//mpMesh->draw();
-	mpModel->draw();*/
+	pBoundingBoxModel->draw();
+
+	glPolygonMode( GL_FRONT, GL_FILL );
+#endif
 }
 
 void Molebat::setGameData( GameData* data )
@@ -122,18 +135,18 @@ Molebat& Molebat::operator=( const Molebat& ref )
 Molebat::Molebat( const Molebat& ref )
 	: Enemy( ref ), pGameData( ref.pGameData ), mSin( ref.mSin )
 {
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
-	mBoundingBox.hHeight = 0.25f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
+	mBoundingBox.hHeight = 0.5f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
 }
 
 Molebat::Molebat()
 	: Enemy( glm::vec3( 0.0f ) ), mSin( rand() % 1000 )
 {
 	mTimeSinceLastHit = 0;
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
-	mBoundingBox.hHeight = 0.25f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
+	mBoundingBox.hHeight = 0.5f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
 }
 
 Molebat::~Molebat()

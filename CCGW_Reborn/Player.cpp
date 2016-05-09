@@ -215,7 +215,7 @@ bool Player::checkMove(glm::vec3 coord) {
 		int w = pGameData->pGrid->getWidth();
 		int h = pGameData->pGrid->getHeight();
 
-		intersect = ( coord.x < 0.0f || coord.x >= w*pGameData->boxScale || coord.z < 0.0f || coord.z >= h*pGameData->boxScale);
+		intersect = ( coord.x < 0.0f || coord.x >= (w-1)*pGameData->boxScale || coord.z < 0.0f || coord.z >= (h-1)*pGameData->boxScale);
 	}
 	return !intersect;
 }
