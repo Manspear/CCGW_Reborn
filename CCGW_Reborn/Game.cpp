@@ -54,10 +54,12 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* playerModel = data.pAssets->load<Model>( "Models/klara.mole" );
 	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
 
-	data.pGrid = new Grid(36, 100);
-	data.mTowers = 36*100;
+	data.pGrid = new Grid(16, 50);
+	data.mTowers = 16*50;
 	data.pTowers = new Tower[data.mTowers];
 
 	Emitter towerEmitter;
@@ -71,25 +73,25 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, enemyModel, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
-
+	/*
 	sNode start = { 0, 0 };
 	sNode end = { 0, 10 };
 	mpPath = new sNode[36*100];
 	mTargets = 0;
 
-	data.pGrid->findPath( start, end, mpPath, &mTargets );
+	data.pGrid->findPath( start, end, mpPath, &mTargets );*/
 
 	data.pPlayer->load( playerModel );
 	mGround.load(terrainModel);
-	mActionMarker.load( playerModel );
-	mTacticalMarker.load( playerModel );
+	mActionMarker.load(markerModel);
+	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i < data.mMolebats; i++ )
 	{
-		data.pMolebats[i].load( playerModel );
+		data.pMolebats[i].load(molebatModel);
 		data.pMolebats[i].setGameData( &data );
 	}
 
@@ -101,7 +103,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 
 	pWaveSpawner = new WaveSpawner( &data );
-
+	pWaveSpawner->setPosition({ 14,0,-10 });
 	Sound* sound = data.pAssets->load<Sound>( "Sounds/chant.wav" );
 	if( !sound )
 	{
@@ -122,7 +124,7 @@ Game::~Game() {
 	delete data.pGrid;
 	delete pActionState;
 	delete[] data.pTowers;
-	delete[] mpPath;
+	//delete[] mpPath;
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
@@ -211,18 +213,22 @@ void Game::update(Input* inputs, float dt)
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
 	
 	bool waveDone = true;
-	for( int i=0; i<data.mMoleratmen; i++ )
+	for (int i = 0; i < data.mMoleratmen; i++)
+	{
 		if (data.pMoleratmen[i].getAlive())
 		{
 			data.pMoleratmen[i].update(dt);
 			waveDone = false;
 		}
-	for (int i = 0; i<data.mMolebats; i++)
+	}
+	for (int i = 0; i < data.mMolebats; i++)
+	{
 		if (data.pMolebats[i].getAlive())
 		{
 			data.pMolebats[i].update(dt);
 			waveDone = false;
 		}
+	}
 	if (waveDone)
 	{
 		mCounter += dt;

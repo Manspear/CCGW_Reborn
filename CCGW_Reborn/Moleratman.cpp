@@ -35,6 +35,9 @@ void Moleratman::update(float dt)
 		mAlive = false;
 	}
 
+	float p = glm::pi<float>()*0.5f;
+	rotY -= p;
+
 	mWorld = {
 		cosf(rotY),	0,		-sinf(rotY),	0,
 		0,				1,		0,				0,
@@ -48,8 +51,8 @@ void Moleratman::update(float dt)
 
 void Moleratman::render( GLuint programID )
 {
-	//Enemy::render( programID );
-
+	Enemy::render( programID );
+	/*
 	GLuint worldLocation = glGetUniformLocation( programID, "world" );
 	glm::mat4 world;
 	world[3][0] = mBoundingBox.center.x;
@@ -76,7 +79,7 @@ void Moleratman::render( GLuint programID )
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
 	//mpMesh->draw();
-	mpModel->draw();
+	mpModel->draw();*/
 }
 
 Moleratman& Moleratman::operator=( const Moleratman& ref )

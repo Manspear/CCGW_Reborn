@@ -25,8 +25,18 @@ void WaveSpawner::update( float deltaTime )
 
 void WaveSpawner::spawn()
 {
+	// find a start tile
+	sNode start = { 5, 0 };
+	for( int i=0; i<5; i++ )
+	{
+		if( pGameData->pGrid->getTile( start.x, 0 ) != TILE_EMPTY )
+			start.x++;
+		else
+			break;
+	}
+
 	// start by getting the path for the moleratmen
-	sNode start = { 0, 0 }, end = { 10, 10 };
+	sNode end = { 7, 49 };
 	if( pGameData->pGrid->findPath( start, end, mpPath, &mTargets ) )
 	{
 		incrementWave();
@@ -89,7 +99,7 @@ void WaveSpawner::spawnMoleratman()
 	{
 		m->setPosition( mPosition );
 		m->setAlive( true );
-		m->setLife( 500.0f );
+		m->setLife( 50.0f );
 		m->setPath( mpPath, mTargets );
 	}
 }

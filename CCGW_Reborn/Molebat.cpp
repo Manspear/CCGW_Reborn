@@ -53,15 +53,18 @@ void Molebat::update(float dt)
 	dir = glm::normalize( pGameData->pPlayer->getPosition() - mPosition );
 	mLookat = glm::normalize( glm::vec3( dir.x, 0.0f, dir.z ) );
 	float rotY = -glm::angle( mLookat, glm::vec3( 1.0f, 0.0f, 0.0f ) );
+	float p = glm::pi<float>()*0.5f;
+	float scale = 0.2f;
+	rotY -= p;
 	if( mLookat.z < 0.0f )
 		rotY *= -1.0f;
 
 	// set data for rendering
 	mPosition = newPos;
 	mWorld = {
-		cosf( rotY ),	0,		-sinf( rotY ),	0,
-		0,				1,		0,				0,
-		sinf(rotY),		0,		cosf(rotY),		0,
+		cosf( rotY ) * scale,	0,		-sinf( rotY ) * scale,	0,
+		0,				1 * scale,		0,				0,
+		sinf(rotY) * scale,		0,		cosf(rotY) * scale,		0,
 		mPosition.x,	mPosition.y+sin(mSin++*0.1f )*0.1f,	mPosition.z, 1
 	};
 	if (mLife <= 0)
@@ -74,7 +77,7 @@ void Molebat::update(float dt)
 void Molebat::render( GLuint programID )
 {
 	Enemy::render( programID );
-
+	/*
 	GLuint worldLocation = glGetUniformLocation(programID, "world");
 	glm::mat4 world;
 	world[3][0] = mBoundingBox.center.x;
@@ -101,7 +104,7 @@ void Molebat::render( GLuint programID )
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
 	//mpMesh->draw();
-	mpModel->draw();
+	mpModel->draw();*/
 }
 
 void Molebat::setGameData( GameData* data )
