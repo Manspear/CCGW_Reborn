@@ -46,7 +46,10 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 
 void Menu::updateNumbers(GameData * data)
 {
-	/*int gold = data->pGold;
+	if( activeMenu == LOSING_SCREEN )
+		return;
+
+	int gold = data->pGold;
 	int divider = 100;
 	for (int i = 0; i < 3; i++)
 	{

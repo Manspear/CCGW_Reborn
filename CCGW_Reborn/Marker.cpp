@@ -3,7 +3,8 @@
 #include "Tower.h"
 
 void Marker::update(const Player* player) {
-	float aRot = player->getRot() + glm::pi<float>() * 0.5f;
+	float aRot = player->getRot() +glm::pi<float>() * 0.5f;
+
 	glm::vec3 playerPos = player->getPosition();
 	glm::vec3 lookAt = player->getLookAt();
 	this->mWorld = {

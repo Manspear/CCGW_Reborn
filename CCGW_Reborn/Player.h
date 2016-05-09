@@ -20,6 +20,7 @@ public:
 	Player(GameData* data, Emitter* emitter);
 	~Player();
 private: 
+	float yoffset;
 	float speedY;
 	float mMaxSpeed;
 	float mSpeed;

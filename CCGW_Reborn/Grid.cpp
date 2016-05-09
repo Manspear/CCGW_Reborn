@@ -98,7 +98,7 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 
 					// Make sure that we're not accessing diagonal nodes
 					// and make sure the tile is empty
-					if( ( x == curx || y == cury ) && mpGrid[NODEAT(x,y)] == TILE_EMPTY )
+					if( ( x == curx || y == cury ) && ( mpGrid[NODEAT(x,y)] == TILE_EMPTY || mpGrid[NODEAT(x,y)] == TILE_BLOCKED ) )
 					{
 						// Make sure the node has not already been visited
 						sNode* dir = &mPath[NODEAT(x,y)];

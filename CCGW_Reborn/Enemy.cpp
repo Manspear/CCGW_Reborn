@@ -1,5 +1,7 @@
 #include "Enemy.h"
 
+Model* Enemy::pBoundingBoxModel = nullptr;
+
 void Enemy::render( GLuint programID )
 {
 	GameObject::render( programID );

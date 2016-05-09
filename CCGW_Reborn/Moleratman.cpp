@@ -6,13 +6,16 @@ void Moleratman::update(float dt, GameData* data)
 	if (mCurrent >= 0)
 	{
 		// TODO: Factor out box scale
-		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0, pPath[mCurrent].y * pGameData->boxScale);
+		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0.0f, pPath[mCurrent].y * pGameData->boxScale);
 
 		float dist = glm::distance(mPosition, glm::vec3(target));
 		if (dist < MOLERATMAN_SPEED * dt)
 		{
 			mCurrent--;
+			glm::vec3 dir = glm::normalize( target - mPosition );
 			mPosition = target;
+
+			target = mPosition + dir;
 		}
 		else
 		{
@@ -41,24 +44,31 @@ void Moleratman::update(float dt, GameData* data)
 		mAlive = false;
 	}
 
-	float p = glm::pi<float>()*0.5f;
-	rotY -= p;
+		float p = glm::pi<float>()*0.5f;
+		rotY -= p;
 
-	mWorld = {
-		cosf(rotY),	0,		-sinf(rotY),	0,
-		0,				1,		0,				0,
-		sinf(rotY),		0,		cosf(rotY),		0,
-		mPosition.x,	mPosition.y,	mPosition.z, 1
-	};
+		mWorld = {
+			cosf(rotY),	0,		-sinf(rotY),	0,
+			0,				1,		0,				0,
+			sinf(rotY),		0,		cosf(rotY),		0,
+			mPosition.x,	mPosition.y,	mPosition.z, 1
+		};
+	}
 
-	mBoundingBox.center = mPosition - glm::vec3( 0.0f, 0.25f, 0.0f );
-	mHeadBox.center = mPosition + glm::vec3( 0.0f, 0.25f, 0.0f );
+	mBoundingBox.center = mPosition + glm::vec3( 0, 0.75f, 0 );
+
+	glm::vec3 headOffset = mLookat*0.5f;
+	headOffset.y = 1.5f;
+	mHeadBox.center = mPosition + headOffset;
 }
 
 void Moleratman::render( GLuint programID )
 {
 	Enemy::render( programID );
-	/*
+	
+#if ENEMY_RENDER_HITBOX
+	glPolygonMode( GL_FRONT, GL_LINE );
+
 	GLuint worldLocation = glGetUniformLocation( programID, "world" );
 	glm::mat4 world;
 	world[3][0] = mBoundingBox.center.x;
@@ -71,8 +81,7 @@ void Moleratman::render( GLuint programID )
 
 	glUniformMatrix4fv( worldLocation, 1, GL_FALSE, &world[0][0] );
 
-	//mpMesh->draw();
-	mpModel->draw();
+	pBoundingBoxModel->draw();
 
 	world[3][0] = mHeadBox.center.x;
 	world[3][1] = mHeadBox.center.y;
@@ -84,8 +93,10 @@ void Moleratman::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	//mpMesh->draw();
-	mpModel->draw();*/
+	pBoundingBoxModel->draw();
+
+	glPolygonMode(GL_FRONT, GL_FILL );
+#endif
 }
 
 Moleratman& Moleratman::operator=( const Moleratman& ref )
@@ -97,16 +108,16 @@ Moleratman& Moleratman::operator=( const Moleratman& ref )
 Moleratman::Moleratman( const Moleratman& ref )
 	: Enemy( ref )
 {
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
-	mBoundingBox.hHeight = 0.25f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
+	mBoundingBox.hHeight = 0.5f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
 }
 
 Moleratman::Moleratman()
 {
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
-	mBoundingBox.hHeight = 0.25f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
+	mBoundingBox.hHeight = 0.5f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
 }
 
 Moleratman::~Moleratman()
