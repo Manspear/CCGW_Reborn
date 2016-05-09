@@ -188,12 +188,18 @@ void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
 	this->mWeapon.draw(programID);
 }
 
+void Player::setAlive(bool amIalive)
+{
+	mHealth = 25;
+}
+
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
 	glm::vec3 result = glm::normalize(v1 + v2);
 	if (result != result)
  		result = glm::vec3(0,0,0);
 	return result;
 }
+
 bool Player::checkMove(glm::vec3 coord) {
 	mBB.center = coord;
 

@@ -146,19 +146,25 @@ void Game::restartGame()
 	mCounter = 0;
 	data.pScore = 0;
 	data.pGold = 5;
-	
+	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
 	for (int i = 0; i<data.mTowers; i++)
 		data.pTowers[i].setAlive(false);
 	delete data.pGrid;
 	data.pGrid = new Grid(16, 50);
+	
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
+	
+	for (int i = 0; i < data.mMolebats; i++)
+		data.pMolebats[i].setAlive(false);
+	
+	for (int i = 0; i < data.mMoleratmen; i++) 
+		data.pMoleratmen[i].setAlive(false);
+	
 	data.pPlayer->setPosition(glm::vec3(14.0f, 0.0f, 14.0f));
-
 	pWaveSpawner->restart();
-	pWaveSpawner->spawn();
 }
 
 State Game::run(Input* inputs, const float &dt, bool menuActive)
