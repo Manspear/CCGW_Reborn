@@ -18,7 +18,6 @@ struct Number {
 	int number;
 };
 
-
 enum MENU {
 	MAIN_MENU, ACTION_HUD, LOSING_SCREEN
 };
@@ -31,7 +30,9 @@ private:
 			mTexture = texture;
 			mVboID = bufferID;
 			mType = type;
+			mNdcX = startX; mNdcY = startY;
 			mX = (startX + 1) * (gWidth / 2); mY = (startY + 1) * (gHeight / 2); mW = (startX + width + 1) * (gWidth / 2); mH = (startY + height + 1) * (gHeight / 2);
+			mHighlighted = false;
 		};
 		~Button() {
 
@@ -39,8 +40,13 @@ private:
 		bool checkMouseIntersection(int x, int y) {
 			return !(x < mX || y < mY || x > mW || y > mH);
 		};
+		glm::vec2 getPos() const{
+			return glm::vec2(mNdcX, mNdcY);
+		}
 		int mX, mY, mW, mH;
+		float mNdcX, mNdcY;
 		char mType;
+		bool mHighlighted;
 		GLuint mTexture;
 		GLuint mVboID;
 	};
@@ -55,24 +61,27 @@ public:
 	bool update(Input* inputs, GameData* data, State state);
 	void updateNumbers(GameData* data);
 	void render();
-	Button addButton(float startX, float startY, float width, float height, char type, std::string texPath);
 	
 	Menu();
 	~Menu();
 private:
-	void buttonAction(char type, Input* inputs);
+	void buttonAction(char type, Input* inputs, int index);
 	GLuint loadTex(std::string filePath);
 	std::string readBuild(std::string filePath);
 	void addNumber(float width, float height);
 	void renderNumbers();
 	void buildAMenu(std::string build, MENU menu);
+	Button addButton(float startX, float startY, float width, float height, char type, std::string texPath);
 
 	std::vector<AMenu> mAllMenu;
+	Button* mActiveField;
 	bool mRunning;
 	ForwardProgram* menuShader;
 	ForwardProgram* numberShader;
 	GLuint numberVbo;
 	GLuint numberTex;
+	GLuint buttonTex;
+	GLuint buttonBool;
 	GLuint posLocation;
 	GLuint numberLocation;
 };
