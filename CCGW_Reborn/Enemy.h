@@ -5,6 +5,8 @@
 #include "BoundingBox.h"
 #include "glm\gtx\vector_angle.hpp"
 
+#define ENEMY_RENDER_HITBOX 1
+
 //Abstract class for enemies.
 class Enemy : public GameObject
 {
@@ -28,6 +30,8 @@ public:
 	Enemy( glm::vec3 position );
 	Enemy();
 	~Enemy();
+
+	static Model* pBoundingBoxModel;
 
 protected:
 	BoundingBox mBoundingBox;

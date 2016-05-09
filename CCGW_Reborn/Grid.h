@@ -11,7 +11,8 @@ enum
 	TILE_BOX = 0x1,
 	TILE_BALLISTA = 0x2,
 	TILE_HOLD = 0x4,
-	TILE_OUT_OF_BOUNDS = 0x8,
+	TILE_BLOCKED = 0x8,
+	TILE_OUT_OF_BOUNDS = 0b11111111,
 };
 
 struct sNode

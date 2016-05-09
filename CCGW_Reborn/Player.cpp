@@ -13,6 +13,9 @@ float Player::getRot() const
 {
 	return rotX;
 }
+float Player::getYOffset() {
+	return this->yoffset;
+}
 
 void Player::update(const Input* inputs, const float &dt)
 {
@@ -87,8 +90,8 @@ void Player::update(const Input* inputs, const float &dt)
 		std::cout << std::endl;
 	}
 
-	if (mPosition.y < 0.5) {
-		mPosition.y = 0.5;
+	if (mPosition.y - yoffset < 0.5) {
+		mPosition.y = 0.0;
 		speedY = 0;
 		canJump = true;
 	}
@@ -141,7 +144,6 @@ void Player::update(const Input* inputs, const float &dt)
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
 	mWorld = rotatematrix * mWorld;
 	
-
 	mWorld[3][0] = mPosition.x;
 	mWorld[3][1] = mPosition.y;
 	mWorld[3][2] = mPosition.z;
@@ -150,7 +152,7 @@ void Player::update(const Input* inputs, const float &dt)
 	if (inputs->buttonReleased(0))
 	{
 		glm::vec3 temp = { mLookat.x, 0, mLookat.z };
-		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0))/4.f;
+		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0))/4.f - glm::vec3(0, yoffset, 0);
 		glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
 		float rotation = rotX  - glm::angle(glm::normalize(glm::vec3(la.x,0,la.z)), tempLookat);
 		//mWeapon->shoot(tempPos, la, rotation, mStrength);
@@ -186,12 +188,18 @@ void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
 	this->mWeapon.draw(programID);
 }
 
+void Player::setAlive(bool amIalive)
+{
+	mHealth = 25;
+}
+
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
 	glm::vec3 result = glm::normalize(v1 + v2);
 	if (result != result)
  		result = glm::vec3(0,0,0);
 	return result;
 }
+
 bool Player::checkMove(glm::vec3 coord) {
 	mBB.center = coord;
 
@@ -201,7 +209,8 @@ bool Player::checkMove(glm::vec3 coord) {
 			int x = (int)((int)(coord.x + 1.0f) / pGameData->boxScale) + i;
 			int y = (int)((int)(coord.z + 1.0f) / pGameData->boxScale) + j;
 			if (!(y < 0 || x < 0 || y >= (int)pGameData->pGrid->getHeight() || x >= (int)pGameData->pGrid->getWidth())) {
-				if (pGameData->pGrid->getTile(x, y) != TILE_EMPTY) {
+				uchar b = pGameData->pGrid->getTile(x, y);
+				if (b != TILE_BLOCKED && b != TILE_EMPTY) {
 					if (this->mBB.intersect(glm::vec3(x*pGameData->boxScale, 1, y*pGameData->boxScale), pGameData->boxScale / 2)) {
 						intersect = true;
 					}
@@ -215,7 +224,7 @@ bool Player::checkMove(glm::vec3 coord) {
 		int w = pGameData->pGrid->getWidth();
 		int h = pGameData->pGrid->getHeight();
 
-		intersect = ( coord.x < 0.0f || coord.x >= w*pGameData->boxScale || coord.z < 0.0f || coord.z >= h*pGameData->boxScale);
+		intersect = ( coord.x < 0.0f || coord.x >= (w-1)*pGameData->boxScale || coord.z < 0.0f || coord.z >= (h-1)*pGameData->boxScale);
 	}
 	return !intersect;
 }
@@ -238,13 +247,13 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	//mWeapon = new Weapon(true, data);
 	mWeapon.load( data, true, emitter);
 	mPosition = glm::vec3( 1, 1, 1 );
-	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1 };
+	yoffset = -0.5f;
+	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, yoffset, 1, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;
-	rotX = glm::pi<float>() * -0.5f;
+	rotX = glm::pi<float>() * -0.5f; 
 	mStrength = 0.0f;
 	mHealth = 100;
-
 	setScale( 0.1f );
 }
 
