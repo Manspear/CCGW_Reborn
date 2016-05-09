@@ -140,6 +140,7 @@ Marker::Marker()
 {
 	mPicked = false;
 	selectedTile = { -1, -1 };
+	setScale(1.f/50.f);
 }
 
 Marker::~Marker()

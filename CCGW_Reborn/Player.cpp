@@ -230,6 +230,7 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	//mWeapon = new Weapon(true, data);
 	mWeapon.load( data, true, emitter);
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+	setScale(1.f / 10.f);
 	mMaxSpeed = 10;
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;

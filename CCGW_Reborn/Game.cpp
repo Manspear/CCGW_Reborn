@@ -82,8 +82,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer->load( playerModel );
 	mGround.load(terrainModel);
-	mActionMarker.load( playerModel );
-	mTacticalMarker.load( playerModel );
+	mActionMarker.load(boxModel);
+	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 	//mTowerModel.load( playerModel );
 	//mTowerModel.setScale( data.boxScale );
