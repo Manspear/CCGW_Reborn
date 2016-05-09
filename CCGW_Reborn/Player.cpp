@@ -87,8 +87,8 @@ void Player::update(const Input* inputs, const float &dt)
 		std::cout << std::endl;
 	}
 
-	if (mPosition.y < 0.5) {
-		mPosition.y = 0.5;
+	if (mPosition.y - yoffset < 0.5) {
+		mPosition.y = 0.0;
 		speedY = 0;
 		canJump = true;
 	}
@@ -141,7 +141,6 @@ void Player::update(const Input* inputs, const float &dt)
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
 	mWorld = rotatematrix * mWorld;
 	
-
 	mWorld[3][0] = mPosition.x;
 	mWorld[3][1] = mPosition.y;
 	mWorld[3][2] = mPosition.z;
@@ -150,7 +149,7 @@ void Player::update(const Input* inputs, const float &dt)
 	if (inputs->buttonReleased(0))
 	{
 		glm::vec3 temp = { mLookat.x, 0, mLookat.z };
-		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0))/4.f;
+		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0))/4.f - glm::vec3(0, yoffset, 0);
 		glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
 		float rotation = rotX  - glm::angle(glm::normalize(glm::vec3(la.x,0,la.z)), tempLookat);
 		//mWeapon->shoot(tempPos, la, rotation, mStrength);
@@ -238,13 +237,13 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	//mWeapon = new Weapon(true, data);
 	mWeapon.load( data, true, emitter);
 	mPosition = glm::vec3( 1, 1, 1 );
-	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1 };
+	yoffset = -0.5f;
+	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, yoffset, 1, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;
-	rotX = glm::pi<float>() * -0.5f;
+	rotX = glm::pi<float>() * -0.5f; 
 	mStrength = 0.0f;
 	mHealth = 100;
-
 	setScale( 0.1f );
 }
 
