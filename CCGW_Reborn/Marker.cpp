@@ -39,7 +39,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
 			mMarkedIndex.push_back(selectedTile);
 			sNode start = { 0, 0 };
-			sNode end = { 20, 99 };
+			sNode end = { 8, 49 };
 			int mTargets = 0;
 			if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
 				mMarkedIndex.erase(mMarkedIndex.end() - 1);

@@ -55,10 +55,10 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* playerModel = data.pAssets->load<Model>( "Models/klara.mole" );
 	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
-	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 
-	data.pGrid = new Grid(36, 100);
-	data.mTowers = 36*100;
+	data.pGrid = new Grid(16, 50);
+	data.mTowers = 16*50;
 	data.pTowers = new Tower[data.mTowers];
 
 	Emitter towerEmitter;
@@ -72,13 +72,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, enemyModel, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
-
+	/*
 	sNode start = { 0, 0 };
 	sNode end = { 0, 10 };
 	mpPath = new sNode[36*100];
 	mTargets = 0;
 
-	data.pGrid->findPath( start, end, mpPath, &mTargets );
+	data.pGrid->findPath( start, end, mpPath, &mTargets );*/
 
 	data.pPlayer->load( playerModel );
 	mGround.load(terrainModel);
@@ -125,7 +125,7 @@ Game::~Game() {
 	delete data.pGrid;
 	delete pActionState;
 	delete[] data.pTowers;
-	delete[] mpPath;
+	//delete[] mpPath;
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
@@ -179,7 +179,7 @@ void Game::render()
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
-	//mGround.render( data.pDeferredProgram->getProgramID() );
+	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );
