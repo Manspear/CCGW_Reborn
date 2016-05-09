@@ -36,7 +36,7 @@ void WaveSpawner::spawn()
 	}
 
 	// start by getting the path for the moleratmen
-	sNode end = { 7, 99 };
+	sNode end = { 7, 49 };
 	if( pGameData->pGrid->findPath( start, end, mpPath, &mTargets ) )
 	{
 		incrementWave();
