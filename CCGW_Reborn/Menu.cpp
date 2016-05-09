@@ -18,15 +18,25 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		inputs->setMouseVisible(true);
 		inputs->setMouseLock(false);
 	}
-	if (inputs->buttonReleased(0)) {
-		int x = inputs->mousePosition().x;
-		int y = (inputs->mousePosition().y * -1) + gHeight;
-		for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
-			if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
-				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs);
+	
+	int x = inputs->mousePosition().x;
+	int y = (inputs->mousePosition().y * -1) + gHeight;
+	for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
+		if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y) && mAllMenu[activeMenu].theMenu[i].mType != 'd') {
+			mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
+			if (inputs->buttonReleased(0)) {
+				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i);
 				break;
-			};
+			}
 		}
+		else
+			mAllMenu[activeMenu].theMenu[i].mHighlighted = false;		
+	
+	}
+	
+	if (mActiveField != nullptr) {
+		if (inputs->keyReleased(SDLK_k))
+			mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(mAllMenu[activeMenu].theNumbers.size() * 0.05f, 0), 0 });
 	}
 	render();
 	if (activeMenu != MAIN_MENU)
@@ -45,7 +55,7 @@ void Menu::updateNumbers(GameData * data)
 	{
 		mAllMenu[activeMenu].theNumbers[i].number = gold / divider;
 		divider /= 10;
-	}
+	}*/
 }
 
 void Menu::render()
@@ -53,14 +63,14 @@ void Menu::render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
-	menuShader->use();
-	
+	menuShader->use();	
 	for (int i = mAllMenu[activeMenu].theMenu.size() - 1; i > -1; i--) {
-		GLuint texLocation = glGetUniformLocation(menuShader->getProgramID(), "texSampler");
-		glUniform1i(texLocation, 0);
+		glUniform1i(buttonTex, 0);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mAllMenu[activeMenu].theMenu[i].mTexture);
 
+		glUniform1i(buttonBool, mAllMenu[activeMenu].theMenu[i].mHighlighted);
+
+		glBindTexture(GL_TEXTURE_2D, mAllMenu[activeMenu].theMenu[i].mTexture);
 		glBindBuffer(GL_ARRAY_BUFFER, mAllMenu[activeMenu].theMenu[i].mVboID);
 
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
@@ -73,8 +83,7 @@ void Menu::render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	menuShader->unUse();
-	if (activeMenu != MAIN_MENU)
-		renderNumbers();
+	renderNumbers();
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 }
@@ -222,11 +231,14 @@ Menu::Menu()
 	numberShader = new ForwardProgram("numbers.vertex", "numbers.pixel", " ");
 	menuShader->setClear(false);
 	numberShader->setClear(false);
+	mActiveField = nullptr;
 	mActive = true;
 	activeMenu = MAIN_MENU;
 	mRunning = true;
 	posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");;
 	numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");;
+	buttonTex = glGetUniformLocation(menuShader->getProgramID(), "texSampler");
+	buttonBool = glGetUniformLocation(menuShader->getProgramID(), "highlighted");
 
 	buildAMenu("menuBuild.txt", MAIN_MENU);
 	buildAMenu("actionBuild.txt", ACTION_HUD);
@@ -241,7 +253,7 @@ Menu::~Menu()
 	delete numberShader;
 }
 
-void Menu::buttonAction(char type, Input* inputs)
+void Menu::buttonAction(char type, Input* inputs, int index)
 {
 	switch (type) {
 	case'p':
@@ -258,8 +270,12 @@ void Menu::buttonAction(char type, Input* inputs)
 		break;
 	case'd':
 		break;
+	case 'a':
+		mActiveField = &mAllMenu[activeMenu].theMenu[index];
 	}
 }
+
+
 
 GLuint Menu::loadTex(std::string filePath)
 {

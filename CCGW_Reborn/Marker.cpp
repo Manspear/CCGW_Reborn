@@ -109,21 +109,17 @@ void Marker::render(const GLuint & programID)
 	mWorld[1][1] = 1.0f;
 	mWorld[2][2] = 1.0f;
 	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-	//activateTextures(programID);
-	//mpMesh->draw();
-	
-
+	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);	
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	mpModel->draw();
 	for (int i = 0; i < mMarkedIndex.size(); i++) {
 		mWorld[3][0] = mMarkedIndex[i].x;
 		mWorld[3][1] = 1.0f;
 		mWorld[3][2] = mMarkedIndex[i].y;
 		glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-		//mpMesh->draw();
 		mpModel->draw();
 	}
-	//deactivateTextures();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 std::vector<glm::vec2> Marker::getMarkedTiles()
