@@ -46,15 +46,15 @@ void Arrow::update(float dt)
 
 
 	glm::vec3 lastPos = mPosition;
-	mPosition += mVelocity * dt;
 	mVelocity += mGravitation * 0.05f;
+	mPosition += mVelocity * dt;
 
 	//rotY = atan2( lastPos.y - mPosition.y, lastPos.x - mPosition.x );
 	mLookat = glm::normalize( mPosition - lastPos );
 	glm::vec3 tempVec = glm::normalize( glm::vec3( mLookat.x, 0, mLookat.z ) );
 	rotY = glm::angle( mLookat, tempVec );
-	if( mLookat.y < 0 )
-		rotY *= -1;
+	//if( mLookat.y < 0 )
+		//rotY *= -1;
 
 	/*
 	glm::mat3 rotationY = glm::mat3(
@@ -86,21 +86,24 @@ void Arrow::update(float dt)
 		glm::vec4(totalRotation[2], 0),
 		glm::vec4(mPosition.x, mPosition.y, mPosition.z, 1));
 	*/
-	/*
-	this->mWorld = {
-		cosf(rotX),				sinf(rotY)*sinf(rotX),		sinf(rotX),				0,
-		0,						cosf(rotX),					sinf(rotX),				0,
-		sinf(rotX),				cosf(rot)*sinf(rotX)*-1.f,	cosf(rotY)*cosf(rotX),	0,
+	
+	/*this->mWorld = {
+		cosf(rotY),				sinf(rotX-p)*sinf(rotY),		sinf(rotY),				0,
+		0,						cosf(rotY),					sinf(rotY),				0,
+		sinf(rotY),				cosf(rotX-p)*sinf(rotY)*-1.f,	cosf(rotX-p)*cosf(rotY),	0,
 		mPosition.x,			mPosition.y,				mPosition.z,			1
 	};*/
 	
+
 	float p = glm::pi<float>() * 0.5f;
-	this->mWorld = {
-					cosf(rotY)* cosf(rotX-p),		sinf(rotY),			cosf(rotY) * sinf(rotX-p),			0,
-					-sinf(rotY) * cosf(rotX-p),		cosf(rotY),			-sinf(rotY) * sinf(rotX-p),			0,
-					-sinf(rotX-p),					0,					cosf(rotX-p),						0,
-					mPosition.x,					mPosition.y,		mPosition.z,						1
-	};
+
+	this->mWorld =	glm::mat4(
+								cosf(rotY)* cosf(rotX+p),		sinf(rotY),			cosf(rotY) * sinf(rotX+p),			0,
+								-sinf(rotY) * cosf(rotX+p),		cosf(rotY),			-sinf(rotY) * sinf(rotX+p),			0,
+								-sinf(rotX+p),					0,					cosf(rotX+p),						0,
+								mPosition.x,					mPosition.y,		mPosition.z,						1
+	);
+
 
 	if (mTimeSinceLastEmmit > mEmmitInterval)
 	{
@@ -134,9 +137,9 @@ void Arrow::update(float dt)
 
 					if (damage > 0.0f)
 					{
-						pGameData->pMoleratmen[i].imHit(damage);
+						pGameData->pMoleratmen[i].imHit(damage, mPosition);
 
-						mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+						//mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 						if (!pGameData->pMoleratmen[i].getAlive()) {
 							pGameData->pGold++;
 							pGameData->pScore++;
@@ -177,8 +180,8 @@ void Arrow::update(float dt)
 
 					if (damage > 0.0f)
 					{
-						pGameData->pMolebats[i].imHit(damage);
-						mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+						pGameData->pMolebats[i].imHit(damage, mPosition);
+						//mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 						if (!pGameData->pMolebats[i].getAlive()) {
 							pGameData->pGold++;
 							pGameData->pScore++;
@@ -201,7 +204,7 @@ void Arrow::update(float dt)
 		int y = (int)((int)(mPosition.z + 1.0f) / pGameData->boxScale);
 		if (!(y < 0 || x < 0 || y >= (int)pGameData->pGrid->getHeight() || x >= (int)pGameData->pGrid->getWidth())) {
 			uchar b = pGameData->pGrid->getTile(x, y);
-			if ( b != TILE_EMPTY && b!=TILE_BLOCKED) {
+			if (b != TILE_EMPTY && b != TILE_BLOCKED) {
 				if( mPosition.y < pGameData->boxScale ){
 					mAlive = false;
 				}
