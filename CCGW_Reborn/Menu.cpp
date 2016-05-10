@@ -25,9 +25,7 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y) && mAllMenu[activeMenu].theMenu[i].mType != 'd') {
 			mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
 			if (inputs->buttonReleased(0)) {
-				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i);
-				if (mAllMenu[activeMenu].theMenu[i].mType == 'r')
-					data->pGame->restartGame();
+				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i, data);
 				break;
 			}
 		}
@@ -44,6 +42,33 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	if (activeMenu != MAIN_MENU)
 		updateNumbers(data);
 	return mRunning;
+}
+
+void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
+{
+	switch (type) {
+	case'p':
+		activeMenu = ACTION_HUD;
+		mActive = false;
+		inputs->setMouseLock(true);
+		inputs->setMouseVisible(false);
+		break;
+	case'q':
+		mRunning = false;
+		break;
+	case'r':
+		activeMenu = ACTION_HUD;
+		mActive = false;
+		inputs->setMouseLock(true);
+		inputs->setMouseVisible(false);
+		data->pGame->restartGame();
+		break;
+	case'd':
+		break;
+	case 'a':
+		mActiveField = &mAllMenu[activeMenu].theMenu[index];
+		break;
+	}
 }
 
 void Menu::updateNumbers(GameData * data)
@@ -247,30 +272,6 @@ Menu::~Menu()
 	delete numberShader;
 	glDeleteBuffers(1, &numberVbo);
 }
-
-void Menu::buttonAction(char type, Input* inputs, int index)
-{
-	switch (type) {
-	case'p':
-		activeMenu = ACTION_HUD;
-		mActive = false;
-		inputs->setMouseLock(true);
-		inputs->setMouseVisible(false);
-		break;
-	case'q':
-		mRunning = false;
-		break;
-	case'r':
-		break;
-	case'd':
-		break;
-	case 'a':
-		mActiveField = &mAllMenu[activeMenu].theMenu[index];
-		break;
-	}
-}
-
-
 
 GLuint Menu::loadTex(std::string filePath)
 {

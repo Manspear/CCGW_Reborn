@@ -85,12 +85,10 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mActionMarker.load(markerModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
+	//mTowerModel.load( playerModel );
+	//mTowerModel.setScale( data.boxScale );
 	mMoleratman.load( enemyModel );
 	mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
-
-	mMolebat.load( molebatModel );
-	mMolebat.setPosition( glm::vec3( 16.0f, 1.0f, 16.0f ) );
-	mMolebat.setGameData( &data );
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
@@ -147,19 +145,25 @@ void Game::restartGame()
 	mCounter = 0;
 	data.pScore = 0;
 	data.pGold = 5;
-	
+	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
 	for (int i = 0; i<data.mTowers; i++)
 		data.pTowers[i].setAlive(false);
 	delete data.pGrid;
 	data.pGrid = new Grid(16, 50);
+	
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
+	
+	for (int i = 0; i < data.mMolebats; i++)
+		data.pMolebats[i].setAlive(false);
+	
+	for (int i = 0; i < data.mMoleratmen; i++) 
+		data.pMoleratmen[i].setAlive(false);
+	
 	data.pPlayer->setPosition(glm::vec3(14.0f, 0.0f, 14.0f));
-
 	pWaveSpawner->restart();
-	pWaveSpawner->spawn();
 }
 
 State Game::run(Input* inputs, const float &dt, bool menuActive)
@@ -200,6 +204,7 @@ void Game::render()
 {
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
+	//data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
 	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
@@ -213,6 +218,9 @@ void Game::render()
 	mMoleratman.render( data.pDeferredProgram->getProgramID());
 	mMolebat.render( data.pDeferredProgram->getProgramID() );
 
+	/*for (int i = 0; i < data.mpTowers.size(); i++) {
+		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
+	}*/
 	for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );
@@ -240,7 +248,7 @@ void Game::update(Input* inputs, float dt)
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
 
-	mMoleratman.update( 0.0f , &data);
+	mMoleratman.update( 0.0f );
 	mMolebat.update( 0.0f );
 	
 	bool waveDone = true;

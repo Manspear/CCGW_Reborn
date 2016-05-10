@@ -1,39 +1,6 @@
 #include "GameObject.h"
 #include <iostream>
 
-/*bool GameObject::load(Mesh * assets, Texture * diffuseTex, Texture * specularMap, Texture * normalMap)
-{
-	if (assets != nullptr)
-		mpMesh2 = assets;
-	if (diffuseTex != nullptr)
-		mpTexture = diffuseTex;
-	if (specularMap != nullptr)
-		mpSpecularMap = specularMap;
-	if (normalMap != nullptr)
-		mpNormalMap = normalMap;
-
-	return (mpMesh != nullptr);
-}
-
-bool GameObject::load(tempMesh* assets, Texture* diffuseTex, Texture* specularMap, Texture* normalMap)
-{
-	if (assets != nullptr)
-		mpMesh = assets;
-	if (diffuseTex != nullptr)
-		mpTexture = diffuseTex;
-	if (specularMap != nullptr)
-		mpSpecularMap = specularMap;
-	if (normalMap != nullptr)
-		mpNormalMap= normalMap;
-
-	return (mpMesh != nullptr);
-}
-
-bool GameObject::loadTex(Texture* texture) {
-	mpTexture = texture;
-	return (mpTexture != nullptr);
-}*/
-
 bool GameObject::load( Model* model )
 {
 	mpModel = model;
@@ -47,61 +14,15 @@ void GameObject::render(const GLuint & programID)
 {
 	GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-
-	//activateTextures(programID);
-	//mpMesh->draw();
 	mpModel->draw();
-	//deactivateTextures();
 }
 
 void GameObject::render(const GLuint & programID, const glm::mat4 &viewMat)
 {
 	GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-
-	//activateTextures(programID);
-	//mpMesh->draw();
 	mpModel->draw();
-	//deactivateTextures();
 }
-
-/*void GameObject::render2(const GLuint & programID)
-{
-	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-	activateTextures(programID);
-	//mpMesh2->draw();
-	mpModel->draw();
-	deactivateTextures();
-}*/
-
-/*void GameObject::activateTextures(const GLuint &programID) {
-	GLuint texLocation = glGetUniformLocation(programID, "texSampler");
-	glUniform1i(texLocation, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mpTexture->getID());
-	if (mpSpecularMap != nullptr) {
-		GLuint specularLocation = glGetUniformLocation(programID, "specularSampler");
-		glUniform1i(specularLocation, 1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mpSpecularMap->getID());
-	}
-	if (mpNormalMap != nullptr) {
-		GLuint normalLocation = glGetUniformLocation(programID, "normalSampler");
-		glUniform1i(normalLocation, 2);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, mpNormalMap->getID());
-	}
-}
-
-void GameObject::deactivateTextures() {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}*/
 
 glm::vec3 GameObject::getPosition() const
 {
@@ -118,10 +39,14 @@ void GameObject::setPosition( glm::vec3 position )
 
 void GameObject::setScale(float scale)
 {
-	//mWorld = { scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1 };
 	mWorld[0][0] = scale;
 	mWorld[1][1] = scale;
 	mWorld[2][2] = scale;
+}
+
+void GameObject::setWorld(glm::mat4 world)
+{
+	mWorld = world;
 }
 
 GameObject::GameObject(const GameObject& ref)
