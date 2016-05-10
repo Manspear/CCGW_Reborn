@@ -25,7 +25,7 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y) && mAllMenu[activeMenu].theMenu[i].mType != 'd') {
 			mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
 			if (inputs->buttonReleased(0)) {
-				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i);
+				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i, data);
 				break;
 			}
 		}
@@ -44,18 +44,37 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	return mRunning;
 }
 
+void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
+{
+	switch (type) {
+	case'p':
+		activeMenu = ACTION_HUD;
+		mActive = false;
+		inputs->setMouseLock(true);
+		inputs->setMouseVisible(false);
+		break;
+	case'q':
+		mRunning = false;
+		break;
+	case'r':
+		activeMenu = ACTION_HUD;
+		mActive = false;
+		inputs->setMouseLock(true);
+		inputs->setMouseVisible(false);
+		data->pGame->restartGame();
+		break;
+	case'd':
+		break;
+	case 'a':
+		mActiveField = &mAllMenu[activeMenu].theMenu[index];
+		break;
+	}
+}
+
 void Menu::updateNumbers(GameData * data)
 {
 	if( activeMenu == LOSING_SCREEN )
 		return;
-
-	int gold = data->pGold;
-	int divider = 100;
-	for (int i = 0; i < 3; i++)
-	{
-		mAllMenu[activeMenu].theNumbers[i].number = gold / divider;
-		divider /= 10;
-	}
 }
 
 void Menu::render()
@@ -251,31 +270,8 @@ Menu::~Menu()
 {
 	delete menuShader;
 	delete numberShader;
+	glDeleteBuffers(1, &numberVbo);
 }
-
-void Menu::buttonAction(char type, Input* inputs, int index)
-{
-	switch (type) {
-	case'p':
-		activeMenu = ACTION_HUD;
-		mActive = false;
-		inputs->setMouseLock(true);
-		inputs->setMouseVisible(false);
-		break;
-	case'q':
-		mRunning = false;
-		break;
-	case'r':
-		mRunning = false;
-		break;
-	case'd':
-		break;
-	case 'a':
-		mActiveField = &mAllMenu[activeMenu].theMenu[index];
-	}
-}
-
-
 
 GLuint Menu::loadTex(std::string filePath)
 {

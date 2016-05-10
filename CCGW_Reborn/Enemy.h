@@ -5,7 +5,7 @@
 #include "BoundingBox.h"
 #include "glm\gtx\vector_angle.hpp"
 
-#define ENEMY_RENDER_HITBOX 0
+#define ENEMY_RENDER_HITBOX 1
 
 //Abstract class for enemies.
 class Enemy : public GameObject

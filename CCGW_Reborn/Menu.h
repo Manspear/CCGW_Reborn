@@ -35,7 +35,7 @@ private:
 			mHighlighted = false;
 		};
 		~Button() {
-
+	
 		};
 		bool checkMouseIntersection(int x, int y) {
 			return !(x < mX || y < mY || x > mW || y > mH);
@@ -65,7 +65,7 @@ public:
 	Menu();
 	~Menu();
 private:
-	void buttonAction(char type, Input* inputs, int index);
+	void buttonAction(char type, Input* inputs, int index, GameData* data);
 	GLuint loadTex(std::string filePath);
 	std::string readBuild(std::string filePath);
 	void addNumber(float width, float height);

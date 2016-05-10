@@ -13,6 +13,9 @@ float Player::getRot() const
 {
 	return rotX;
 }
+float Player::getYOffset() {
+	return this->yoffset;
+}
 
 void Player::update(const Input* inputs, const float &dt)
 {
@@ -185,12 +188,18 @@ void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
 	this->mWeapon.draw(programID);
 }
 
+void Player::setAlive(bool amIalive)
+{
+	mHealth = 25;
+}
+
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
 	glm::vec3 result = glm::normalize(v1 + v2);
 	if (result != result)
  		result = glm::vec3(0,0,0);
 	return result;
 }
+
 bool Player::checkMove(glm::vec3 coord) {
 	mBB.center = coord;
 
@@ -200,7 +209,8 @@ bool Player::checkMove(glm::vec3 coord) {
 			int x = (int)((int)(coord.x + 1.0f) / pGameData->boxScale) + i;
 			int y = (int)((int)(coord.z + 1.0f) / pGameData->boxScale) + j;
 			if (!(y < 0 || x < 0 || y >= (int)pGameData->pGrid->getHeight() || x >= (int)pGameData->pGrid->getWidth())) {
-				if (pGameData->pGrid->getTile(x, y) != TILE_EMPTY) {
+				uchar b = pGameData->pGrid->getTile(x, y);
+				if (b != TILE_BLOCKED && b != TILE_EMPTY) {
 					if (this->mBB.intersect(glm::vec3(x*pGameData->boxScale, 1, y*pGameData->boxScale), pGameData->boxScale / 2)) {
 						intersect = true;
 					}

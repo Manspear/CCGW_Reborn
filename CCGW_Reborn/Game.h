@@ -30,7 +30,7 @@ class Game {
 public:
 	bool tactical;
 	GameData* getGameData();
-
+	void restartGame();
 
 	State run(Input* inputs, const float &dt, bool menuActive);
 	void tacticalRun(Input* inputs, const float &dt, bool menuActive);
@@ -43,19 +43,15 @@ private:
 	Terrain mGround;
 	Marker mActionMarker;
 	Marker mTacticalMarker;
-	//Tower mTowerModel;
 	GameData data;
 	sNode* mpPath;
 	int mTargets;
-	//std::vector<Tower*> mpTowers;
 	WaveSpawner* pWaveSpawner;
 
 	int mGold;
 	int mScore;
 
 	int mMaxWaves;
-	int mBabyCount;
-
 
 	float mCounter;
 	float mDelayCleared;
@@ -65,6 +61,5 @@ private:
 	void createScreenQuad();
 	void drawOnScreenQuad();
 	void render();
-	void buildTowers();
 	void update(Input* inputs, float dt);
 };

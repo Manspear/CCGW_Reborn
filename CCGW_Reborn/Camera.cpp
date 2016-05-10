@@ -7,9 +7,11 @@
 void Camera::follow( glm::vec3 position, const glm::vec3 &lookDir, float distance, const glm::vec3 &up )
 {
 	glm::vec3 temp = {lookDir.x, 0, lookDir.z};
+	glm::vec3 xoffset = glm::cross(temp, glm::vec3(0, 1, 0));
 	glm::vec3 offset = glm::vec3(glm::cross(lookDir, glm::cross(glm::vec3(0, 1, 0), lookDir)))*(distance / 4);
-	mPosition = position - distance * lookDir + offset+ glm::cross(temp, glm::vec3(0,1,0));// (-lookDir * distance);
-	glm::vec3 lookingPoint = position + offset + lookDir * distance;
+	offset.y += 1.5f;
+	mPosition = position - distance * lookDir  + offset + xoffset;// (-lookDir * distance);
+	glm::vec3 lookingPoint = position + lookDir * distance;
 	mView = glm::lookAt(mPosition , lookingPoint, up);
 	//std::cout << lookingPoint.x << "   " << lookingPoint.y << "   " << lookingPoint.z << "\n";
 }

@@ -1,6 +1,7 @@
 #include "Moleratman.h"
+#include "Player.h"
 
-void Moleratman::update(float dt)
+void Moleratman::update(float dt, GameData* data)
 {
 	if (mCurrent >= 0)
 	{
@@ -32,7 +33,16 @@ void Moleratman::update(float dt)
 		mLookat = glm::normalize(glm::vec3(dir.x, 0.0f, dir.z));
 		rotY = -glm::angle(mLookat, glm::vec3(1.0f, 0.0f, 0.0f));
 		if (mLookat.z < 0.0f)
-			rotY *= -1.0f;
+			rotY *= -1.0f;		
+	}
+	else if (mAlive && mCurrent <= 0){
+		if (--data->mBabyCount <= 0)
+			data->pPlayer->takeDamage(1000);
+		mAlive = false;
+	}
+	if (mLife <= 0) {
+		mAlive = false;
+	}
 
 		float p = glm::pi<float>()*0.5f;
 		rotY -= p;
@@ -43,8 +53,6 @@ void Moleratman::update(float dt)
 			sinf(rotY),		0,		cosf(rotY),		0,
 			mPosition.x,	mPosition.y,	mPosition.z, 1
 		};
-	}
-
 	mBoundingBox.center = mPosition + glm::vec3( 0, 0.75f, 0 );
 
 	glm::vec3 headOffset = mLookat*0.5f;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 class Assets;
 class Camera;
 class DeferredProgram;
@@ -13,10 +11,12 @@ class Grid;
 class Molebat;
 class Moleratman;
 class Tower;
+class Game;
 struct GameData
 {
 	Assets* pAssets;
 	Camera* pCamera;
+	Game* pGame;
 	DeferredProgram* pDeferredProgram;
 	ForwardProgram* pForwardProgram;
 	ForwardProgram* pMenuProgram;
@@ -27,11 +27,11 @@ struct GameData
 	Molebat* pMolebats;
 	int boxScale;
 	int mMolebats;
+	int mBabyCount;
 	Moleratman* pMoleratmen;
 	int mMoleratmen;
 	int pScore;
 	int pGold;
-	//std::vector<Tower*> mpTowers;
 	Tower* pTowers;
 	int mTowers;
 };

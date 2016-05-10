@@ -13,8 +13,10 @@ public:
 	float getRot() const;
 	void render(const GLuint & programID, const glm::mat4 &viewMat);
 	bool checkMove(glm::vec3 coord);
+	void setAlive(bool amIalive);
 	void takeDamage(float damage);
 	bool isAlive();
+	float getYOffset();
 	
 	Player();
 	Player(GameData* data, Emitter* emitter);
@@ -26,7 +28,6 @@ private:
 	float mSpeed;
 	float mStrength;
 	glm::vec3 mDirection;
-	//Weapon* mWeapon;
 	Weapon mWeapon;
 	GameData* pGameData;
 
