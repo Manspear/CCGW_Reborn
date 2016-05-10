@@ -47,8 +47,6 @@ private:
 	sNode* mpPath;
 	int mTargets;
 	WaveSpawner* pWaveSpawner;
-	Moleratman mMoleratman;
-	Molebat mMolebat;
 
 	int mGold;
 	int mScore;

@@ -26,6 +26,7 @@ public:
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
+	void setWorld(glm::mat4 world);
 
 	GameObject(const GameObject& ref);
 	GameObject(glm::vec3 position, float scale);

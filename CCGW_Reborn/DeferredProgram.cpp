@@ -89,6 +89,14 @@ void DeferredProgram::use() {
 	glViewport(0, 0, gWidth, gHeight);
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	GLuint texLocation = glGetUniformLocation( mProgramID, "texSampler" );
+	GLuint specularLocation = glGetUniformLocation( mProgramID, "specularSampler" );
+	GLuint normalLocation = glGetUniformLocation( mProgramID, "normalSampler" );
+
+	glUniform1i( texLocation, 0 );
+	glUniform1i( specularLocation, 1 );
+	glUniform1i( normalLocation, 2 );
 }
 
 void DeferredProgram::unUse() {
