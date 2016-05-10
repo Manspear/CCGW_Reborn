@@ -124,6 +124,11 @@ void GameObject::setScale(float scale)
 	mWorld[2][2] = scale;
 }
 
+void GameObject::setWorld(glm::mat4 world)
+{
+	mWorld = world;
+}
+
 GameObject::GameObject(const GameObject& ref)
 	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )
 {

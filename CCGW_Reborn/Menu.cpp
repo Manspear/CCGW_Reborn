@@ -55,7 +55,7 @@ void Menu::updateNumbers(GameData * data)
 	{
 		mAllMenu[activeMenu].theNumbers[i].number = gold / divider;
 		divider /= 10;
-	}*/
+	}
 }
 
 void Menu::render()

@@ -26,6 +26,8 @@ void Camera::tacticalMovement(glm::vec3 moveDir, const float &height)
 void Camera::updateUniforms( GLuint viewPerspective, GLuint cameraPosition )
 {
 	glUniformMatrix4fv(viewPerspective, 1, GL_FALSE, &getViewPerspective()[0][0] );
+	//glUniformMatrix4fv( view, 1, GL_FALSE, &mView[0][0] );
+	//glUniformMatrix4fv( projection, 1, GL_FALSE, &mPerspective[0][0] );
 	glUniform3fv( cameraPosition, 1, &mPosition[0] );
 }
 

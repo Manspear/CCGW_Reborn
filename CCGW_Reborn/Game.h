@@ -49,8 +49,6 @@ private:
 	int mTargets;
 	//std::vector<Tower*> mpTowers;
 	WaveSpawner* pWaveSpawner;
-	Moleratman mMoleratman;
-	Molebat mMolebat;
 
 	int mGold;
 	int mScore;
