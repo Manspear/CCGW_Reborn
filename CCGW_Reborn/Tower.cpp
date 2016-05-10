@@ -63,7 +63,7 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 		targetHit = false;	
 		if (targetEnemy->getAlive())
 		{
-			targetEnemy->imHit(mStrength);
+			targetEnemy->imHit(mStrength, targetEnemy->getPosition() + glm::vec3(0,1.5f,0));
 			if (!targetEnemy->getAlive())
 			{
 				data->pGold++;

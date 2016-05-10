@@ -23,8 +23,8 @@ void Molebat::update(float dt)
 		pGameData->pPlayer->takeDamage(10);
 		mTimeSinceLastHit = 0;
 	}
-
-	newPos += movement * dt;
+	float mSpeed = 3;
+	newPos += movement * mSpeed * dt;
 
 	// stay above ground
 	if( newPos.y < MOLEBAT_HEIGHT )

@@ -53,8 +53,8 @@ void Arrow::update(float dt)
 	mLookat = glm::normalize( mPosition - lastPos );
 	glm::vec3 tempVec = glm::normalize( glm::vec3( mLookat.x, 0, mLookat.z ) );
 	rotY = glm::angle( mLookat, tempVec );
-	if( mLookat.y < 0 )
-		rotY *= -1;
+	//if( mLookat.y < 0 )
+		//rotY *= -1;
 
 	/*
 	glm::mat3 rotationY = glm::mat3(
@@ -97,24 +97,13 @@ void Arrow::update(float dt)
 
 	float p = glm::pi<float>() * 0.5f;
 
-	/*this->mWorld = {
-					cosf(rotY)* cosf(rotX),		sinf(rotY),			cosf(rotY) * sinf(rotX),			0,
-					-sinf(rotY) * cosf(rotX),		cosf(rotY),			-sinf(rotY) * sinf(rotX),			0,
-					-sinf(rotX),					0,					cosf(rotX),						0,
-					mPosition.x,					mPosition.y,		mPosition.z,						1
-	};*/
-	glm::mat4 mroty = { cosf(rotY), 0, -sinf(rotY),0,
-					0,1,0,0,
-					sinf(rotY),0,cosf(rotY),0,
-					0,0,0,1 };
-	glm::mat4 mrotx = { 1, 0, 0,0,
-		0,cosf(rotX+p),sinf(rotX+ p),0,
-		0,-sinf(rotX+p),cosf(rotX+p),0,
-		0,0,0,1 };
-	mWorld =mrotx * mroty ;
-	mWorld[3][0] = mPosition.x;
-	mWorld[3][1] = mPosition.y;
-	mWorld[3][2] = mPosition.z;
+	this->mWorld =	glm::mat4(
+								cosf(rotY)* cosf(rotX+p),		sinf(rotY),			cosf(rotY) * sinf(rotX+p),			0,
+								-sinf(rotY) * cosf(rotX+p),		cosf(rotY),			-sinf(rotY) * sinf(rotX+p),			0,
+								-sinf(rotX+p),					0,					cosf(rotX+p),						0,
+								mPosition.x,					mPosition.y,		mPosition.z,						1
+	);
+
 
 	if (mTimeSinceLastEmmit > mEmmitInterval)
 	{
@@ -148,9 +137,9 @@ void Arrow::update(float dt)
 
 					if (damage > 0.0f)
 					{
-						pGameData->pMoleratmen[i].imHit(damage);
+						pGameData->pMoleratmen[i].imHit(damage, mPosition);
 
-						mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+						//mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 						if (!pGameData->pMoleratmen[i].getAlive()) {
 							pGameData->pGold++;
 							pGameData->pScore++;
@@ -191,8 +180,8 @@ void Arrow::update(float dt)
 
 					if (damage > 0.0f)
 					{
-						pGameData->pMolebats[i].imHit(damage);
-						mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+						pGameData->pMolebats[i].imHit(damage, mPosition);
+						//mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 						if (!pGameData->pMolebats[i].getAlive()) {
 							pGameData->pGold++;
 							pGameData->pScore++;

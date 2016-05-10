@@ -4,6 +4,8 @@
 #include "Grid.h"
 #include "BoundingBox.h"
 #include "glm\gtx\vector_angle.hpp"
+#include "Emitter.h"
+#include "Texture.h"
 
 #define ENEMY_RENDER_HITBOX 1
 
@@ -16,8 +18,8 @@ public:
 
 	//Set the path that this enemy should follow.
 	void setPath( sNode* path, int max );
-
-	void imHit(float strength);
+	void load(Model* model, Emitter* pEmitter);
+	void imHit(float strength, glm::vec3 position);
 	void setAlive( bool alive );
 	void setLife( float life );
 	bool getAlive() const;
@@ -32,8 +34,9 @@ public:
 	~Enemy();
 
 	static Model* pBoundingBoxModel;
-
 protected:
+	
+	Emitter mEmitter;
 	BoundingBox mBoundingBox;
 	BoundingBox mHeadBox;
 	float mBoundRadius;

@@ -6,7 +6,7 @@
 
 void Camera::follow( glm::vec3 position, const glm::vec3 &lookDir, float distance, const glm::vec3 &up )
 {
-	glm::vec3 temp = {lookDir.x, 0, lookDir.z};
+	glm::vec3 temp = glm::normalize(glm::vec3(lookDir.x, 0.0001f * lookDir.y, lookDir.z));
 	glm::vec3 xoffset = glm::cross(temp, glm::vec3(0, 1, 0));
 	glm::vec3 offset = glm::vec3(glm::cross(lookDir, glm::cross(glm::vec3(0, 1, 0), lookDir)))*(distance / 4);
 	offset.y += 1.5f;

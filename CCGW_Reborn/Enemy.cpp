@@ -5,7 +5,7 @@ Model* Enemy::pBoundingBoxModel = nullptr;
 void Enemy::render( GLuint programID )
 {
 	GameObject::render( programID );
-
+	
 	// change to 1 to draw the path
 #if 0
 	GLuint worldLocation = glGetUniformLocation( programID, "world" );
@@ -29,12 +29,19 @@ void Enemy::setPath( sNode* path, int max )
 	mCurrent = max-1;
 }
 
-void Enemy::imHit(float strength)
+void Enemy::load(Model* model, Emitter* emitter)
+{
+	GameObject::load(model);
+	this->mEmitter = *emitter;
+}
+
+void Enemy::imHit(float strength, glm::vec3 position)
 {
 	mLife -= strength;
 	if (mLife <= 0) {
 		mAlive = false;
 	}
+	mEmitter.spawn(position, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 }
 
 void Enemy::setAlive( bool alive )
