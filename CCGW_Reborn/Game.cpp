@@ -175,12 +175,12 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 {
 	if(menuActive)
 		update(inputs, dt);
-	render();
 	State result = GAME_PLAYING;
 	if (!data.pPlayer->isAlive())
 		result = GAME_LOST;
 	if (pWaveSpawner->hasWon())
 		result = GAME_WON;
+	render();
 	return result;
 }
 
@@ -209,7 +209,6 @@ void Game::render()
 {
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
-	//data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
 	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
@@ -250,13 +249,9 @@ void Game::render()
 void Game::update(Input* inputs, float dt) 
 {
 	pWaveSpawner->update(dt);
-
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
-
-	//mMoleratman.update( 0.0f );
-	//mMolebat.update( 0.0f );
 	
 	bool waveDone = true;
 	for (int i = 0; i < data.mMoleratmen; i++)
@@ -293,8 +288,6 @@ void Game::update(Input* inputs, float dt)
 			data.pTowers[i].update( &data, dt );
 
 	mActionMarker.update(data.pPlayer);
-
-
 	if (!data.pPlayer->isAlive())
 		int a = 0;
 }

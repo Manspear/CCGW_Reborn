@@ -13,12 +13,11 @@ void WaveSpawner::update( float deltaTime )
 			mCurMoleratmen++;
 			spawnMoleratman();
 		}
-		else if( mCurMolebats < mSpawnMolebats )
+		else if (mCurMolebats < mSpawnMolebats)
 		{
 			mCurMolebats++;
 			spawnMolebat();
 		}
-
 		mDelay = WAVESPAWNER_DELAY;
 	}
 }
