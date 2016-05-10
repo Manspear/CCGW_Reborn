@@ -46,8 +46,8 @@ void Arrow::update(float dt)
 
 
 	glm::vec3 lastPos = mPosition;
-	mPosition += mVelocity * dt;
 	mVelocity += mGravitation * 0.05f;
+	mPosition += mVelocity * dt;
 
 	//rotY = atan2( lastPos.y - mPosition.y, lastPos.x - mPosition.x );
 	mLookat = glm::normalize( mPosition - lastPos );
@@ -86,21 +86,35 @@ void Arrow::update(float dt)
 		glm::vec4(totalRotation[2], 0),
 		glm::vec4(mPosition.x, mPosition.y, mPosition.z, 1));
 	*/
-	/*
-	this->mWorld = {
-		cosf(rotX),				sinf(rotY)*sinf(rotX),		sinf(rotX),				0,
-		0,						cosf(rotX),					sinf(rotX),				0,
-		sinf(rotX),				cosf(rot)*sinf(rotX)*-1.f,	cosf(rotY)*cosf(rotX),	0,
+	
+	/*this->mWorld = {
+		cosf(rotY),				sinf(rotX-p)*sinf(rotY),		sinf(rotY),				0,
+		0,						cosf(rotY),					sinf(rotY),				0,
+		sinf(rotY),				cosf(rotX-p)*sinf(rotY)*-1.f,	cosf(rotX-p)*cosf(rotY),	0,
 		mPosition.x,			mPosition.y,				mPosition.z,			1
 	};*/
 	
+
 	float p = glm::pi<float>() * 0.5f;
-	this->mWorld = {
-					cosf(rotY)* cosf(rotX-p),		sinf(rotY),			cosf(rotY) * sinf(rotX-p),			0,
-					-sinf(rotY) * cosf(rotX-p),		cosf(rotY),			-sinf(rotY) * sinf(rotX-p),			0,
-					-sinf(rotX-p),					0,					cosf(rotX-p),						0,
+
+	/*this->mWorld = {
+					cosf(rotY)* cosf(rotX),		sinf(rotY),			cosf(rotY) * sinf(rotX),			0,
+					-sinf(rotY) * cosf(rotX),		cosf(rotY),			-sinf(rotY) * sinf(rotX),			0,
+					-sinf(rotX),					0,					cosf(rotX),						0,
 					mPosition.x,					mPosition.y,		mPosition.z,						1
-	};
+	};*/
+	glm::mat4 mroty = { cosf(rotY), 0, -sinf(rotY),0,
+					0,1,0,0,
+					sinf(rotY),0,cosf(rotY),0,
+					0,0,0,1 };
+	glm::mat4 mrotx = { 1, 0, 0,0,
+		0,cosf(rotX+p),sinf(rotX+ p),0,
+		0,-sinf(rotX+p),cosf(rotX+p),0,
+		0,0,0,1 };
+	mWorld =mrotx * mroty ;
+	mWorld[3][0] = mPosition.x;
+	mWorld[3][1] = mPosition.y;
+	mWorld[3][2] = mPosition.z;
 
 	if (mTimeSinceLastEmmit > mEmmitInterval)
 	{
@@ -201,7 +215,7 @@ void Arrow::update(float dt)
 		int y = (int)((int)(mPosition.z + 1.0f) / pGameData->boxScale);
 		if (!(y < 0 || x < 0 || y >= (int)pGameData->pGrid->getHeight() || x >= (int)pGameData->pGrid->getWidth())) {
 			uchar b = pGameData->pGrid->getTile(x, y);
-			if ( b != TILE_EMPTY && b!=TILE_BLOCKED) {
+			if (b != TILE_EMPTY && b != TILE_BLOCKED) {
 				if( mPosition.y < pGameData->boxScale ){
 					mAlive = false;
 				}

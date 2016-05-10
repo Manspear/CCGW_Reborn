@@ -22,7 +22,7 @@ void Tower::update(GameData* gameData, const float & dt)
 		{
 			for (int i = 0; i < gameData->mMoleratmen; i++) {
 				if (gameData->pMoleratmen[i].getAlive()) {
-					glm::vec3 direction = gameData->pMoleratmen[i].getPosition() - mPosition;
+					glm::vec3 direction = (gameData->pMoleratmen[i].getPosition() + glm::vec3(0,1,0)) - mPosition;
 					mDistanceToTarget = glm::length(direction);
 					direction = glm::normalize(direction);
 					if (mDistanceToTarget < mRange)
@@ -36,7 +36,7 @@ void Tower::update(GameData* gameData, const float & dt)
 						if (tempDir.z < 0)
 							angle *= -1;
 
-						mWeapon.shoot(mPosition, direction, angle);
+						mWeapon.shoot(mPosition , direction, angle);
 						break;
 					}
 				}

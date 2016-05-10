@@ -56,6 +56,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );
+	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
 
 	Enemy::pBoundingBoxModel = boundingBoxModel;
 
@@ -74,7 +75,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	{
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
-		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, enemyModel, &towerEmitter );
+		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
 
