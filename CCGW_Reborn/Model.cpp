@@ -169,7 +169,7 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 	//Now loop through the root's children, and apply the root-matrix to their
 	//"final transform". Then loop through the children's children and apply 
 	//that "final transform" to them. Etc...
-	recursiveUpdateJointMatrixList(finalRootMatrix, std::vector<sKeyFrame> tempFrames, rootKey);
+	recursiveUpdateJointMatrixList(finalRootMatrix, tempFrames, rootKey);
 }
 
 bool Model::load( Assets* assets, std::string file )
@@ -217,7 +217,8 @@ bool Model::load( Assets* assets, std::string file )
 	}
 
 	sortJointsByID();
-	makeJointHierarchy();
+	if(mpJointList.size() > 0)
+		makeJointHierarchy();
 	jointMatrixList.resize(mpJointList.size());
 	
 	mMeshes = assetData.getMeshList()->size();
