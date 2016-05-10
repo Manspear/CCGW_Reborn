@@ -86,8 +86,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mTacticalMarker.setScale( data.boxScale );
 	//mTowerModel.load( playerModel );
 	//mTowerModel.setScale( data.boxScale );
-	mMoleratman.load( enemyModel );
-	mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
 	data.pMolebats = new Molebat[data.mMolebats];
@@ -169,12 +167,12 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 {
 	if(menuActive)
 		update(inputs, dt);
-	render();
 	State result = GAME_PLAYING;
 	if (!data.pPlayer->isAlive())
 		result = GAME_LOST;
 	if (pWaveSpawner->hasWon())
 		result = GAME_WON;
+	render();
 	return result;
 }
 
@@ -203,7 +201,6 @@ void Game::render()
 {
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
-	//data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
 	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
@@ -214,12 +211,6 @@ void Game::render()
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
 
-	mMoleratman.render( data.pDeferredProgram->getProgramID());
-	mMolebat.render( data.pDeferredProgram->getProgramID() );
-
-	/*for (int i = 0; i < data.mpTowers.size(); i++) {
-		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
-	}*/
 	for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );
@@ -243,12 +234,10 @@ void Game::render()
 
 void Game::update(Input* inputs, float dt) 
 {
+	pWaveSpawner->update(dt);
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
-
-	mMoleratman.update( 0.0f );
-	mMolebat.update( 0.0f );
 	
 	bool waveDone = true;
 	for (int i = 0; i < data.mMoleratmen; i++)
@@ -285,12 +274,6 @@ void Game::update(Input* inputs, float dt)
 			data.pTowers[i].update( &data, dt );
 
 	mActionMarker.update(data.pPlayer);
-
-	pWaveSpawner->update( dt );
-
-	if( inputs->keyPressed( SDLK_k ) )
-		pWaveSpawner->spawn();
-
 	if (!data.pPlayer->isAlive())
 		int a = 0;
 }
