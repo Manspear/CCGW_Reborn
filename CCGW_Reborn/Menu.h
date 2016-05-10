@@ -15,7 +15,7 @@ struct Vertex {
 
 struct Number {
 	glm::vec2 pos;
-	int number;
+	int sampleX;
 };
 
 enum MENU {
@@ -72,6 +72,7 @@ private:
 	void renderNumbers();
 	void buildAMenu(std::string build, MENU menu);
 	Button addButton(float startX, float startY, float width, float height, char type, std::string texPath);
+	void writeToField(Input* inputs);
 
 	std::vector<AMenu> mAllMenu;
 	Button* mActiveField;

@@ -2,6 +2,7 @@
 
 #include <SDL\SDL.h>
 #include <glm\glm.hpp>
+#include <vector>
 
 enum
 {
@@ -52,6 +53,8 @@ public:
 	bool getMouseVisible() const;
 	bool getQuit() const;
 
+	std::vector<int>* getPressedKeys();
+
 	Input& operator=(const Input& ref);
 	Input(const Input& ref);
 	Input(SDL_Window* w);
@@ -66,6 +69,7 @@ private:
 	bool mQuit;
 	glm::vec2 mCurMouse;
 	glm::vec2 mPrevMouse;
+	std::vector<int> mPressedKeys;
 
 	SDL_Window* mpWindow;
 };

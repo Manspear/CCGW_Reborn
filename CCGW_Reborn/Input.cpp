@@ -4,7 +4,7 @@
 bool Input::update()
 {
 	bool result = true;
-
+	mPressedKeys.clear();
 	// copy last frames current input to current frames previous input
 	for (int i = 0; i<MAX_KEYS; i++)
 		mPrevKeys[i] = mCurKeys[i];
@@ -23,7 +23,10 @@ bool Input::update()
 		{
 			int key = e.key.keysym.sym;
 			if (key >= 0 && key < MAX_KEYS)
+			{
+				mPressedKeys.push_back(key);
 				mCurKeys[key] = true;
+			}
 		}
 		else if (e.type == SDL_KEYUP) //  user released a key
 		{
@@ -173,6 +176,11 @@ bool Input::getMouseVisible() const
 bool Input::getQuit() const
 {
 	return mQuit;
+}
+
+std::vector<int>* Input::getPressedKeys()
+{
+	return &mPressedKeys;
 }
 
 Input& Input::operator=(const Input& ref)

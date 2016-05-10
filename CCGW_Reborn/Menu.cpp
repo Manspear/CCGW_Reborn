@@ -22,8 +22,9 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	int x = inputs->mousePosition().x;
 	int y = (inputs->mousePosition().y * -1) + gHeight;
 	for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
-		if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y) && mAllMenu[activeMenu].theMenu[i].mType != 'd') {
-			mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
+		if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
+			if(mAllMenu[activeMenu].theMenu[i].mType != 'd')
+				mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
 			if (inputs->buttonReleased(0)) {
 				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i, data);
 				break;
@@ -35,13 +36,32 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	}
 	
 	if (mActiveField != nullptr) {
-		if (inputs->keyReleased(SDLK_k))
-			mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(mAllMenu[activeMenu].theNumbers.size() * 0.05f, 0), 0 });
+			writeToField(inputs);			
 	}
 	render();
 	if (activeMenu != MAIN_MENU)
 		updateNumbers(data);
 	return mRunning;
+}
+
+void Menu::writeToField(Input* inputs)
+{
+	std::vector<int>* keyVector = inputs->getPressedKeys();
+	int x;
+	for (int i = 0; i < keyVector->size(); i++) {
+		x = keyVector->at(i);
+		if (x == 8) {
+			if (!mAllMenu[activeMenu].theNumbers.empty())
+				mAllMenu[activeMenu].theNumbers.pop_back();
+		}
+		else if (mAllMenu[activeMenu].theNumbers.size() < 6 ){
+			if (x > 57)
+				x -= 86;
+			else
+				x -= 48;
+			mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(mAllMenu[activeMenu].theNumbers.size() * 0.05f, 0), x });
+		}
+	}
 }
 
 void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
@@ -64,6 +84,8 @@ void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 		data->pGame->restartGame();
 		break;
 	case'd':
+		mAllMenu[activeMenu].theMenu[index].mHighlighted = false;
+		mActiveField = nullptr;
 		break;
 	case 'a':
 		mActiveField = &mAllMenu[activeMenu].theMenu[index];
@@ -119,7 +141,7 @@ void Menu::renderNumbers()
 	glBindTexture(GL_TEXTURE_2D, numberTex);
 	for (int i = 0; i < mAllMenu[activeMenu].theNumbers.size(); i++) {
 		glUniform2fv(posLocation, 1, &mAllMenu[activeMenu].theNumbers[i].pos[0]);
-		glUniform1f(numberLocation, mAllMenu[activeMenu].theNumbers[i].number);
+		glUniform1f(numberLocation, mAllMenu[activeMenu].theNumbers[i].sampleX);
 		glBindBuffer(GL_ARRAY_BUFFER, numberVbo);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
@@ -263,7 +285,7 @@ Menu::Menu()
 	buildAMenu("actionBuild.txt", ACTION_HUD);
 	buildAMenu("losingBuild.txt", LOSING_SCREEN);
 
-	addNumber(0.05, 0.1);
+	addNumber(0.05, 0.07);
 }
 
 Menu::~Menu()

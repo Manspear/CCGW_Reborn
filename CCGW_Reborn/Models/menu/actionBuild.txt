@@ -1,5 +1,6 @@
 b -0.3 -0.95 0.2 0.2 d Models/menu/bebisBar.png
 b -0.5 -1.0 1.0 0.3 d Models/menu/actionBar.png
+b 0.025 0.0325 0.025 0.025 d Models/menu/marker.png
 n -0.5 -0.5
 n -0.4 -0.5
 n -0.3 -0.5
