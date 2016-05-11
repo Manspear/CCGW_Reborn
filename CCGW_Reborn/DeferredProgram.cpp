@@ -83,7 +83,7 @@ void DeferredProgram::use() {
 	glUseProgram(mProgramID);
 	for (int i = 0; i < mTotalAttributes; i++)
 	{
-		glEnableVertexAttribArray(i);
+		//glEnableVertexAttribArray(i);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, mFBOid);
 	glViewport(0, 0, gWidth, gHeight);
@@ -103,7 +103,7 @@ void DeferredProgram::unUse() {
 	glUseProgram(0);
 	for (int i = 0; i < mTotalAttributes; i++)
 	{
-		glDisableVertexAttribArray(i);
+		//glDisableVertexAttribArray(i);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include <iostream>
+#include <glm\gtc\type_ptr.hpp>
 
 bool GameObject::load( Model* model )
 {
@@ -15,31 +16,32 @@ void GameObject::render(const GLuint & programID)
 	
 	//GLuint world = glGetUniformLocation(programID, "world");
 	//glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-	GLuint world = glGetUniformLocation(programID, "animationMatrices");
+	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
+
 	mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
 
-	animationTime += 0.1f;
+	animationTime += 0.01f;
 	
-	glUniformMatrix4fv(world, 32, GL_TRUE, &mpModel->jointMatrixList[0][0][0]);
+	//glUniformMatrix4fv(world, 32, GL_FALSE, &mpModel->jointMatrixList[0][0][0]);
+	//glUniformMatrix4fv( world, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr( mpModel->jointMatrixList[0] ) );
+
+	GLuint world = glGetUniformLocation( programID, "animationMatrices" );
+	glUniformMatrix4fv( world, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr( mpModel->jointMatrixList[0] ) );
+
 	mpModel->jointMatrixList;
-	float derp[32*16];
+	/*float derp[32*16];
 	for (int i = 0; i < mpModel->jointMatrixList.size(); i++)
 	{
-		//derp[i] = mpModel->jointMatrixList[i];
 		for (int a = 0; a < 4; a++)
 		{
 			for (int b = 0; b < 4; b++)
 			{
 				derp[i * 16 + a * 4 + b] = mpModel->jointMatrixList[i][a][b];
-				/*if (a == b)
-					derp[i * 16 + a * 4 + b] = 1.0f;
-				else
-					derp[i * 16 + a * 4 + b] = 0.0f;*/
 			}
 		}
-	}
+	}*/
 	GLuint world2 = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world2,1, GL_TRUE, &mWorld[0][0]);
+	glUniformMatrix4fv(world2,1, GL_FALSE, &mWorld[0][0]);
 	mpModel->draw();
 }
 

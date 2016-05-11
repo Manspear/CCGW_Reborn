@@ -165,14 +165,21 @@ bool Mesh::load( MoleReader* reader, int index )
 		glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(sSkelAnimVertex)*vertexList->size(), vertexList->data(), GL_STATIC_DRAW);
 
+		glEnableVertexAttribArray( 0 );
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
+		glEnableVertexAttribArray(5);
+		glEnableVertexAttribArray(6);
+
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), 0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 3));
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 6));
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 8));
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 11));
-		glVertexAttribPointer(5, 4, GL_INT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(int) * 14));
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 18));
-
+		glVertexAttribIPointer(5, 4, GL_INT, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 14));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 14 + sizeof(int)*4));
 
 		mSize = vertexList->size();
 		mMaterialIndex = mesh->materialID;
@@ -195,13 +202,21 @@ void Mesh::unload()
 void Mesh::draw() 
 {
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
+	glEnableVertexAttribArray(6);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 3));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 6));
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 8));
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 11));
-	glVertexAttribPointer(5, 4, GL_INT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(int) * 14));
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 18));
+	glVertexAttribIPointer(5, 4, GL_INT, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 14));
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 14+sizeof(int)*4));
 	glDrawArrays(GL_TRIANGLES, 0, mSize);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

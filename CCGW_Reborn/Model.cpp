@@ -1,5 +1,8 @@
 #include "Model.h"
 #include <iostream>
+#include <glm\gtc\type_ptr.hpp>
+#include <glm\gtx\transform.hpp>
+#include <glm\gtx\euler_angles.hpp>
 #define SLOW_LAUNCH 1
 
 void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::mat4x4 worldMat)
@@ -10,6 +13,8 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 	Save the frame i was just at. Save the take along wiht the frame.
 
 	**/
+
+	worldMat = glm::mat4();
 
 	float targetTime = speedFactor * currTime;
 	std::vector<sKeyFrame> tempFrames;
@@ -311,22 +316,28 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	//The transform has to apply even when there's no children.
 	mpJointList[currJointID].jointData;
 
-	float tempInvBindPose[16];
+	/*float tempInvBindPose[16];
 	for (int i = 0; i < 16; i++)
 		tempInvBindPose[i] = mpJointList[currJointID].jointData->globalBindPoseInverse[i];
-	glm::mat4 invBPose = convertToMat4(tempInvBindPose);
+	glm::mat4 invBPose = convertToMat4(tempInvBindPose);*/
 
-	//Now get the key-transform
-	glm::mat4 keySMat = convertToScaleMat(tempFrames[currJointID].keyScale);
+	glm::mat4 invBPose = glm::make_mat4( mpJointList[currJointID].jointData->globalBindPoseInverse );
+
+	//Now get the key-
 	glm::mat4 keyRMat = convertToRotMat(tempFrames[currJointID].keyRotate);
+	glm::mat4 keySMat= convertToScaleMat(tempFrames[currJointID].keyScale);	
 	glm::mat4 keyTMat = convertToTransMat(tempFrames[currJointID].keyPos);
+
+	//glm::mat4 invinv = glm::inverse( invBPose );
+
 	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
-	glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
+	//glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
+	glm::mat4 keyTransform = keyTMat * keySMat * keyRMat;
 	//Now "remove" the bindpose from the joint
-	//glm::mat4 pureKeyTransform = keyTransform * invBPose;
-	glm::mat4 pureKeyTransform = invBPose * keyTransform;
+	glm::mat4 pureKeyTransform = keyTransform * invBPose;
+	//glm::mat4 pureKeyTransform = invBPose * keyTransform;
 	glm::mat4 finalTransform = pureKeyTransform * parentTransformMatrix;
-	//glm::mat4 finalTransform = keyTransform * parentTransformMatrix;
+	//glm::mat4 finalTransform = keyTransform;// * parentTransformMatrix;
 
 	jointMatrixList[currJointID] = finalTransform;
 
@@ -334,8 +345,9 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	{
 		//glm::mat4 junky;
 		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
-		//recursiveUpdateJointMatrixList(finalTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
-		recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		recursiveUpdateJointMatrixList(finalTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
+
+		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 	}
 }
 
@@ -365,28 +377,29 @@ glm::mat4 Model::convertToRotMat(float inputArr[3])
 	mat4 rotX = 
 	{
 		1.f,			0.f,					0.f,				0.f,
-		0.f,		    cosf(inputArr[0]),	    sinf(inputArr[0]),	0.f,
-		0.f,		    -sinf(inputArr[0]),     cosf(inputArr[0]),  0.f,
+		0.f,		    cosf(inputArr[0]),	    -sinf(inputArr[0]),	0.f,
+		0.f,		    sinf(inputArr[0]),     cosf(inputArr[0]),  0.f,
 		0.f,			0.f,					0.f,				1.f
 	};
 	mat4 rotY =
 	{
-		cosf(inputArr[1]),	0.f,			-sinf(inputArr[1]),		0.f,
+		cosf(inputArr[1]),	0.f,			sinf(inputArr[1]),		0.f,
 		0.f,				1.f,			0.f,					0.f,
-		sinf(inputArr[1]),  0.f,			cosf(inputArr[1]),		0.f,
+		-sinf(inputArr[1]),  0.f,			cosf(inputArr[1]),		0.f,
 		0.f,				0.f,			0.f,					1.f
 	};
 	mat4 rotZ =
 	{
-		cosf(inputArr[2]),	sinf(inputArr[2]),		0.f,				0.f,
-		-sinf(inputArr[2]), cosf(inputArr[2]),		0.f,				0.f,
+		cosf(inputArr[2]),	-sinf(inputArr[2]),		0.f,				0.f,
+		sinf(inputArr[2]), cosf(inputArr[2]),		0.f,				0.f,
 		0.f,				0.f,					1.f,				0.f,
 		0.f,				0.f,					0.f,				1.f
 	};
 
-	mat4 rotMatrix = rotX * rotY * rotZ;
+	//mat4 rotMatrix = rotX * rotY * rotZ;
 	
-	return rotMatrix;
+	//return rotMatrix;
+	return rotX * rotY * rotZ;
 }
 
 glm::mat4 Model::convertToScaleMat(float inputArr[3])

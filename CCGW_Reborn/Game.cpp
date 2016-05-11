@@ -57,13 +57,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
-	Model* boxModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
-	Model* terrainModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
-	Model* markerModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
-	Model* boundingBoxModel = data.pAssets->load<Model>("Models/animTestCylinder.mole");
+	Model* playerModel = data.pAssets->load<Model>("Models/rotationCube2.mole");
+	Model* boxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* enemyModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* markerModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");

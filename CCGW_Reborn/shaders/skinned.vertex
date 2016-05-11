@@ -1,12 +1,12 @@
 #version 420 core
 
-in vec3 pos ;
-in vec3 normal ;
-in vec2 texPos ;
-in vec3 tangent ;
-in vec3 bitangent ;
-in ivec4 influences ;
-in vec4 weights ;
+layout(location=0) in vec3 pos ;
+layout(location=1) in vec3 normal ;
+layout(location=2) in vec2 texPos ;
+layout(location=3) in vec3 tangent ;
+layout(location=4) in vec3 bitangent ;
+layout(location=5) in ivec4 influences ;
+layout(location=6) in vec4 weights ;
 
 out vec4 posOut;
 out vec2 uvOut;
@@ -26,19 +26,16 @@ void main()
 	vw[0] = weights[0];
 	vw[1] = weights[1];
 	vw[2] = weights[2];
-	vw[3] = 1.f - weights[0] - weights[1] - weights[2]; 
+	vw[3] = 1.0 - weights[0] - weights[1] - weights[2];
 
 	//vec4 vw = vec4( 0.0, 1.0, 0.0, 0.0 );
 	vec4 vpos = vec4( 0.0, 0.0, 0.0, 0.0 );
 	for( int i=0; i<4; i++ )
 	{
-		vpos += ( ( vec4( pos, 1.0 )) * animationMatrices[influences[i]]* vw[i]);
-		//vpos += vw[i] * ( vec4( pos, 1.0 ) * animationMatrices[influences[i]] );
-		//vpos += weights[i] * ( vec4( pos, 1.0 ) * animationMatrices[influences[i]] );
+		vpos += ( animationMatrices[influences[i]] * vec4( pos, 1.0 ) ) * weights[i];
 	}
 
-	//posOut = world * vec4(pos, 1.0);
-	posOut = world * vec4( vec3(vpos), 1.0f );
+	posOut = vec4( vpos.xyz, 1.0 );
 
 	uvOut = texPos;
 	normalOut = normal;
