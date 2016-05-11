@@ -39,6 +39,7 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	float rotX;
 	float rotY;
 	float scale;
+	float animationTime;
 
 	BoundingBox mBB;
 

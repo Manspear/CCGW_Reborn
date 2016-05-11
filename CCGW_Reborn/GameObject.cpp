@@ -12,8 +12,34 @@ void GameObject::update(const float &dt) {
 
 void GameObject::render(const GLuint & programID)
 {
-	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
+	
+	//GLuint world = glGetUniformLocation(programID, "world");
+	//glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
+	GLuint world = glGetUniformLocation(programID, "animationMatrices");
+	mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
+
+	animationTime += 0.1f;
+	
+	glUniformMatrix4fv(world, 32, GL_TRUE, &mpModel->jointMatrixList[0][0][0]);
+	mpModel->jointMatrixList;
+	float derp[32*16];
+	for (int i = 0; i < mpModel->jointMatrixList.size(); i++)
+	{
+		//derp[i] = mpModel->jointMatrixList[i];
+		for (int a = 0; a < 4; a++)
+		{
+			for (int b = 0; b < 4; b++)
+			{
+				derp[i * 16 + a * 4 + b] = mpModel->jointMatrixList[i][a][b];
+				/*if (a == b)
+					derp[i * 16 + a * 4 + b] = 1.0f;
+				else
+					derp[i * 16 + a * 4 + b] = 0.0f;*/
+			}
+		}
+	}
+	GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(world2,1, GL_TRUE, &mWorld[0][0]);
 	mpModel->draw();
 }
 
@@ -65,7 +91,7 @@ GameObject::GameObject(glm::vec3 position = { 0, 0, 0 }, float scale = 1.0f)
 				0,				0,				scale,			0,
 				position.x,		position.y,		position.z,		1.0 
 	};
-
+	animationTime = 0;
 }
 
 GameObject::GameObject()
@@ -75,6 +101,7 @@ GameObject::GameObject()
 	mLookat = { 0, 0, -1 };
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	this->mBB = BoundingBox(mPosition, scale);
+	animationTime = 0;
 }
 
 GameObject::~GameObject()

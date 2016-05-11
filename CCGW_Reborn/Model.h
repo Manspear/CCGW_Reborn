@@ -41,6 +41,7 @@ public:
 private:
 	Mesh* mpMeshes;
 	int mMeshes;
+	MoleReader assetData;
 
 	Texture **mpDiffuseMaps, **mpSpecularMaps, **mpNormalMaps;
 	int mMaps;

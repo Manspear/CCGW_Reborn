@@ -105,6 +105,9 @@
     <None Include="shaders\forward.vertex" />
     <None Include="shaders\menu.pixel" />
     <None Include="shaders\menu.vertex" />
+    <None Include="shaders\skinned.geometry" />
+    <None Include="shaders\skinned.pixel" />
+    <None Include="shaders\skinned.vertex" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC8315FC-C91F-40C9-ABB0-7D559CF64A85}</ProjectGuid>

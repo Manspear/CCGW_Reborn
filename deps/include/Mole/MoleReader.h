@@ -73,7 +73,7 @@
 		float vertexUV[2];
 		float tangentNormal[3];
 		float biTangentNormal[3];
-		float influences[4];
+		int influences[4];
 		float weights[4];
 	};
 

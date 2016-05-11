@@ -1,67 +1,9 @@
 #include "Model.h"
-
+#include <iostream>
 #define SLOW_LAUNCH 1
 
 void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::mat4x4 worldMat)
 {
-	/**
-	If we're gonna do blending we've gotta find the two keys that are closest
-	to the currTime.
-	One of those two keytimes must be "higher" than currTime, and the other "lower"
-	than keyTime.
-	But before blending, let's just take the key that's closest to the currTime.
-	That way we'll see if the matrices work.
-
-	How will we determine "where" on the animation we're currently?
-	As soon as you press the "w"-button you start a "holddowntimer".
-	That holddowntimer you send into this function.
-	When the holddowntimer time exceeds this animation's "max time"
-	the holddowntimer must reset so that the animationloop may reset.
-
-	... How do you really make animations consistently run at 60 fps?
-	Is it all time?
-	Hmm... 60 frames per second. 60 frames. It says how many samples
-	of the animation is needed...
-	Animated at 24 fps, but game runnign at 60 fps...
-	The framerate of the engine has nothing to do with the animation
-	play speed.
-	The animation plays separately. So how do we make animations run faster
-	"dynamically" ? What does it mean for an animation to run faster?
-	The animation WILL get sampled at the framerate that the engine's running at.
-	What happens if "speedfactor" is multiplied with currTIme? You sample from a later stage in the animation.
-	If you've held key for
-	if speedfactor = 2
-	0 1 2 3 4 5
-	0 2 4 6 8 10
-	Well look at that. It IS running consistently faster! Glorious.
-
-	Hmm... currTime can "run out of scope" quite easily.
-	Joints can and will have differing animationendtimes.
-	The idéal would be to NEVER modify currTime directly from in here,
-	but instead have one separate currTime for each joint.
-	each Joint having a "reset currTime".
-	But how to make currTime to NEVER run out of scope? Hmm... Math?
-	yes math... But what math?
-
-	50
-	5
-	"How many fives fit in there? 10! Easily dividable, no math rests.
-	6
-	5.5
-	6 - 5.5 = 0.5
-
-	40
-	3.2
-	40 - 3.2 = 36.8 <-- Not usable.
-	40 / 3.2 = 12.5
-	12.5 3.2's fit inside of 40.
-	SO if we multiply 3.2 * 0.5 = 1.6
-	It is... Maybe correct.
-	Algorithm:
-	the rest of currTime % maxKeyTime
-	is "the joint time".
-	fmod seems to do the trick.
-	**/
 
 	/**
 	More efficient algorithm:
@@ -74,6 +16,7 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 
 	for (int i = 0; i < mpJointList.size(); i++)
 	{
+		mpJointList[i].keyFramesByTake[0][take].back().keyTime;
 		float jointMaxTime = mpJointList[i].keyFramesByTake[0][take].back().keyTime;
 		targetTime = std::fmod(targetTime, jointMaxTime);
 		//Find the right keyframe based on time
@@ -103,13 +46,30 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 				closestKey = j;
 				break;
 			}
-			mpJointList[i].keyFramesByTake[0][take][j];
+			//mpJointList[i].keyFramesByTake[0][take][j];
 		}
 		/**
 		Now save this value in a "temporary final list of frames"
 		**/
+		
 		tempFrames.push_back(mpJointList[i].keyFramesByTake[0][take][closestKey]);
 	}
+	//Find the root joint.
+	int rootKey = 0;
+	for (int j = 0; j < mpJointList.size(); j++)
+	{
+		//If the joint has no parentjoint... That is: if it's the root.
+		if (mpJointList[j].jointData->parentJointID < 0)
+		{
+			rootKey = j;
+		}
+	}
+
+
+	recursiveUpdateJointMatrixList(worldMat, tempFrames, rootKey);
+}
+
+void shit() {
 	/**
 	Now multiply "The Root" with the current keyframe-values, and then multiply that matrix with the worldpos-values.
 	The root now has a "final transform".
@@ -122,21 +82,9 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 	GlobalInverseBindPose -> One for each joint.
 	Multiply it with all of the matrix transform matrices
 	You multiply it with all of the keyFrameMatrices.
-	
+
 	KEYFRAME * INVERSEBINDPOSE! THAS IT!
 	**/
-
-	//Find the root joint.
-	int rootKey;
-	for (int j = 0; j < mpJointList.size(); j++)
-	{
-		//If the joint has no parentjoint... That is: if it's the root.
-		if (mpJointList[j].jointData->parentJointID < 0)
-		{
-			rootKey = j;
-		}
-	}
-
 	/**
 	Perform the requisite transforms on the root.
 	We only care about the rotation.
@@ -147,36 +95,39 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 	2. InverseBIndPose on it
 	3. Multiply it with the input "transform-vector"
 	**/
-	float tempInvBindPose[16];
-	for (int i = 0; i < 16; i++)
-		tempInvBindPose[i] = mpJointList[rootKey].jointData->globalBindPoseInverse[i];
-	
-	glm::mat4 invBPose = convertToMat4(tempInvBindPose);
+	//float tempInvBindPose[16];
+	//for (int i = 0; i < 16; i++)
+	//	tempInvBindPose[i] = mpJointList[rootKey].jointData->globalBindPoseInverse[i];
+	//
+	//glm::mat4 invBPose = convertToMat4(tempInvBindPose);
 
-	//Now get the key-transform
-	glm::mat4 keySMat = convertToScaleMat(tempFrames[rootKey].keyScale);
-	glm::mat4 keyRMat = convertToRotMat(tempFrames[rootKey].keyRotate);
-	glm::mat4 keyTMat = convertToTransMat(tempFrames[rootKey].keyPos);
-	glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
-	//Now "remove" the bindpose from the joint
-	glm::mat4 pureKeyTransform = keyTransform * invBPose;
-	//Now modify it with the worldMatrix
-	glm::mat4 finalRootMatrix = pureKeyTransform * worldMat;
-	
-	//Saving the root matrix in the matrix array.
-	jointMatrixList[rootKey] = finalRootMatrix;
-	
+	////Now get the key-transform
+	//glm::mat4 keySMat = convertToScaleMat(tempFrames[rootKey].keyScale);
+	//glm::mat4 keyRMat = convertToRotMat(tempFrames[rootKey].keyRotate);
+	//glm::mat4 keyTMat = convertToTransMat(tempFrames[rootKey].keyPos);
+	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
+	////Now "remove" the bindpose from the joint
+	///**
+	//Inversebindpose MIGHT mean that all of the joints enter their "origo", wherefrom they can get scaled, rotated, etc
+	//without lokking funny.
+	//**/
+	//glm::mat4 pureKeyTransform = keyTransform * invBPose;
+	////Now modify it with the worldMatrix
+	//glm::mat4 finalRootMatrix = pureKeyTransform * worldMat;
+	//
+	////Saving the root matrix in the matrix array.
+	//jointMatrixList[rootKey] = finalRootMatrix;
+
 	//Now loop through the root's children, and apply the root-matrix to their
 	//"final transform". Then loop through the children's children and apply 
 	//that "final transform" to them. Etc...
-	recursiveUpdateJointMatrixList(finalRootMatrix, tempFrames, rootKey);
 }
 
 bool Model::load( Assets* assets, std::string file )
 {
 	bool result = true;
 
-	MoleReader assetData;
+	
 #if SLOW_LAUNCH
 	assetData.readFromBinary( file.c_str() );
 #else
@@ -206,7 +157,8 @@ bool Model::load( Assets* assets, std::string file )
 				tempJoint.keyFramesByTake.push_back(currFrameList);
 			}
 			tempJoint.jointData = currJoint;
-			tempJoint.meshChildren = assetData.getJointMeshChildList(i, j);
+			if(currJoint->meshChildCount > 0)
+				tempJoint.meshChildren = assetData.getJointMeshChildList(i, j);
 			mpJointList.push_back(tempJoint);
 		}
 		const std::vector<sMChildHolder>* meshChildListHolder = assetData.getMeshChildList();
@@ -363,30 +315,47 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	for (int i = 0; i < 16; i++)
 		tempInvBindPose[i] = mpJointList[currJointID].jointData->globalBindPoseInverse[i];
 	glm::mat4 invBPose = convertToMat4(tempInvBindPose);
+
 	//Now get the key-transform
 	glm::mat4 keySMat = convertToScaleMat(tempFrames[currJointID].keyScale);
 	glm::mat4 keyRMat = convertToRotMat(tempFrames[currJointID].keyRotate);
 	glm::mat4 keyTMat = convertToTransMat(tempFrames[currJointID].keyPos);
-	glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
+	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
+	glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
 	//Now "remove" the bindpose from the joint
-	glm::mat4 pureKeyTransform = keyTransform * invBPose;
+	//glm::mat4 pureKeyTransform = keyTransform * invBPose;
+	glm::mat4 pureKeyTransform = invBPose * keyTransform;
 	glm::mat4 finalTransform = pureKeyTransform * parentTransformMatrix;
+	//glm::mat4 finalTransform = keyTransform * parentTransformMatrix;
+
+	jointMatrixList[currJointID] = finalTransform;
 
 	for (int i = 0; i < mpJointList[currJointID].jointChildren.size(); i++)
 	{
-		recursiveUpdateJointMatrixList(finalTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		//glm::mat4 junky;
+		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		//recursiveUpdateJointMatrixList(finalTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 	}
 }
 
 glm::mat4 Model::convertToTransMat(float inputArr[3])
 {
+	//glm::mat4 output =
+	//{
+	//	1.f, 0.f, 0.f, inputArr[0],
+	//	0.f, 1.f, 0.f, inputArr[1],
+	//	0.f, 0.f, 1.f, inputArr[2],
+	//	0.f, 0.f, 0.f, 1.f
+	//};
 	glm::mat4 output =
 	{
-		1.f, 0.f, 0.f, inputArr[0],
-		0.f, 1.f, 0.f, inputArr[1],
-		0.f, 0.f, 1.f, inputArr[2],
-		0.f, 0.f, 0.f, 1.f
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 1.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		inputArr[0],  inputArr[1], inputArr[2], 1.f
 	};
+
 	return output;
 }
 
@@ -441,6 +410,13 @@ glm::mat4 Model::convertToMat4(float inputArr[16])
 		inputArr[2], inputArr[6], inputArr[10], inputArr[14],
 		inputArr[3], inputArr[7], inputArr[11], inputArr[15]
 	};
+	/*glm::mat4 output =
+	{
+		inputArr[0], inputArr[1], inputArr[2], inputArr[3],
+		inputArr[4], inputArr[5], inputArr[6], inputArr[7],
+		inputArr[8], inputArr[9], inputArr[10], inputArr[11],
+		inputArr[12], inputArr[13], inputArr[14], inputArr[15]
+	};*/
 
 	return output;
 }
