@@ -36,7 +36,7 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	}
 	
 	if (mActiveField != nullptr) {
-			writeToField(inputs);			
+			writeToField(inputs->getPressedKeys());			
 	}
 	render();
 	if (activeMenu != MAIN_MENU)
@@ -44,9 +44,8 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	return mRunning;
 }
 
-void Menu::writeToField(Input* inputs)
+void Menu::writeToField(std::vector<int>* keyVector)
 {
-	std::vector<int>* keyVector = inputs->getPressedKeys();
 	int x;
 	for (int i = 0; i < keyVector->size(); i++) {
 		x = keyVector->at(i);
@@ -64,6 +63,14 @@ void Menu::writeToField(Input* inputs)
 	}
 }
 
+void Menu::writeToHighScore()
+{
+	ofstream file;
+	file.open("models/menu/highscore.txt");
+	file << 875;
+	file.close();
+}
+
 void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 {
 	switch (type) {
@@ -75,6 +82,7 @@ void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 		break;
 	case'q':
 		mRunning = false;
+		writeToHighScore();
 		break;
 	case'r':
 		activeMenu = ACTION_HUD;
@@ -158,17 +166,33 @@ void Menu::buildAMenu(std::string build, MENU menu)
 	istringstream s;
 	s.str(readBuild(build));
 	float x, y, w, h;
+	char a, b, c, d, e;
 	string temp, texPath;
 	char type, nrOrButt;
 	istringstream s2;
 	mAllMenu.push_back(AMenu{});
+	activeMenu = menu;
 	while (getline(s, temp)) {
-		s2.str(temp);
-		s2 >> nrOrButt >> x >> y >> w >> h >> type >> texPath;
-		if (nrOrButt == 'b')
+		s2.str(temp);	
+		s2 >> nrOrButt;
+		if (nrOrButt == 'b') {
+			s2 >> x >> y >> w >> h >> type >> texPath;
 			mAllMenu[menu].theMenu.push_back(addButton(x, y, w, h, type, texPath));
-		else
+		}
+		else if (nrOrButt == 'n') {
+			s2 >> x >> y;
 			mAllMenu[menu].theNumbers.push_back(Number{ glm::vec2(x, y), 0 });
+		}
+		else {
+			mActiveField = &mAllMenu[menu].theMenu.back();
+			s2 >> x;
+			std::vector<int> aVector;
+			while (!s2.eof()) {
+				s2 >> a;
+				aVector.push_back(a);
+			}
+			writeToField(&aVector);
+		}
 		s2.clear();
 	}
 }
@@ -274,7 +298,6 @@ Menu::Menu()
 	numberShader->setClear(false);
 	mActiveField = nullptr;
 	mActive = true;
-	activeMenu = MAIN_MENU;
 	mRunning = true;
 	posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");;
 	numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");;
@@ -284,6 +307,7 @@ Menu::Menu()
 	buildAMenu("menuBuild.txt", MAIN_MENU);
 	buildAMenu("actionBuild.txt", ACTION_HUD);
 	buildAMenu("losingBuild.txt", LOSING_SCREEN);
+	activeMenu = MAIN_MENU;
 
 	addNumber(0.05, 0.07);
 }
