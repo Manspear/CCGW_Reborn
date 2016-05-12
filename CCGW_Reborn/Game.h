@@ -48,6 +48,8 @@ private:
 	int mTargets;
 	WaveSpawner* pWaveSpawner;
 
+	std::vector<GameObject> babylist;
+
 	int mGold;
 	int mScore;
 
