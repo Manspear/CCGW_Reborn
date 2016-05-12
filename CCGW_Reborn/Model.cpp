@@ -382,21 +382,21 @@ glm::mat4 Model::convertToRotMat(float inputArr[3])
 	mat4 rotX = 
 	{
 		1.f,			0.f,					0.f,				0.f,
-		0.f,		    cosf(inputArr[0]),	    -sinf(inputArr[0]),	0.f,
-		0.f,		    sinf(inputArr[0]),     cosf(inputArr[0]),  0.f,
+		0.f,		    cosf(inputArr[0]),	    sinf(inputArr[0]),	0.f,
+		0.f,		    -sinf(inputArr[0]),     cosf(inputArr[0]),  0.f,
 		0.f,			0.f,					0.f,				1.f
 	};
 	mat4 rotY =
 	{
-		cosf(inputArr[1]),	0.f,			sinf(inputArr[1]),		0.f,
+		cosf(inputArr[1]),	0.f,			-sinf(inputArr[1]),		0.f,
 		0.f,				1.f,			0.f,					0.f,
-		-sinf(inputArr[1]),  0.f,			cosf(inputArr[1]),		0.f,
+		sinf(inputArr[1]),  0.f,			cosf(inputArr[1]),		0.f,
 		0.f,				0.f,			0.f,					1.f
 	};
 	mat4 rotZ =
 	{
-		cosf(inputArr[2]),	-sinf(inputArr[2]),		0.f,				0.f,
-		sinf(inputArr[2]), cosf(inputArr[2]),		0.f,				0.f,
+		cosf(inputArr[2]),	sinf(inputArr[2]),		0.f,				0.f,
+		-sinf(inputArr[2]), cosf(inputArr[2]),		0.f,				0.f,
 		0.f,				0.f,					1.f,				0.f,
 		0.f,				0.f,					0.f,				1.f
 	};
