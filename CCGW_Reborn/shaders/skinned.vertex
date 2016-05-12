@@ -1,0 +1,48 @@
+#version 420 core
+
+layout(location=0) in vec3 pos ;
+layout(location=1) in vec3 normal ;
+layout(location=2) in vec2 texPos ;
+layout(location=3) in vec3 tangent ;
+layout(location=4) in vec3 bitangent ;
+layout(location=5) in ivec4 influences ;
+layout(location=6) in vec4 weights ;
+
+out vec4 posOut;
+out vec2 uvOut;
+out vec3 normalOut;
+out mat3 tbnOut;
+
+uniform mat4 animationMatrices[32];
+uniform mat4 world;
+
+void main()
+{
+	/*Initialize 4 weight values to be assigned further in code.*/
+	vec4 vw = vec4( 0.f, 0.f, 0.f, 0.f );
+
+	//To get the 4th weight so that the sum of the weights add up to 1,
+	//we subtract 1 with the weights 0, 1, 2.
+	vw[0] = weights[0];
+	vw[1] = weights[1];
+	vw[2] = weights[2];
+	vw[3] = 1.0 - weights[0] - weights[1] - weights[2];
+
+	//vec4 vw = vec4( 0.0, 1.0, 0.0, 0.0 );
+	vec4 vpos = vec4( 0.0, 0.0, 0.0, 0.0 );
+	for( int i=0; i<4; i++ )
+	{
+		vpos += ( animationMatrices[influences[i]] * vec4( pos, 1.0 ) ) * weights[i];
+	}
+
+	posOut = vec4( vpos.xyz, 1.0 );
+
+	uvOut = texPos;
+	normalOut = normal;
+
+	vec3 T = normalize( vec3(vec4( tangent, 0.0 ) ) );
+	vec3 B = normalize( vec3(  vec4( bitangent, 0.0 ) ) );
+	vec3 N = normalize( vec3(  vec4( normal, 0.0 ) ) );
+
+	tbnOut = mat3( T, B, N );
+}

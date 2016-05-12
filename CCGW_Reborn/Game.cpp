@@ -33,7 +33,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mBabyCount = 25;
 	data.pAssets = new Assets();
 	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
-	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
+	data.pDeferredProgram = new DeferredProgram("skinned.vertex", "skinned.pixel", "skinned.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
 	data.pEmission = new Emission(&data, 1150);
@@ -54,13 +54,28 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pScore = 0;
 	data.pGold = 5;
 
-	Model* playerModel = data.pAssets->load<Model>( "Models/klara.mole" );
-	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
+	/*Model* playerModel = data.pAssets->load<Model>( "Models/jointCube.mole" );
+	Model* boxModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* enemyModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
+
+	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole"); 
+	Model* boxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* enemyModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* markerModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+
+	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
 	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
-	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );
+	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
 
 	Enemy::pBoundingBoxModel = boundingBoxModel;
@@ -92,7 +107,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mTacticalMarker.setScale( data.boxScale );
 	//mTowerModel.load( playerModel );
 	//mTowerModel.setScale( data.boxScale );
-	//mMoleratman.load( enemyModel );
+	mMoleratman.load( enemyModel );
 	//mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
@@ -210,14 +225,14 @@ void Game::render()
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
-//	mGround.render( data.pDeferredProgram->getProgramID() );
+	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );
 	
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
-			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
+			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );*/
 
 	//mMoleratman.render( data.pDeferredProgram->getProgramID());
 	//mMolebat.render( data.pDeferredProgram->getProgramID() );
@@ -225,7 +240,7 @@ void Game::render()
 	/*for (int i = 0; i < data.mpTowers.size(); i++) {
 		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
 	}*/
-	for( int i=0; i<data.mTowers; i++ )
+	/*for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );
 	if(data.pCamera->getPosition().y < 15)
@@ -233,14 +248,14 @@ void Game::render()
 	else
 	{
 		mTacticalMarker.render(data.pDeferredProgram->getProgramID());
-	}
+	}*/
 
-	data.pBillboardProgram->use();
+	/*data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
 
 	data.pEmission->draw();
 	data.pBillboardProgram->end();
-	data.pBillboardProgram->unUse();
+	data.pBillboardProgram->unUse();*/
 	data.pDeferredProgram->unUse();
 
 	drawOnScreenQuad();	
@@ -253,6 +268,8 @@ void Game::update(Input* inputs, float dt)
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
 	
+	mMoleratman.update( 0.0f );
+	mMolebat.update( 0.0f );
 	bool waveDone = true;
 	for (int i = 0; i < data.mMoleratmen; i++)
 	{
