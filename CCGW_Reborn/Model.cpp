@@ -15,13 +15,12 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 	**/
 
 	worldMat = glm::mat4();
-
+	//Keep this on watch...
 	float targetTime = speedFactor * currTime;
 	std::vector<sKeyFrame> tempFrames;
 
 	for (int i = 0; i < mpJointList.size(); i++)
 	{
-		mpJointList[i].keyFramesByTake[0][take].back().keyTime;
 		float jointMaxTime = mpJointList[i].keyFramesByTake[0][take].back().keyTime;
 		targetTime = std::fmod(targetTime, jointMaxTime);
 		//Find the right keyframe based on time
@@ -174,6 +173,7 @@ bool Model::load( Assets* assets, std::string file )
 	}
 
 	sortJointsByID();
+
 	if(mpJointList.size() > 0)
 		makeJointHierarchy();
 	jointMatrixList.resize(mpJointList.size());
@@ -332,12 +332,14 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 
 	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
 	//glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
-	glm::mat4 keyTransform = keyTMat * keySMat * keyRMat;
+	glm::mat4 keyTransform = parentTransformMatrix *  keyTMat * keySMat * keyRMat;
 	//Now "remove" the bindpose from the joint
 	glm::mat4 pureKeyTransform = keyTransform * invBPose;
 	//glm::mat4 pureKeyTransform = invBPose * keyTransform;
-	glm::mat4 finalTransform = pureKeyTransform * parentTransformMatrix;
+	glm::mat4 finalTransform = pureKeyTransform;
 	//glm::mat4 finalTransform = keyTransform;// * parentTransformMatrix;
+
+	
 
 	jointMatrixList[currJointID] = finalTransform;
 
@@ -345,10 +347,13 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	{
 		//glm::mat4 junky;
 		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
-		recursiveUpdateJointMatrixList(finalTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
 
 		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 	}
+	/**
+	THink I've gotta transform the children so that they are in "spaces related to their parent's"
+	**/
 }
 
 glm::mat4 Model::convertToTransMat(float inputArr[3])
