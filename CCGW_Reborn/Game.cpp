@@ -122,7 +122,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
-	//mGround.load(terrainModel);
+	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 	//mTowerModel.load( playerModel );
@@ -166,6 +166,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 Game::~Game() {
 	delete data.pDeferredProgram;
+	delete data.pDeferredProgramNonAni;
 	delete data.pForwardProgram;
 	delete data.pBillboardProgram;
 	delete data.pPlayer;
@@ -177,6 +178,7 @@ Game::~Game() {
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
+	delete[] mVisibleTowers;
 
 	data.pAssets->unload();
 	delete data.pAssets;

@@ -18,10 +18,7 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		inputs->setMouseVisible(true);
 		inputs->setMouseLock(false);
 	}
-	if (mActive == ACTION_HUD) {
-		
-	}
-	else {
+	if (activeMenu != ACTION_HUD) {
 		int x = inputs->mousePosition().x;
 		int y = (inputs->mousePosition().y * -1) + gHeight;
 		for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
