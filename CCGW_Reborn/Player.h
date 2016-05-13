@@ -30,7 +30,7 @@ private:
 	float mStrength;
 	glm::vec3 mDirection;
 	GameData* pGameData;
-
+	int daIndex;
 	float mHealth;
 
 	float mRot;

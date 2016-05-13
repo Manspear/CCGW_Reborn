@@ -39,6 +39,7 @@ void Moleratman::update(float dt, GameData* data)
 		if (--data->mBabyCount <= 0)
 			data->pPlayer->takeDamage(1000);
 		mAlive = false;
+
 	}
 	if (mLife <= 0) {
 		mAlive = false;
@@ -79,7 +80,7 @@ void Moleratman::render( GLuint programID )
 
 	glUniformMatrix4fv( worldLocation, 1, GL_FALSE, &world[0][0] );
 
-	pBoundingBoxModel->draw();
+	pBoundingBoxModel->drawNonAni();
 
 	world[3][0] = mHeadBox.center.x;
 	world[3][1] = mHeadBox.center.y;
@@ -91,7 +92,7 @@ void Moleratman::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	pBoundingBoxModel->draw();
+	pBoundingBoxModel->drawNonAni();
 
 	glPolygonMode(GL_FRONT, GL_FILL );
 #endif

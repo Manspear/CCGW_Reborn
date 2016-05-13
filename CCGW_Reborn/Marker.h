@@ -10,7 +10,7 @@ public:
 	std::vector<glm::vec2> getMarkedTiles();
 	void resetMarkedTiles();
 	Marker();
-	~Marker();
+	virtual ~Marker();
 private:
 	std::vector<glm::vec2> mMarkedIndex;
 	glm::vec2 selectedTile;

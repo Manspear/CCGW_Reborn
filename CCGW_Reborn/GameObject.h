@@ -21,9 +21,9 @@ public:
 	/*Abstract method. Don't call.*/
 	virtual void update(const float &dt);
 	/*Abstract method. Don't call.*/
-	virtual void render(const GLuint &programID);
+	virtual void renderAni(const GLuint &programID);
 	//virtual void render2(const GLuint &programID);
-	virtual void render(const GLuint &programID, const glm::mat4 &viewMat);
+	virtual void renderNonAni(const GLuint &programID);
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
@@ -42,6 +42,8 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	float rotY;
 	float scale;
 	Sound* mSound;
+	float animationTime;
+
 	BoundingBox mBB;
 
 	Model* mpModel;

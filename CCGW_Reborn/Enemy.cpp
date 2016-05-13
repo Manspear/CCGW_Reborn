@@ -4,7 +4,7 @@ Model* Enemy::pBoundingBoxModel = nullptr;
 
 void Enemy::render( GLuint programID )
 {
-	GameObject::render( programID );
+	GameObject::renderAni( programID );
 	
 	// change to 1 to draw the path
 #if 0
@@ -43,7 +43,11 @@ void Enemy::imHit(float strength, glm::vec3 position)
 	if (mLife <= 0) {
 		mAlive = false;
 	}
-	mEmitter.spawn(position, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+	mEmitter.spawn(position, glm::vec3(0, -1.0f, 0), 1.0f);
+	mEmitter.spawn(position, glm::vec3(1.0f, -0.5f, 0), 1.0f);
+	mEmitter.spawn(position, glm::vec3(0, -0.5f, 1.0f), 1.0f);
+	mEmitter.spawn(position, glm::vec3(0, -0.5f, -1.0f), 1.0f);
+	mEmitter.spawn(position, glm::vec3(-1.0f, -0.5f, 0.0f), 1.0f);
 }
 
 void Enemy::setAlive( bool alive )

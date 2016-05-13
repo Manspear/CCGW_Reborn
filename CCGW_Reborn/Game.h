@@ -29,6 +29,7 @@ enum State {
 class Game {
 public:
 	bool tactical;
+
 	GameData* getGameData();
 	void restartGame();
 
@@ -41,18 +42,14 @@ private:
 	GameState* pActionState;
 	GLuint testScreen;
 	Terrain mGround;
-	Marker mActionMarker;
 	Marker mTacticalMarker;
 	GameData data;
-	sNode* mpPath;
 	int mTargets;
 	WaveSpawner* pWaveSpawner;
 	Tower** mVisibleTowers;
 	int mMaxTowers;
 
 	std::vector<GameObject> babylist;
-
-	GameObject corners[8];
 
 	int mGold;
 	int mScore;

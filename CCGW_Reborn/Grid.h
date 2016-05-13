@@ -5,6 +5,7 @@
 #include "Frustum.h"
 
 #define NODEAT(x,y) ((y)*mWidth+(x))
+#define GRID_MAX_HIERARCHIES 3
 
 enum
 {
@@ -61,13 +62,16 @@ public:
 	Grid();
 	~Grid();
 
-	sBoxHier mTop;
+	/*sBoxHier mTop;
 	sBoxHier mMiddle;
-	sBoxHier mBottom;
+	sBoxHier mBottom;*/
+
+	sBoxHier mCullHierarchy[GRID_MAX_HIERARCHIES];
 
 private:
 	int heuristic( sNode* start, sNode* end );
 	void buildCullHierarchy( sBoxHier* parent, float scale );
+	void destroyCullHierarchy( sBoxHier* parent );
 
 	int mScale;
 	int mWidth, mHeight;

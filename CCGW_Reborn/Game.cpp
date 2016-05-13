@@ -42,7 +42,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
 	Emitter playerEmitter;
 
-	data.pEmission->allocEmitter(&playerEmitter, 100);
+		data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
@@ -54,16 +54,46 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pScore = 0;
 	data.pGold = 5;
 
-	Model* playerModel = data.pAssets->load<Model>( "Models/klara.mole" );
-	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
+	/*Model* playerModel = data.pAssets->load<Model>( "Models/jointCube.mole" );
+	Model* boxModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* enemyModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
+	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
+
+	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole"); 
+	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
+	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
+	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
 	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
-	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );
+	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
 
-	Enemy::pBoundingBoxModel = boundingBoxModel;
+	//Enemy::pBoundingBoxModel = boundingBoxModel;
+
+	GameObject tempBaby(glm::vec3(10, 1, -50), 1);
+	tempBaby.load(babyModel);
+	float p = glm::pi<float>()*0.5f;
+	glm::mat4 rotmat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
+		0, 0.2f, 0, 0,
+		sinf(p)*0.2f, 0, cosf(p)*0.2f, 0,
+		0, 0, 0, 1
+	);
+	tempBaby.setWorld(rotmat);
+	for (int i = 0; i < 25; i++) {
+		babylist.push_back(GameObject(tempBaby));
+		babylist[i].setPosition(glm::vec3(6.5*(i / 5), 0.3, 100 + (i % 5)));
+	}
+
+
 
 	data.pGrid = new Grid(16, 48);
 	for( int i=0; i<16; i++ )
@@ -226,43 +256,29 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 
 void Game::render()
 {
-	data.pDeferredProgram->use();
-	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
-	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
-//	mGround.render( data.pDeferredProgram->getProgramID() );
+	data.pDeferredProgramNonAni->use();
+	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
+	mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	for (int i = 0; i<data.mMolebats; i++)
+		if (data.pMolebats[i].getAlive())
+			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+
+	for (int i = 0; i<data.mTowers; i++)
+	for( int i=0; i<data.mTowers; i++ )
+		if (data.pTowers[i].getAlive())
+			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	for (int i = 0; i < data.mBabyCount; i++)
+		babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+	data.pDeferredProgramNonAni->unUse();
+	
+	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
+	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
+	data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
-			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );
+			data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
 	
-	for( int i=0; i<data.mMolebats; i++ )
-		if( data.pMolebats[i].getAlive() )
-			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
-
-	for( int i=0; i<8; i++ )
-		corners[i].render( data.pDeferredProgram->getProgramID() );
-
-	//mMoleratman.render( data.pDeferredProgram->getProgramID());
-	//mMolebat.render( data.pDeferredProgram->getProgramID() );
-
-	/*for (int i = 0; i < data.mpTowers.size(); i++) {
-		data.mpTowers[i]->render(data.pDeferredProgram->getProgramID());
-	}*/
-	
-	/*for( int i=0; i<data.mTowers; i++ )
-		if( data.pTowers[i].getAlive() )
-			data.pTowers[i].render( data.pDeferredProgram->getProgramID() );*/
-
-	for( int i=0; i<mMaxTowers; i++ )
-		if( mVisibleTowers[i]->getAlive() )
-			mVisibleTowers[i]->render( data.pDeferredProgram->getProgramID() );
-
-	if(data.pCamera->getPosition().y < 15)
-		mActionMarker.render(data.pDeferredProgram->getProgramID());
-	else
-	{
-		mTacticalMarker.render(data.pDeferredProgram->getProgramID());
-	}
-
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
 
@@ -280,7 +296,7 @@ void Game::update(Input* inputs, float dt)
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
-	
+
 	static bool doCull = true;
 	if( doCull )
 		data.pCamera->updateFrustum();
@@ -325,8 +341,6 @@ void Game::update(Input* inputs, float dt)
 	for( int i=0; i<data.mTowers; i++ )
 		if( data.pTowers[i].getAlive() )
 			data.pTowers[i].update( &data, dt );
-
-	mActionMarker.update(data.pPlayer);
 	if (!data.pPlayer->isAlive())
 		int a = 0;
 }
@@ -334,7 +348,7 @@ void Game::update(Input* inputs, float dt)
 void Game::drawOnScreenQuad()
 {
 	data.pForwardProgram->use();
-	data.pDeferredProgram->enableTextures(data.pForwardProgram->getProgramID());
+	data.pDeferredProgramNonAni->enableTextures(data.pForwardProgram->getProgramID());
 
 	GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
 	glUniform3fv(cameraPos, 1, &data.pCamera->getPosition()[0]);
@@ -347,6 +361,6 @@ void Game::drawOnScreenQuad()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	data.pDeferredProgram->disableTextures();
+	data.pDeferredProgramNonAni->disableTextures();
 	data.pForwardProgram->unUse();
 }
