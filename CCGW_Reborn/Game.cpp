@@ -34,7 +34,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pAssets = new Assets();
 	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
 	data.pDeferredProgram = new DeferredProgram("skinned.vertex", "skinned.pixel", "skinned.geometry");
-	//data.pDeferredProgram->setClear(false);
 	data.pDeferredProgramNonAni = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
@@ -121,20 +120,24 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 
 
-
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
-	data.pPlayer->setScale(0.2f);
-	mGround.load(terrainModel);
+	//mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
+	//mTowerModel.load( playerModel );
+	//mTowerModel.setScale( data.boxScale );
+	//mMoleratman.load( enemyModel );
+	//mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
+	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i < data.mMolebats; i++ )
 	{
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
+		data.pMolebats[i].loadSound(sound);
 	}
 
 	data.mMoleratmen = 50;
@@ -142,11 +145,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for (int i = 0; i < data.mMoleratmen; i++) {
 		data.pMoleratmen[i].load(enemyModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
+		data.pMoleratmen[i].loadSound(sound);
 	}
+
+	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
+	data.pPlayer->mWeapon.loadSound(sound);
 
 	pWaveSpawner = new WaveSpawner( &data );
 	pWaveSpawner->setPosition({ 14,0,-10 });
-	Sound* sound = data.pAssets->load<Sound>( "Sounds/chant.wav" );
+	sound = data.pAssets->load<Sound>( "Sounds/monstersound.wav" );
 	if( !sound )
 	{
 		const char* error = Mix_GetError();
@@ -154,6 +161,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 	else
  		sound->play();
+	
 }
 
 Game::~Game() {
@@ -169,8 +177,6 @@ Game::~Game() {
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
-	delete data.pDeferredProgramNonAni;
-	delete[] mVisibleTowers;
 
 	data.pAssets->unload();
 	delete data.pAssets;
@@ -216,7 +222,6 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 		result = GAME_LOST;
 	if (pWaveSpawner->hasWon())
 		result = GAME_WON;
-
 	render();
 	return result;
 }

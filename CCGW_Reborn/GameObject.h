@@ -10,6 +10,7 @@
 #include "global_variables.h"
 #include "BoundingBox.h"
 #include "Model.h"
+#include "Sound.h"
 
 class GameObject
 {
@@ -29,6 +30,7 @@ public:
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
 	void setWorld(glm::mat4 world);
+	void loadSound(Sound* sound);
 
 	GameObject(const GameObject& ref);
 	GameObject(glm::vec3 position, float scale);
@@ -41,6 +43,7 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	float rotX;
 	float rotY;
 	float scale;
+	Sound* mSound;
 	float animationTime;
 
 	BoundingBox mBB;

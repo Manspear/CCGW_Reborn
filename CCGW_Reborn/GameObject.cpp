@@ -56,6 +56,18 @@ void GameObject::setWorld(glm::mat4 world)
 	mWorld = world;
 }
 
+void GameObject::loadSound(Sound* sound)
+{
+	if (!sound)
+	{
+		const char* error = Mix_GetError();
+		std::cout << "Mixer error: " << error << std::endl;
+	}
+	else
+		this->mSound = sound;
+	int x = 0;
+}
+
 GameObject::GameObject(const GameObject& ref)
 	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )
 {
@@ -72,6 +84,7 @@ GameObject::GameObject(glm::vec3 position = { 0, 0, 0 }, float scale = 1.0f)
 				0,				0,				scale,			0,
 				position.x,		position.y,		position.z,		1.0 
 	};
+	mSound = nullptr;
 	animationTime = 0;
 }
 

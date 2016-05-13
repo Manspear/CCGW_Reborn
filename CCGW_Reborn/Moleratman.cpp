@@ -116,6 +116,7 @@ Moleratman::Moleratman( const Moleratman& ref )
 
 Moleratman::Moleratman()
 {
+	mSound = nullptr;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;
 	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;

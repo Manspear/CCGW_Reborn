@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Arrow.h"
+#include "Sound.h"
 
 #define WEAPON_MAX_ARROWS 10
 
@@ -15,8 +16,8 @@ public:
 	void render( GLuint worldLocation );
 	float getStrength() const;
 	float getRange() const;
+	void loadSound(Sound* sound);
 	
-	//Weapon(bool owner, GameData* data);
 	Weapon();
 	~Weapon();
 
@@ -24,6 +25,5 @@ private:
 	bool mPlayerOwned;
 	Arrow mpArrows[WEAPON_MAX_ARROWS];
 	float mStrength;
-	//int mMax;
 	float mRange;
 };
