@@ -10,8 +10,9 @@ public:
 	bool load( GameData* data, bool playerOwned, Emitter* emitter );
 	void shoot(glm::vec3 position, glm::vec3 lookat, float rotation);
 	void shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength);
-	void draw(const GLuint &programID);
 	void update(float dt);
+	//void draw(const GLuint &programID);
+	void render( GLuint worldLocation );
 	float getStrength() const;
 	float getRange() const;
 	

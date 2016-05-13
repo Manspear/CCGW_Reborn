@@ -53,7 +53,8 @@ void Weapon::update(float dt) {
 	}
 }
 
-void Weapon::draw(const GLuint &programID) {
+//void Weapon::draw(const GLuint &programID) {
+void Weapon::render( GLuint worldLocation ) {
 	/*for (int i = 0; i < mMax; i++) {
 		if (arrows[i].isAlive())
 			arrows[i].render(programID);
@@ -63,7 +64,7 @@ void Weapon::draw(const GLuint &programID) {
 	{
 		if( mpArrows[i].isAlive() )
 		{
-			mpArrows[i].renderNonAni( programID );
+			mpArrows[i].renderNonAni( worldLocation );
 		}
 	}
 }

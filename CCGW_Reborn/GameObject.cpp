@@ -11,21 +11,23 @@ bool GameObject::load( Model* model )
 void GameObject::update(const float &dt) {
 }
 
-void GameObject::renderAni(const GLuint & programID)
+//void GameObject::renderAni(const GLuint & programID)
+void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
 	mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
 	animationTime += 0.01f;
-	GLuint world = glGetUniformLocation(programID, "animationMatrices");
-	glUniformMatrix4fv(world, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
-	GLuint world2 = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world2,1, GL_FALSE, &mWorld[0][0]);
+	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
+	glUniformMatrix4fv(animationLocation, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
+	//GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation,1, GL_FALSE, &mWorld[0][0]);
 	mpModel->drawAni();
 }
 
-void GameObject::renderNonAni(const GLuint & programID)
+//void GameObject::renderNonAni(const GLuint & programID)
+void GameObject::renderNonAni( GLuint worldLocation )
 {
-	GLuint world2 = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world2, 1, GL_FALSE, &mWorld[0][0]);
+	//GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 	mpModel->drawNonAni();
 }
 

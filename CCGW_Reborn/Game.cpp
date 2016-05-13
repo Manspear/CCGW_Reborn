@@ -64,13 +64,14 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole"); 
+	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
+
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
@@ -169,6 +170,7 @@ Game::~Game() {
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
 	delete data.pDeferredProgramNonAni;
+	delete[] mVisibleTowers;
 
 	data.pAssets->unload();
 	delete data.pAssets;
@@ -214,6 +216,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 		result = GAME_LOST;
 	if (pWaveSpawner->hasWon())
 		result = GAME_WON;
+
 	render();
 	return result;
 }
@@ -243,26 +246,43 @@ void Game::render()
 {
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	//mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+
+	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+
+	mGround.renderNonAni( worldLocation );
+
 	for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
-			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			data.pMolebats[i].renderNonAni( worldLocation );
 
-	for (int i = 0; i<data.mTowers; i++)
-	for( int i=0; i<data.mTowers; i++ )
-		if (data.pTowers[i].getAlive())
-			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	for (int i = 0; i<mMaxTowers; i++)
+		if (mVisibleTowers[i]->getAlive())
+			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			mVisibleTowers[i]->renderNonAni( worldLocation );
+
 	for (int i = 0; i < data.mBabyCount; i++)
-		babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-	this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+		babylist[i].renderNonAni(worldLocation);
+
+	//this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+	mTacticalMarker.render( worldLocation );
+
 	data.pDeferredProgramNonAni->unUse();
+
+	worldLocation = data.pDeferredProgram->getWorldLocation();
+	GLuint animationLocation = data.pDeferredProgram->getAnimationLocation();
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
-	data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
+	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
+	data.pPlayer->renderAni( worldLocation, animationLocation );
+
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
-			data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
+			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
+			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );

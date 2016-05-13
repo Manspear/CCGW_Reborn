@@ -25,7 +25,9 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 		targetTime = std::fmod(targetTime, jointMaxTime);
 		//Find the right keyframe based on time
 		int currKeyIndex;
+		
 		const int frameCount = mpJointList[i].keyFramesByTake[take].size();
+		
 		//will pick the key with the time value that 
 		//represents the "currTime" the best.
 		int closestKey;
@@ -132,11 +134,7 @@ bool Model::load( Assets* assets, std::string file )
 	bool result = true;
 	MoleReader assetData;
 	
-#if SLOW_LAUNCH
 	assetData.readFromBinary( file.c_str() );
-#else
-	moleReader.readFromBinary( "Models/wallBox.mole" );
-#endif
 
 	/**
 	Will now get all of the joints and their keyframes and their modelchildren into a single list, and order them based on jointID.
@@ -202,7 +200,7 @@ bool Model::load( Assets* assets, std::string file )
 		}
 	}
 
-return result;
+	return result;
 }
 
 void Model::unload()
@@ -491,5 +489,5 @@ Model::Model()
 
 Model::~Model()
 {
-	delete this->mpMeshes;
+	//delete this->mpMeshes;
 }

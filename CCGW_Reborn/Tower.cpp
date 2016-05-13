@@ -74,11 +74,13 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 	}
 	return targetHit;
 }
-void Tower::render(const GLuint & programID)
+
+//void Tower::render(const GLuint & programID)
+void Tower::render( GLuint worldLocation )
 {
-	GameObject::renderNonAni(programID);
+	GameObject::renderNonAni(worldLocation);
 	if (mShooting)
-		mWeapon.draw( programID );
+		mWeapon.render( worldLocation );
 }
 
 void Tower::setAlive( bool alive )

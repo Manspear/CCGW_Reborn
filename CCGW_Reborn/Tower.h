@@ -11,7 +11,8 @@ class Tower : public GameObject
 public:
 	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Emitter* emitter );
 	void update(GameData* gameData, const float &dt);
-	void render(const GLuint &programID);
+	//void render(const GLuint &programID);
+	void render( GLuint worldLocation );
 
 	void setAlive( bool alive );
 	void setHasBallista( bool hasBallista );

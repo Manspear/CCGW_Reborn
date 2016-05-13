@@ -13,6 +13,8 @@ DeferredProgram::DeferredProgram(const std::string& vertexPath, const std::strin
 	glUseProgram( mProgramID );
 	mViewPerspectiveLocation = glGetUniformLocation( mProgramID, "viewProjection" );
 	mCameraPositionLocation = glGetUniformLocation( mProgramID, "cameraPos" );
+	mWorldLocation = glGetUniformLocation( mProgramID, "world");
+	mAnimationLocation = glGetUniformLocation( mProgramID, "animationMatrices" );
 	glUseProgram( 0 );
 
 	//Initializing framebuffer
@@ -172,4 +174,14 @@ GLuint DeferredProgram::getCameraPositionLocation() const {
 GLuint DeferredProgram::getFrameBuffer() const
 {
 	return mFBOid;
+}
+
+GLuint DeferredProgram::getWorldLocation() const
+{
+	return mWorldLocation;
+}
+
+GLuint DeferredProgram::getAnimationLocation() const
+{
+	return mAnimationLocation;
 }

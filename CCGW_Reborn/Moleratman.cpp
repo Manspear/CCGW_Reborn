@@ -61,14 +61,16 @@ void Moleratman::update(float dt, GameData* data)
 	mHeadBox.center = mPosition + headOffset;
 }
 
-void Moleratman::render( GLuint programID )
+//void Moleratman::render( GLuint programID )
+void Moleratman::render( GLuint worldLocation, GLuint animationLocation )
 {
-	Enemy::render( programID );
+	//Enemy::render( programID );
+	Enemy::render( worldLocation, animationLocation );
 	
 #if ENEMY_RENDER_HITBOX
 	glPolygonMode( GL_FRONT, GL_LINE );
 
-	GLuint worldLocation = glGetUniformLocation( programID, "world" );
+	//GLuint worldLocation = glGetUniformLocation( programID, "world" );
 	glm::mat4 world;
 	world[3][0] = mBoundingBox.center.x;
 	world[3][1] = mBoundingBox.center.y;

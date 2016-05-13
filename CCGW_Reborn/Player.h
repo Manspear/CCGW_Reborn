@@ -7,11 +7,13 @@
 class Player : public GameObject{
 public:
 	void update(const Input* inputs, const float &dt);
+	//void render(const GLuint & programID, const glm::mat4 &viewMat);
+	void render( GLuint worldLocation, GLuint animationLocation );
+
 	glm::vec3 tacticalUpdate(const Input* inputs, const float &dt, const GameData &gameData);
 	glm::vec3 getMovingDirection(glm::vec3 v1, glm::vec3 v2);
 	glm::vec3 getLookAt() const;
 	float getRot() const;
-	void render(const GLuint & programID, const glm::mat4 &viewMat);
 	bool checkMove(glm::vec3 coord);
 	void setAlive(bool amIalive);
 	void takeDamage(float damage);
