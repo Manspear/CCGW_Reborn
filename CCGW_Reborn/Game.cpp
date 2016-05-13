@@ -81,12 +81,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	//Enemy::pBoundingBoxModel = boundingBoxModel;
 
-	data.pGrid = new Grid(16, 50);
+	data.pGrid = new Grid(16, 48);
 	for( int i=0; i<16; i++ )
 		data.pGrid->setTile( i, 0, TILE_BLOCKED );
 
-	data.mTowers = 16*50;
+	data.mTowers = 16*48;
 	data.pTowers = new Tower[data.mTowers];
+
+	mVisibleTowers = new Tower*[data.mTowers];
+	mMaxTowers = 0;
 
 	Emitter towerEmitter;
 	data.pEmission->allocEmitter( &towerEmitter, 1000 );
@@ -97,7 +100,16 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, &towerEmitter );
-		data.pTowers[i].setAlive( false );
+		data.pTowers[i].setAlive( true );
+	}
+
+	glm::vec3 c[8];
+	data.pGrid->mTop.mpChildren[0].mBoundingBox.getCorners(c);
+	for( int i=0; i<8; i++ )
+	{
+		corners[i].load( boxModel );
+		corners[i].setPosition( c[i] );
+		corners[i].setScale( 0.1f );
 	}
 
 	data.pPlayer->load( playerModel );
@@ -227,8 +239,11 @@ void Game::render()
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	if (tactical)
-		mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+	for( int i=0; i<8; i++ )
+		corners[i].render( data.pDeferredProgram->getProgramID() );
+
 	for (int i = 0; i<data.mTowers; i++)
+	/*for( int i=0; i<data.mTowers; i++ )
 		if (data.pTowers[i].getAlive())
 			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	data.pDeferredProgramNonAni->unUse();
@@ -257,6 +272,17 @@ void Game::update(Input* inputs, float dt)
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
+
+	static bool doCull = true;
+	if( doCull )
+		data.pCamera->updateFrustum();
+	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );
+	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mVisibleTowers, &mMaxTowers );
+
+	//std::cout << "Visible towers: " << mMaxTowers << std::endl;
+
+	if( inputs->keyReleased( SDLK_c ) )
+		doCull = !doCull;
 
 	bool waveDone = true;
 	for (int i = 0; i < data.mMoleratmen; i++)

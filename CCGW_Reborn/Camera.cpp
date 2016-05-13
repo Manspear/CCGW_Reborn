@@ -31,6 +31,11 @@ void Camera::updateUniforms( GLuint viewPerspective, GLuint cameraPosition )
 	glUniform3fv( cameraPosition, 1, &mPosition[0] );
 }
 
+void Camera::updateFrustum()
+{
+	mFrustum.extractPlanes( getViewPerspective() );
+}
+
 void Camera::setPerspective( float fov, float aspectRatio, float nearplane, float farplane )
 {
 	mPerspective = glm::perspective( fov, aspectRatio, nearplane, farplane );
@@ -60,6 +65,11 @@ const glm::mat4& Camera::getPerspective() const
 glm::mat4 Camera::getViewPerspective() const
 {
 	return mPerspective * mView;
+}
+
+const Frustum* Camera::getFrustum() const
+{
+	return &mFrustum;
 }
 
 Camera& Camera::operator=( const Camera& ref )

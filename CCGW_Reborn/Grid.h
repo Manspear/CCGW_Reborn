@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "tempMesh.h"
+#include <glm\glm.hpp>
+#include "Frustum.h"
 
 #define NODEAT(x,y) ((y)*mWidth+(x))
 
@@ -21,8 +22,15 @@ struct sNode
 	sNode* parent;
 };
 
+struct sBoxHier
+{
+	BoundingBox mBoundingBox;
+	sBoxHier* mpChildren;
+};
+
 typedef unsigned char uchar;
 
+class Tower;
 //Grid class used to hold information about the gameboard.
 class Grid {
 public:
@@ -31,6 +39,8 @@ public:
 
 	//Determines if a tile has a/several specific flag/flags.
 	bool tileIs( int x, int y, uchar flags ) const;
+
+	void cull( const Frustum* frustum, Tower* towers, Tower** visible, int* max );
 
 	//Set a tile to a/several specific flag/flags.
 	void setTile( int x, int y, uchar flags );
@@ -51,14 +61,22 @@ public:
 	Grid();
 	~Grid();
 
+	sBoxHier mTop;
+	sBoxHier mMiddle;
+	sBoxHier mBottom;
+
 private:
 	int heuristic( sNode* start, sNode* end );
+	void buildCullHierarchy( sBoxHier* parent, float scale );
+
 	int mScale;
 	int mWidth, mHeight;
 	uchar* mpGrid;
 	int *mGScore, *mFScore;
 	sNode* mPath;
 	sNode* mPath2;
+
+	
 
 	//tempMesh* DEBUG_mesh;
 };
