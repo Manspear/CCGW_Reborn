@@ -17,6 +17,7 @@ public:
 	void takeDamage(float damage);
 	bool isAlive();
 	float getYOffset();
+	Weapon mWeapon;
 	
 	Player();
 	Player(GameData* data, Emitter* emitter);
@@ -28,7 +29,6 @@ private:
 	float mSpeed;
 	float mStrength;
 	glm::vec3 mDirection;
-	Weapon mWeapon;
 	GameData* pGameData;
 
 	float mHealth;

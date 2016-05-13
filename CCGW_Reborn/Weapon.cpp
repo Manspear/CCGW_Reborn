@@ -22,12 +22,6 @@ void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation)
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength)
 {
 	bool shot = false;
-	/*for (int i = 0; i < mMax && !shot; i++) {
-	if (!arrows[i].isAlive()) {
-	arrows[i].spawn(playerOwned,position, lookat,15*mStrength, { 0,-1,0 }, rotation);
-	shot = true;
-	}
-	}*/
 	for (int i = 0; i<WEAPON_MAX_ARROWS && !shot; i++)
 	{
 		if (!mpArrows[i].isAlive())
@@ -39,11 +33,6 @@ void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float s
 	mStrength = strength;
 }
 void Weapon::update(float dt) {
-	/*for (int i = 0; i < mMax; i++) {
-		if(arrows[i].isAlive())
-			arrows[i].update(dt);
-	}*/
-
 	for( int i=0; i<WEAPON_MAX_ARROWS; i++ )
 	{
 		if( mpArrows[i].isAlive() )
@@ -54,11 +43,6 @@ void Weapon::update(float dt) {
 }
 
 void Weapon::draw(const GLuint &programID) {
-	/*for (int i = 0; i < mMax; i++) {
-		if (arrows[i].isAlive())
-			arrows[i].render(programID);
-	}*/
-
 	for( int i=0; i<WEAPON_MAX_ARROWS; i++ )
 	{
 		if( mpArrows[i].isAlive() )
@@ -90,9 +74,16 @@ float Weapon::getStrength() const
 	this->mStrength = 5;
 }*/
 
+void Weapon::loadSound(Sound * sound)
+{
+	for (int i = 0; i < WEAPON_MAX_ARROWS; i++)
+		mpArrows[i].loadSound(sound);
+}
+
 Weapon::Weapon()
 	: mStrength( 5 )
 {
+	
 }
 
 Weapon::~Weapon() 

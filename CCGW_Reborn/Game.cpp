@@ -42,7 +42,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
 	Emitter playerEmitter;
 
-		data.pEmission->allocEmitter(&playerEmitter, 100);
+	data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
@@ -84,7 +84,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, &towerEmitter );
-		data.pTowers[i].setAlive( true );
+		data.pTowers[i].setAlive( false );
 	}
 
 	glm::vec3 c[8];
@@ -108,11 +108,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	//mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
+	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i < data.mMolebats; i++ )
 	{
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
+		data.pMolebats[i].loadSound(sound);
 	}
 
 	data.mMoleratmen = 50;
@@ -120,11 +122,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for (int i = 0; i < data.mMoleratmen; i++) {
 		data.pMoleratmen[i].load(enemyModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
+		data.pMoleratmen[i].loadSound(sound);
 	}
+
+	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
+	data.pPlayer->mWeapon.loadSound(sound);
 
 	pWaveSpawner = new WaveSpawner( &data );
 	pWaveSpawner->setPosition({ 14,0,-10 });
-	Sound* sound = data.pAssets->load<Sound>( "Sounds/chant.wav" );
+	sound = data.pAssets->load<Sound>( "Sounds/monstersound.wav" );
 	if( !sound )
 	{
 		const char* error = Mix_GetError();
@@ -132,6 +138,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 	else
  		sound->play();
+	
 }
 
 Game::~Game() {

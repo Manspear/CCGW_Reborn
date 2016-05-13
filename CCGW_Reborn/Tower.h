@@ -17,7 +17,7 @@ public:
 	void setHasBallista( bool hasBallista );
 	bool getAlive() const;
 	bool getHasBallista() const;
-
+	Weapon mWeapon;
 	//Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale);
 	Tower();
 	~Tower();
@@ -25,8 +25,6 @@ private:
 	float mFireRate;
 	float mReloadTime;
 	float mRange;
-	//Weapon* mpWeapon;
-	Weapon mWeapon;
 	bool mWeaponReady;
 	bool mShooting;
 	float mDistanceToTarget;

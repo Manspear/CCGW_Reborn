@@ -18,7 +18,6 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		inputs->setMouseVisible(true);
 		inputs->setMouseLock(false);
 	}
-	
 	int x = inputs->mousePosition().x;
 	int y = (inputs->mousePosition().y * -1) + gHeight;
 	for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
@@ -77,11 +76,13 @@ void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 	case'p':
 		activeMenu = ACTION_HUD;
 		mActive = false;
+		mActiveField = nullptr;
 		inputs->setMouseLock(true);
 		inputs->setMouseVisible(false);
 		break;
 	case'q':
 		mRunning = false;
+		mActiveField = nullptr;
 		writeToHighScore();
 		break;
 	case'r':
@@ -89,6 +90,7 @@ void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 		mActive = false;
 		inputs->setMouseLock(true);
 		inputs->setMouseVisible(false);
+		mActiveField = nullptr;
 		data->pGame->restartGame();
 		break;
 	case'd':
