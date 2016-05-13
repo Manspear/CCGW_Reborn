@@ -64,7 +64,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/klara3_shouldwork3.mole"); 
+	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole"); 
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
@@ -100,7 +100,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, &towerEmitter );
-		data.pTowers[i].setAlive( true );
+		data.pTowers[i].setAlive( false );
 	}
 
 	glm::vec3 c[8];
@@ -240,10 +240,10 @@ void Game::render()
 			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	if (tactical)
 	for( int i=0; i<8; i++ )
-		corners[i].render( data.pDeferredProgram->getProgramID() );
+		corners[i].renderNonAni( data.pDeferredProgram->getProgramID() );
 
 	for (int i = 0; i<data.mTowers; i++)
-	/*for( int i=0; i<data.mTowers; i++ )
+	for( int i=0; i<data.mTowers; i++ )
 		if (data.pTowers[i].getAlive())
 			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	data.pDeferredProgramNonAni->unUse();
