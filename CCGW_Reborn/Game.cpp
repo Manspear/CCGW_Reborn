@@ -64,7 +64,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole"); 
+	Model* playerModel = data.pAssets->load<Model>("Models/klara3_shouldwork3.mole"); 
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");

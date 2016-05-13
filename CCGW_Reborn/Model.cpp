@@ -5,7 +5,7 @@
 #include <glm\gtx\euler_angles.hpp>
 #define SLOW_LAUNCH 1
 
-void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::mat4x4 worldMat)
+void Model::updateAnimation(float speedFactor, int take, float currTime, glm::mat4x4 worldMat)
 {
 
 	/**
@@ -33,7 +33,7 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 		for (int j = 0; j < frameCount; j++)
 		{
 			if (prevDiff == -1337)
-			{
+			{	 
 				closestKey = j;
 				prevDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
 			}
@@ -173,7 +173,7 @@ bool Model::load( Assets* assets, std::string file )
 	}
 
 	sortJointsByID();
-
+	mpJointList;
 	if(mpJointList.size() > 0)
 		makeJointHierarchy();
 	jointMatrixList.resize(mpJointList.size());
@@ -364,7 +364,9 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 
 	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
 	//glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
+	//VVVVVVVVVVVVVVV THIS WORKS WELL REMEMBER
 	glm::mat4 keyTransform = parentTransformMatrix *  keyTMat * keySMat * keyRMat;
+	//glm::mat4 keyTransform = parentTransformMatrix * keyTMat * keySMat * keyRMat;
 	//Now "remove" the bindpose from the joint
 	glm::mat4 pureKeyTransform = keyTransform * invBPose;
 	//glm::mat4 pureKeyTransform = invBPose * keyTransform;
@@ -379,7 +381,10 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	{
 		//glm::mat4 junky;
 		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		//VVVVVVVVVVVVVVVVVVVVVVVVV THIS ONE WORKS WELL REMEMBER
 		recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		
+		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 
 		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 	}

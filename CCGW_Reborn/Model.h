@@ -24,7 +24,7 @@ public:
 
 	std::vector<glm::mat4> jointMatrixList;
 
-	void updateAnimation(float speedFactor, int take, float& currTime, glm::mat4x4 worldMat);
+	void updateAnimation(float speedFactor, int take, float currTime, glm::mat4x4 worldMat);
 	bool load( Assets* assets, std::string file );
 	void unload();
 	void drawAni();
