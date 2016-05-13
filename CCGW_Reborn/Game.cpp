@@ -70,7 +70,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
-
+	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
@@ -80,6 +80,22 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
 
 	//Enemy::pBoundingBoxModel = boundingBoxModel;
+
+	GameObject tempBaby(glm::vec3(10, 1, -50), 1);
+	tempBaby.load(babyModel);
+	float p = glm::pi<float>()*0.5f;
+	glm::mat4 rotmat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
+		0, 0.2f, 0, 0,
+		sinf(p)*0.2f, 0, cosf(p)*0.2f, 0,
+		0, 0, 0, 1
+	);
+	tempBaby.setWorld(rotmat);
+	for (int i = 0; i < 25; i++) {
+		babylist.push_back(GameObject(tempBaby));
+		babylist[i].setPosition(glm::vec3(6.5*(i / 5), 0.3, 100 + (i % 5)));
+	}
+
+
 
 	data.pGrid = new Grid(16, 48);
 	for( int i=0; i<16; i++ )
@@ -103,14 +119,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].setAlive( false );
 	}
 
-	glm::vec3 c[8];
-	data.pGrid->mTop.mpChildren[0].mBoundingBox.getCorners(c);
-	for( int i=0; i<8; i++ )
-	{
-		corners[i].load( boxModel );
-		corners[i].setPosition( c[i] );
-		corners[i].setScale( 0.1f );
-	}
+
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
@@ -238,14 +247,14 @@ void Game::render()
 	for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-	if (tactical)
-	for( int i=0; i<8; i++ )
-		corners[i].renderNonAni( data.pDeferredProgram->getProgramID() );
 
 	for (int i = 0; i<data.mTowers; i++)
 	for( int i=0; i<data.mTowers; i++ )
 		if (data.pTowers[i].getAlive())
 			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	for (int i = 0; i < data.mBabyCount; i++)
+		babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
 	data.pDeferredProgramNonAni->unUse();
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
