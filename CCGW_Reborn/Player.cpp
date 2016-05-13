@@ -22,8 +22,11 @@ void Player::update(const Input* inputs, const float &dt)
 	bool canJump = false;
 
 	if (inputs->buttonDown(0))
-		this->mStrength += dt;
-	//mWeapon->update(dt);
+	{
+		mStrength > 4 ? mStrength = 2 : mStrength += dt;
+	
+	}
+		//mWeapon->update(dt);
 	mWeapon.update( dt );
 	speedY -= 25 * dt;
 	mSpeed *= 1- 15*dt;
@@ -149,14 +152,17 @@ void Player::update(const Input* inputs, const float &dt)
 	mWorld[3][2] = mPosition.z;
 	mWorld[3][3] = 1.f;
 
-	if (inputs->buttonReleased(0))
+	if (inputs->buttonReleased(0) )
 	{
-		glm::vec3 temp = { mLookat.x, 0, mLookat.z };
-		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0))/4.f - glm::vec3(0, yoffset, 0);
-		glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
-		float rotation = rotX  - glm::angle(glm::normalize(glm::vec3(la.x,0,la.z)), tempLookat);
-		//mWeapon->shoot(tempPos, la, rotation, mStrength);
-		mWeapon.shoot( tempPos, la, rotation, mStrength );
+		if (mStrength > 0.25f)
+		{
+			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
+			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset, 0);
+			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
+			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
+			//mWeapon->shoot(tempPos, la, rotation, mStrength);
+			mWeapon.shoot(tempPos, la, rotation, mStrength);
+		}
 		mStrength = 0;
 	}
 }

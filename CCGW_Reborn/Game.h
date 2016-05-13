@@ -47,6 +47,12 @@ private:
 	sNode* mpPath;
 	int mTargets;
 	WaveSpawner* pWaveSpawner;
+	Tower** mVisibleTowers;
+	int mMaxTowers;
+
+	std::vector<GameObject> babylist;
+
+	GameObject corners[8];
 
 	int mGold;
 	int mScore;

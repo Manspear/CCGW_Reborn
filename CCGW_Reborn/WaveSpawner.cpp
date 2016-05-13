@@ -25,7 +25,7 @@ void WaveSpawner::update( float deltaTime )
 void WaveSpawner::spawn()
 {
 	// start by getting the path for the moleratmen
-	sNode start = { 7, 0 }, end = { 7, 49 };
+	sNode start = { 7, 0 }, end = { 7, 47 };
 	if( pGameData->pGrid->findPath( start, end, mpPath, &mTargets ) )
 	{
 		incrementWave();
