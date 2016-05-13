@@ -33,7 +33,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mBabyCount = 25;
 	data.pAssets = new Assets();
 	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
-	data.pDeferredProgram = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
+	data.pDeferredProgram = new DeferredProgram("skinned.vertex", "skinned.pixel", "skinned.geometry");
+	data.pDeferredProgramNonAni = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
 	data.pEmission = new Emission(&data, 1150);
@@ -117,19 +118,10 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].setAlive( false );
 	}
 
-	glm::vec3 c[8];
-	data.pGrid->mTop.mpChildren[0].mBoundingBox.getCorners(c);
-	for( int i=0; i<8; i++ )
-	{
-		corners[i].load( boxModel );
-		corners[i].setPosition( c[i] );
-		corners[i].setScale( 0.1f );
-	}
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 	//mGround.load(terrainModel);
-	mActionMarker.load(markerModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 	//mTowerModel.load( playerModel );
