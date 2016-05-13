@@ -18,22 +18,25 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		inputs->setMouseVisible(true);
 		inputs->setMouseLock(false);
 	}
-	int x = inputs->mousePosition().x;
-	int y = (inputs->mousePosition().y * -1) + gHeight;
-	for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
-		if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
-			if(mAllMenu[activeMenu].theMenu[i].mType != 'd')
-				mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
-			if (inputs->buttonReleased(0)) {
-				buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i, data);
-				break;
-			}
-		}
-		else
-			mAllMenu[activeMenu].theMenu[i].mHighlighted = false;		
-	
+	if (mActive == ACTION_HUD) {
+		
 	}
-	
+	else {
+		int x = inputs->mousePosition().x;
+		int y = (inputs->mousePosition().y * -1) + gHeight;
+		for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
+			if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
+				if (mAllMenu[activeMenu].theMenu[i].mType != 'd')
+					mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
+				if (inputs->buttonReleased(0)) {
+					buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i, data);
+					break;
+				}
+			}
+			else
+				mAllMenu[activeMenu].theMenu[i].mHighlighted = false;
+		}
+	}
 	if (mActiveField != nullptr) {
 			writeToField(inputs->getPressedKeys());			
 	}
