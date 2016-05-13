@@ -84,16 +84,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
 		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, &towerEmitter );
-		data.pTowers[i].setAlive( true );
-	}
-
-	glm::vec3 c[8];
-	data.pGrid->mTop.mpChildren[0].mBoundingBox.getCorners(c);
-	for( int i=0; i<8; i++ )
-	{
-		corners[i].load( boxModel );
-		corners[i].setPosition( c[i] );
-		corners[i].setScale( 0.1f );
+		data.pTowers[i].setAlive( false );
 	}
 
 	data.pPlayer->load( playerModel );
@@ -147,6 +138,7 @@ Game::~Game() {
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
+	delete[] mVisibleTowers;
 
 	data.pAssets->unload();
 	delete data.pAssets;
@@ -205,7 +197,10 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 		 }
 		 else {
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 30);
+			 data.pCamera->updateFrustum();
 			 mTacticalMarker.update( inputs, data );
+
+			 data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mVisibleTowers, &mMaxTowers );
 		 }
 	 }
 	 if (inputs->keyPressed(SDLK_t))
@@ -230,9 +225,6 @@ void Game::render()
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
-
-	for( int i=0; i<8; i++ )
-		corners[i].render( data.pDeferredProgram->getProgramID() );
 
 	//mMoleratman.render( data.pDeferredProgram->getProgramID());
 	//mMolebat.render( data.pDeferredProgram->getProgramID() );

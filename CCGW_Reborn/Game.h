@@ -52,8 +52,6 @@ private:
 
 	std::vector<GameObject> babylist;
 
-	GameObject corners[8];
-
 	int mGold;
 	int mScore;
 
