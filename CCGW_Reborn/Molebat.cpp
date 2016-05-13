@@ -34,7 +34,7 @@ void Molebat::update(float dt)
 	glm::vec3 evade;
 	for( int i=0; i<pGameData->mMolebats; i++ )
 	{
-		if( &pGameData->pMolebats[i] == this )
+		if( &pGameData->pMolebats[i] == this || !pGameData->pMolebats[i].getAlive() )
 			continue;
 
 		glm::vec3 dir = pGameData->pMolebats[i].getPosition() - newPos;

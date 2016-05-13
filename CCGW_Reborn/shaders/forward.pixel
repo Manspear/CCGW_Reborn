@@ -33,7 +33,7 @@ void main (){
 	
 		//finalColor = pos;
 		//finalColor = vec4(normal, 1.0);
-		finalColor =  0.5 * color  + 0.2 * max(dot(normalize(lightPos - pos.xyz), normal), 0.0) + 0.3* specular;
+		finalColor =  0.5 * color  + 0.2 * max(dot(normalize(lightPos - pos.xyz), normal), 0.0) + 0.3* vec4( specular, 0.0 );
 	}
 	else
 		finalColor = 0.5*color;
