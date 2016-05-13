@@ -250,18 +250,18 @@ void Game::render()
 {
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	//mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 
-	for (int i = 0; i<data.mTowers; i++)
 	for( int i=0; i<data.mTowers; i++ )
 		if (data.pTowers[i].getAlive())
 			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	for (int i = 0; i < data.mBabyCount; i++)
 		babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-	this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+	if (tactical)
+		this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
 	data.pDeferredProgramNonAni->unUse();
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
