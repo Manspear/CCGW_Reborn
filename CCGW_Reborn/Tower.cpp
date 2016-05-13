@@ -76,7 +76,7 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 }
 void Tower::render(const GLuint & programID)
 {
-	GameObject::render(programID);
+	GameObject::renderNonAni(programID);
 	if (mShooting)
 		mWeapon.draw( programID );
 }
