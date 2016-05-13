@@ -63,7 +63,7 @@ void Weapon::draw(const GLuint &programID) {
 	{
 		if( mpArrows[i].isAlive() )
 		{
-			mpArrows[i].render( programID );
+			mpArrows[i].renderNonAni( programID );
 		}
 	}
 }

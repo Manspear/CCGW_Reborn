@@ -34,7 +34,7 @@ void Molebat::update(float dt)
 	glm::vec3 evade;
 	for( int i=0; i<pGameData->mMolebats; i++ )
 	{
-		if( &pGameData->pMolebats[i] == this )
+		if( &pGameData->pMolebats[i] == this || !pGameData->pMolebats[i].getAlive() )
 			continue;
 
 		glm::vec3 dir = pGameData->pMolebats[i].getPosition() - newPos;
@@ -102,7 +102,7 @@ void Molebat::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	pBoundingBoxModel->draw();
+	pBoundingBoxModel->drawNonAni();
 
 	world[3][0] = mHeadBox.center.x;
 	world[3][1] = mHeadBox.center.y;
@@ -114,7 +114,7 @@ void Molebat::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	pBoundingBoxModel->draw();
+	pBoundingBoxModel->drawNonAni();
 
 	glPolygonMode( GL_FRONT, GL_FILL );
 #endif

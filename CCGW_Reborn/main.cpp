@@ -51,6 +51,9 @@ int main(int argc, char** argv)
 
 	State gs = GAME_PLAYING;
 
+	int fps = 0;
+	float fpsTimer = 0.0f;
+
 	Menu mainMenu;
 	char menuAction = 0;
 	while (running)
@@ -59,6 +62,15 @@ int main(int argc, char** argv)
 		dt = (float)(temp - timeStamp) / 1000.f;
 		timeStamp = temp;
 		input.update();
+
+		fpsTimer += dt;
+		fps++;
+		if( fpsTimer > 1.0f )
+		{
+			std::cout << "FPS: " << fps << std::endl;
+			fps = 0;
+			fpsTimer -= 1.0f;
+		}
 		
 		if (!game.tactical)
 			gs = game.run(&input, dt, !mainMenu.mActive);
@@ -70,7 +82,6 @@ int main(int argc, char** argv)
 		
 		SDL_GL_SwapWindow(window);
 	}
-
 	Mix_CloseAudio();
 	SDL_Quit();
 	return 0;

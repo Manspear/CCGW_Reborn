@@ -9,7 +9,7 @@ using namespace std;
 class ShaderProgram {
 public:
 	ShaderProgram();
-	~ShaderProgram();
+	virtual ~ShaderProgram();
 
 	void compileShaders(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
 	void linkShaders();

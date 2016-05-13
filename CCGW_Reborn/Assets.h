@@ -51,7 +51,7 @@ public:
 	Assets& operator=(const Assets& ref);
 	Assets(const Assets& ref);
 	Assets();
-	~Assets();
+	virtual ~Assets();
 
 private:
 	map<string, Asset*> mAssets;

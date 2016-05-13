@@ -40,7 +40,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
 			mMarkedIndex.push_back(selectedTile);
 			sNode start = { 0, 0 };
-			sNode end = { 8, 49 };
+			sNode end = { 8, 47 };
 			int mTargets = 0;
 			if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
 				mMarkedIndex.erase(mMarkedIndex.end() - 1);
@@ -106,19 +106,16 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 
 void Marker::render(const GLuint & programID)
 {
-	mWorld[0][0] = 1.0f;
-	mWorld[1][1] = 1.0f;
-	mWorld[2][2] = 1.0f;
 	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);	
+	glUniformMatrix4fv(world, 1, GL_FALSE, &mWorld[0][0]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	mpModel->draw();
+	mpModel->drawNonAni();
 	for (int i = 0; i < mMarkedIndex.size(); i++) {
 		mWorld[3][0] = mMarkedIndex[i].x;
 		mWorld[3][1] = 1.0f;
 		mWorld[3][2] = mMarkedIndex[i].y;
-		glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-		mpModel->draw();
+		glUniformMatrix4fv(world, 1, GL_FALSE, &mWorld[0][0]);
+		mpModel->drawNonAni();
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

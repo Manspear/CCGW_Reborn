@@ -30,6 +30,7 @@
     <ClCompile Include="Emitter.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="ForwardProgram.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="global_variables.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Emitter.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="ForwardProgram.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameObject.h" />
@@ -105,6 +107,9 @@
     <None Include="shaders\forward.vertex" />
     <None Include="shaders\menu.pixel" />
     <None Include="shaders\menu.vertex" />
+    <None Include="shaders\skinned.geometry" />
+    <None Include="shaders\skinned.pixel" />
+    <None Include="shaders\skinned.vertex" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC8315FC-C91F-40C9-ABB0-7D559CF64A85}</ProjectGuid>
@@ -164,6 +169,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)deps/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

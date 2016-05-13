@@ -39,6 +39,21 @@ const bool BoundingBox::intersect(glm::vec3 start, glm::vec3 end) const {
 	return ( tenter < texit );
 }
 
+void BoundingBox::getCorners( glm::vec3* corners ) const
+{
+	// bottom 4
+	corners[0] = center + glm::vec3( -hWidth, -hHeight, -hDepth );
+	corners[1] = center + glm::vec3( hWidth, -hHeight, -hDepth );
+	corners[2] = center + glm::vec3( hWidth, -hHeight, hDepth );
+	corners[3] = center + glm::vec3( -hWidth, -hHeight, hDepth );
+
+	// top 4
+	corners[4] = center + glm::vec3( hWidth, hHeight, hDepth );
+	corners[5] = center + glm::vec3( -hWidth, hHeight, hDepth );
+	corners[6] = center + glm::vec3( -hWidth, hHeight, -hDepth );
+	corners[7] = center + glm::vec3( hWidth, hHeight, -hDepth );
+}
+
 bool BoundingBox::raySlabIntersect( float slabmin, float slabmax, float raystart, float rayend, float& tbenter, float& tbexit ) const
 {
 	float raydir = rayend - raystart;

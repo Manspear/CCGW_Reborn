@@ -123,6 +123,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionState.h">
@@ -236,6 +239,9 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\deferred.geometry">
@@ -266,6 +272,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\billboard.vertex">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\skinned.geometry">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\skinned.pixel">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\skinned.vertex">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

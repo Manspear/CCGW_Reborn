@@ -11,6 +11,8 @@ public:
 	const bool intersect(glm::vec3 point) const;
 	const bool intersect(glm::vec3 start, glm::vec3 end) const;
 
+	void getCorners( glm::vec3* corners ) const;
+
 	BoundingBox(glm::vec3 centerPoint, float sides);
 	BoundingBox();
 	~BoundingBox();

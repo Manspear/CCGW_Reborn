@@ -18,6 +18,7 @@ public:
 	/*Unloads the mesh and frees the memory on the GPU.*/
 	void unload();
 	void draw();
+	void drawNonAni();
 
 	int getMaterialIndex() const;
 	
