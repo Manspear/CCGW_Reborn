@@ -79,7 +79,7 @@ void Moleratman::render( GLuint programID )
 
 	glUniformMatrix4fv( worldLocation, 1, GL_FALSE, &world[0][0] );
 
-	pBoundingBoxModel->draw();
+	pBoundingBoxModel->drawNonAni();
 
 	world[3][0] = mHeadBox.center.x;
 	world[3][1] = mHeadBox.center.y;
@@ -91,7 +91,7 @@ void Moleratman::render( GLuint programID )
 
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
 
-	pBoundingBoxModel->draw();
+	pBoundingBoxModel->drawNonAni();
 
 	glPolygonMode(GL_FRONT, GL_FILL );
 #endif

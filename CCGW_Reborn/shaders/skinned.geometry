@@ -13,7 +13,7 @@ out vec2 uvOut2;
 out mat3 tbnOut2;
 
 uniform mat4 viewProjection;
-//uniform mat4 world;
+uniform mat4 world;
 uniform vec3 cameraPos;
 
 void main()
@@ -22,16 +22,16 @@ void main()
 	vec3 p2 = posOut[2].xyz - posOut[0].xyz;
 	vec3 testNormal = normalize(cross(p1, p2));
 	vec3 aVector = normalize(cameraPos - posOut[1].xyz);
-	//if(dot(testNormal, aVector) > 0.0f)
-	///{
+	if(dot(testNormal, aVector) > 0.0f)
+	{
 		for (int i = 0; i < 3; i++)
 		{
 			gl_Position = viewProjection * vec4(posOut[i]);
 			uvOut2 = uvOut[i];
-			//normalOut2 = normalize(vec3(world * vec4(normalOut[i], 0.0)));
+			normalOut2 = normalize(vec3(world * vec4(normalOut[i], 0.0)));
 			tbnOut2 = tbnOut[i];
 			EmitVertex();
 		}
 		EndPrimitive();
-	//}
+	}
 }

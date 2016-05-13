@@ -18,14 +18,14 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 	//Keep this on watch...
 	float targetTime = speedFactor * currTime;
 	std::vector<sKeyFrame> tempFrames;
-
+	mpJointList;
 	for (int i = 0; i < mpJointList.size(); i++)
 	{
-		float jointMaxTime = mpJointList[i].keyFramesByTake[0][take].back().keyTime;
+		float jointMaxTime = mpJointList[i].keyFramesByTake[take].back().keyTime;
 		targetTime = std::fmod(targetTime, jointMaxTime);
 		//Find the right keyframe based on time
 		int currKeyIndex;
-		const int frameCount = mpJointList[i].keyFramesByTake[0][take].size();
+		const int frameCount = mpJointList[i].keyFramesByTake[take].size();
 		//will pick the key with the time value that 
 		//represents the "currTime" the best.
 		int closestKey;
@@ -35,17 +35,17 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 			if (prevDiff == -1337)
 			{
 				closestKey = j;
-				prevDiff = abs(targetTime - mpJointList[i].keyFramesByTake[0][take][j].keyTime);
+				prevDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
 			}
 			else {
-				float currDiff = abs(targetTime - mpJointList[i].keyFramesByTake[0][take][j].keyTime);
+				float currDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
 				if (currDiff < prevDiff)
 				{
 					closestKey = j;
 					prevDiff = currDiff;
 				}
 			}
-			if (mpJointList[i].keyFramesByTake[0][take][j].keyTime == targetTime)
+			if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
 			{
 				closestKey = j;
 				break;
@@ -56,14 +56,14 @@ void Model::updateAnimation(float speedFactor, int take, float & currTime, glm::
 		Now save this value in a "temporary final list of frames"
 		**/
 		
-		tempFrames.push_back(mpJointList[i].keyFramesByTake[0][take][closestKey]);
+		tempFrames.push_back(mpJointList[i].keyFramesByTake[take][closestKey]);
 	}
 	//Find the root joint.
 	int rootKey = 0;
 	for (int j = 0; j < mpJointList.size(); j++)
 	{
 		//If the joint has no parentjoint... That is: if it's the root.
-		if (mpJointList[j].jointData->parentJointID < 0)
+		if (mpJointList[j].jointData.parentJointID < 0)
 		{
 			rootKey = j;
 		}
@@ -130,7 +130,7 @@ void shit() {
 bool Model::load( Assets* assets, std::string file )
 {
 	bool result = true;
-
+	MoleReader assetData;
 	
 #if SLOW_LAUNCH
 	assetData.readFromBinary( file.c_str() );
@@ -144,30 +144,30 @@ bool Model::load( Assets* assets, std::string file )
 	file. Don't have to keep hold of millions of vertices.
 	**/
 
-	const sMainHeader* mainHeader = assetData.getMainHeader();
-	for (int i = 0; i < mainHeader->meshCount; i++)
+	const sMainHeader mainHeader = assetData.getMainHeader();
+	for (int i = 0; i < mainHeader.meshCount; i++)
 	{
 		sModelMesh tempMesh;
-		const sMesh* currMesh = assetData.getMesh(i);
-		const int jointCount = currMesh->jointCount;
+		sMesh currMesh = assetData.getMesh(i);
+		int jointCount = currMesh.jointCount;
 		for (int j = 0; j < jointCount; j++)
 		{
 			sModelJoint tempJoint;
-			const sJoint* currJoint = assetData.getJoint(i, j);
+			const sJoint currJoint = assetData.getJoint(i, j);
 
-			for (int k = 0; k < currJoint->animationStateCount; k++)
+			for (int k = 0; k < currJoint.animationStateCount; k++)
 			{
-				const std::vector<sKeyFrame>* currFrameList = assetData.getKeyList(i, j, k);
+				const std::vector<sKeyFrame> currFrameList = assetData.getKeyList(i, j, k);
 				tempJoint.keyFramesByTake.push_back(currFrameList);
 			}
 			tempJoint.jointData = currJoint;
-			if(currJoint->meshChildCount > 0)
+			if(currJoint.meshChildCount > 0)
 				tempJoint.meshChildren = assetData.getJointMeshChildList(i, j);
 			mpJointList.push_back(tempJoint);
 		}
-		const std::vector<sMChildHolder>* meshChildListHolder = assetData.getMeshChildList();
+		std::vector<sMChildHolder> meshChildListHolder = assetData.getMeshChildList();
 
-		tempMesh.meshChildren = meshChildListHolder[0][i].meshChildList;
+		tempMesh.meshChildren = meshChildListHolder[i].meshChildList;//meshChildListHolder[0][i].meshChildList;
 		tempMesh.meshData = currMesh;
 		mpMeshList.push_back(tempMesh);
 	}
@@ -178,8 +178,8 @@ bool Model::load( Assets* assets, std::string file )
 		makeJointHierarchy();
 	jointMatrixList.resize(mpJointList.size());
 	
-	mMeshes = assetData.getMeshList()->size();
-	mMaps = assetData.getMaterialList()->size();
+	mMeshes = assetData.getMeshList().size();
+	mMaps = assetData.getMaterialList().size();
 
 	mpMeshes = new Mesh[mMeshes];
 	mpDiffuseMaps = new Texture*[mMaps];
@@ -189,18 +189,18 @@ bool Model::load( Assets* assets, std::string file )
 	for( int i=0; i<mMeshes && result; i++ )
 		result = result && mpMeshes[i].load( &assetData, i );
 
-for (int i = 0; i < mMaps && result; i++)
-{
-	const sMaterial* material = assetData.getMaterial(i);
-	mpDiffuseMaps[i] = assets->load<Texture>(material->diffuseTexture);
-	mpSpecularMaps[i] = assets->load<Texture>(material->specularTexture);
-	mpNormalMaps[i] = assets->load<Texture>(material->normalTexture);
-
-	if (mpDiffuseMaps[i] == nullptr)
+	for (int i = 0; i < mMaps && result; i++)
 	{
-		mpDiffuseMaps[i] = assets->load<Texture>("Models/cube.png");
+		const sMaterial material = assetData.getMaterial(i);
+		mpDiffuseMaps[i] = assets->load<Texture>(material.diffuseTexture);
+		mpSpecularMaps[i] = assets->load<Texture>(material.specularTexture);
+		mpNormalMaps[i] = assets->load<Texture>(material.normalTexture);
+	
+		if (mpDiffuseMaps[i] == nullptr)
+		{
+			mpDiffuseMaps[i] = assets->load<Texture>("Models/cube.png");
+		}
 	}
-}
 
 return result;
 }
@@ -215,12 +215,18 @@ void Model::unload()
 	delete[] mpSpecularMaps;
 	delete[] mpNormalMaps;
 
+	for (int i = 0; i < mpJointList.size(); i++) {
+		mpJointList[i].jointChildren.clear();
+		mpJointList[i].keyFramesByTake.clear();
+		mpJointList[i].meshChildren.clear();
+	}
+	
 	mMeshes = mMaps = 0;
 
 	// No need to unload the textures, Assets will take care of that
 }
 
-void Model::draw()
+void Model::drawAni()
 {
 	for (int i = 0; i < mMeshes; i++)
 	{
@@ -250,6 +256,32 @@ void Model::draw()
 	}
 }
 
+void Model::drawNonAni()
+{
+	for (int i = 0; i < mMeshes; i++)
+	{
+		int material = mpMeshes[i].getMaterialIndex();
+		mpDiffuseMaps[material]->bind(GL_TEXTURE0);
+		Texture* spec = mpSpecularMaps[material];
+		if (spec)
+			spec->bind(GL_TEXTURE1);
+		else
+		{
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		Texture* norm = mpNormalMaps[material];
+		if (norm)
+			norm->bind(GL_TEXTURE2);
+		else
+		{
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		mpMeshes[i].drawNonAni();
+	}
+}
+
 Texture* Model::getDiffuseMap(int index) const
 {
 	return mpDiffuseMaps[index];
@@ -271,7 +303,7 @@ void Model::sortJointsByID()
 	int searchID = 0;
 	for (int i = 0; i < mpJointList.size(); i++)
 	{
-		if (mpJointList[i].jointData->jointID == searchID)
+		if (mpJointList[i].jointData.jointID == searchID)
 		{
 			newList.push_back(mpJointList[i]);
 			searchID++;
@@ -292,7 +324,7 @@ void Model::makeJointHierarchy()
 	int rootKey;
 	for(int i = 0; i < mpJointList.size(); i++)
 	{
-		if (mpJointList[i].jointData->parentJointID < 0)
+		if (mpJointList[i].jointData.parentJointID < 0)
 			rootKey = i;
 	}
 	recursiveMakeJointHierarchy(rootKey);
@@ -302,10 +334,10 @@ void Model::recursiveMakeJointHierarchy(int parentID)
 {
 	for (int j = 0; j < mpJointList.size(); j++)
 	{
-		if (mpJointList[j].jointData->parentJointID == parentID)
+		if (mpJointList[j].jointData.parentJointID == parentID)
 		{
 			//Add it as child.
-			mpJointList[parentID].jointChildren.push_back(mpJointList[j].jointData->jointID);
+			mpJointList[parentID].jointChildren.push_back(mpJointList[j].jointData.jointID);
 			recursiveMakeJointHierarchy(j);
 		}
 	}
@@ -321,7 +353,7 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 		tempInvBindPose[i] = mpJointList[currJointID].jointData->globalBindPoseInverse[i];
 	glm::mat4 invBPose = convertToMat4(tempInvBindPose);*/
 
-	glm::mat4 invBPose = glm::make_mat4( mpJointList[currJointID].jointData->globalBindPoseInverse );
+	glm::mat4 invBPose = glm::make_mat4( mpJointList[currJointID].jointData.globalBindPoseInverse );
 
 	//Now get the key-
 	glm::mat4 keyRMat = convertToRotMat(tempFrames[currJointID].keyRotate);
@@ -454,4 +486,5 @@ Model::Model()
 
 Model::~Model()
 {
+	delete this->mpMeshes;
 }

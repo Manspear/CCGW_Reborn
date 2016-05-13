@@ -35,7 +35,7 @@ void main()
 		vpos += ( animationMatrices[influences[i]] * vec4( pos, 1.0 ) ) * weights[i];
 	}
 
-	posOut = vec4( vpos.xyz, 1.0 );
+	posOut = world * vec4( vpos.xyz, 1.0 );
 
 	uvOut = texPos;
 	normalOut = normal;

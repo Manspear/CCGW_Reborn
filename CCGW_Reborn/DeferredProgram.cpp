@@ -81,10 +81,6 @@ DeferredProgram::~DeferredProgram() {
 
 void DeferredProgram::use() {
 	glUseProgram(mProgramID);
-	for (int i = 0; i < mTotalAttributes; i++)
-	{
-		//glEnableVertexAttribArray(i);
-	}
 	glBindFramebuffer(GL_FRAMEBUFFER, mFBOid);
 	glViewport(0, 0, gWidth, gHeight);
 	glClearDepth(1.0);
@@ -99,12 +95,21 @@ void DeferredProgram::use() {
 	glUniform1i( normalLocation, 2 );
 }
 
+void DeferredProgram::use(GLuint frameBuffer) {
+	glUseProgram(mProgramID);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+	GLuint texLocation = glGetUniformLocation(mProgramID, "texSampler");
+	GLuint specularLocation = glGetUniformLocation(mProgramID, "specularSampler");
+	GLuint normalLocation = glGetUniformLocation(mProgramID, "normalSampler");
+
+	glUniform1i(texLocation, 0);
+	glUniform1i(specularLocation, 1);
+	glUniform1i(normalLocation, 2);
+}
+
 void DeferredProgram::unUse() {
 	glUseProgram(0);
-	for (int i = 0; i < mTotalAttributes; i++)
-	{
-		//glDisableVertexAttribArray(i);
-	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -162,4 +167,9 @@ GLuint DeferredProgram::getViewPerspectiveLocation() const {
 
 GLuint DeferredProgram::getCameraPositionLocation() const {
 	return mCameraPositionLocation;
+}
+
+GLuint DeferredProgram::getFrameBuffer() const
+{
+	return mFBOid;
 }

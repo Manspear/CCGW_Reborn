@@ -10,15 +10,15 @@ class Model : public Asset
 public:
 	struct sModelJoint
 	{
-		const sJoint* jointData;
-		std::vector<const std::vector<sKeyFrame>*> keyFramesByTake;
+		sJoint jointData;
+		std::vector<std::vector<sKeyFrame>> keyFramesByTake;
 		std::vector<sMeshChild> meshChildren;
 		std::vector<int> jointChildren;
 	};
 
 	struct sModelMesh
 	{
-		const sMesh* meshData;
+		sMesh meshData;
 		std::vector<sMeshChild> meshChildren;
 	};
 
@@ -27,7 +27,8 @@ public:
 	void updateAnimation(float speedFactor, int take, float& currTime, glm::mat4x4 worldMat);
 	bool load( Assets* assets, std::string file );
 	void unload();
-	void draw();
+	void drawAni();
+	void drawNonAni();
 
 	Texture* getDiffuseMap( int index ) const;
 	Texture* getSpecularMap( int index ) const;
@@ -41,7 +42,6 @@ public:
 private:
 	Mesh* mpMeshes;
 	int mMeshes;
-	MoleReader assetData;
 
 	Texture **mpDiffuseMaps, **mpSpecularMaps, **mpNormalMaps;
 	int mMaps;

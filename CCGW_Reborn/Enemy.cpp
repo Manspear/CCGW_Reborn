@@ -4,7 +4,7 @@ Model* Enemy::pBoundingBoxModel = nullptr;
 
 void Enemy::render( GLuint programID )
 {
-	GameObject::render( programID );
+	GameObject::renderAni( programID );
 	
 	// change to 1 to draw the path
 #if 0

@@ -184,7 +184,7 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 
 void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
 {
-	GameObject::render(programID);
+	GameObject::renderAni(programID);
 	this->mWeapon.draw(programID);
 }
 

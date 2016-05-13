@@ -70,7 +70,6 @@ int main(int argc, char** argv)
 		
 		SDL_GL_SwapWindow(window);
 	}
-
 	Mix_CloseAudio();
 	SDL_Quit();
 	return 0;
