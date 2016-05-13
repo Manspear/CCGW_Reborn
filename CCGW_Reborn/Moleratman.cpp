@@ -39,6 +39,7 @@ void Moleratman::update(float dt, GameData* data)
 		if (--data->mBabyCount <= 0)
 			data->pPlayer->takeDamage(1000);
 		mAlive = false;
+
 	}
 	if (mLife <= 0) {
 		mAlive = false;

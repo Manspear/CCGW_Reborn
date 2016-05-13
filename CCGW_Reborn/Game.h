@@ -29,6 +29,7 @@ enum State {
 class Game {
 public:
 	bool tactical;
+
 	GameData* getGameData();
 	void restartGame();
 

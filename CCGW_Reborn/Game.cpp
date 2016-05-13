@@ -42,7 +42,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
 	Emitter playerEmitter;
 
-		data.pEmission->allocEmitter(&playerEmitter, 100);
+	data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
@@ -58,10 +58,28 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
-	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
+	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
+	
+	//baby fixerino
+	GameObject tempBaby(glm::vec3(10, 1, -50), 1);
+	tempBaby.load(babyModel);
+	float p = glm::pi<float>()*0.5f;
+	glm::mat4 rotmat(	cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
+						0, 0.2f, 0,		  0,
+						sinf(p)*0.2f, 0, cosf(p)*0.2f,  0,
+						0,		 0, 0,		  1
+	);
+	tempBaby.setWorld(rotmat);
+	for (int i = 0; i < 25; i++) {
+		babylist.push_back(GameObject(tempBaby));
+		babylist[i].setPosition(glm::vec3(6.5*(i /5), 0.3, 100 +  (i % 5)));
+	}
+	//baby klar
+
 
 	Enemy::pBoundingBoxModel = boundingBoxModel;
 
@@ -76,6 +94,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pEmission->allocEmitter( &towerEmitter, 1000 );
 	towerEmitter.load( particleTexture );
 
+
 	for( int i=0; i<data.mTowers; i++ )
 	{
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
@@ -86,7 +105,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
-	//mGround.load(terrainModel);
+	mGround.load(terrainModel);
 	mActionMarker.load(markerModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
@@ -210,7 +229,7 @@ void Game::render()
 	data.pDeferredProgram->use();
 	data.pCamera->updateUniforms( data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation() );
 	data.pPlayer->render(data.pDeferredProgram->getProgramID(), data.pCamera->getView());
-//	mGround.render( data.pDeferredProgram->getProgramID() );
+	mGround.render( data.pDeferredProgram->getProgramID() );
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].render( data.pDeferredProgram->getProgramID() );
@@ -219,6 +238,8 @@ void Game::render()
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].render( data.pDeferredProgram->getProgramID() );
 
+	for (int i = 0; i < data.mBabyCount; i++)
+		babylist[i].render(data.pDeferredProgram->getProgramID());
 	//mMoleratman.render( data.pDeferredProgram->getProgramID());
 	//mMolebat.render( data.pDeferredProgram->getProgramID() );
 
