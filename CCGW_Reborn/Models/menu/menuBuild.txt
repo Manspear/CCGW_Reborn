@@ -1,5 +1,9 @@
 b -0.16 -0.4 0.3 0.15 p Models/menu/begin.png
+
 b -0.16 -0.57 0.3 0.15 a Models/menu/score.png
+
 b -0.16 -0.74 0.3 0.15 r Models/menu/help.png
+
 b -0.16 -0.91 0.3 0.15 q Models/menu/exit.png
+
 b -1.0 -1.0 2 2 d Models/menu/mainMenu.png

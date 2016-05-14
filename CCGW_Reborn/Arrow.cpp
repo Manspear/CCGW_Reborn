@@ -8,23 +8,9 @@
 bool Arrow::load(GameData* data, Model* model, Emitter* emitter )
 {
 	bool result = true;
-	//mpMesh = data->pAssets->load<tempMesh>(mesh);
 	mpModel = model;
-
-	//mpEmitter.load( data, "Models/pns.png" );
-	//data->mEmitters.push_back( &mpEmitter );
-	
-	//pEmitter = data->pEmitter;
-
-	/*if( data->pEmission->allocEmitter( &mEmitter, 50 ) )
-		result = result && mEmitter.load( data, "Models/pns.png" );
-	else
-		result = false;*/
-
 	mEmitter = *emitter;
-
 	pGameData = data;
-
 	return result;
 }
 
@@ -35,66 +21,14 @@ bool Arrow::isAlive()
 void Arrow::update(float dt)
 {
 	this->mTimeSinceLastEmmit += dt;
-
-	/*glm::vec3 tempVec = glm::normalize(glm::vec3(mLookat.x, 0, mLookat.z));
-	this->rotY = glm::angle(mLookat, tempVec);
-	if (mLookat.y < 0) {
-		rotY *= -1;
-	}
-	this->mPosition += mSpeed*mLookat*dt;
-	this->mLookat = glm::normalize((this->mLookat*this->mSpeed) + 5.0f*mGravitation*dt);*/
-
-
 	glm::vec3 lastPos = mPosition;
 	mVelocity += mGravitation * 0.05f;
 	mPosition += mVelocity * dt;
 
-	//rotY = atan2( lastPos.y - mPosition.y, lastPos.x - mPosition.x );
 	mLookat = glm::normalize( mPosition - lastPos );
 	glm::vec3 tempVec = glm::normalize( glm::vec3( mLookat.x, 0, mLookat.z ) );
 	rotY = glm::angle( mLookat, tempVec );
-	//if( mLookat.y < 0 )
-		//rotY *= -1;
-
-	/*
-	glm::mat3 rotationY = glm::mat3(
-		cosf(rotX), 0, sinf(rotX),
-		0, 1, 0,
-		-sinf(rotX), 0, cosf(rotX));
-	glm::mat3 rotationX = glm::mat3(1, 0, 0,
-		0, cosf(rotY), sinf(rotY),
-		0, -sinf(rotY), cosf(rotY));
-
-	glm::mat3 totalRotation = rotationX * rotationY;
-	this->mWorld = glm::mat4(glm::vec4(totalRotation[0], 0),
-		glm::vec4(totalRotation[1], 0),
-		glm::vec4(totalRotation[2], 0),
-		glm::vec4(mPosition.x, mPosition.y, mPosition.z, 1));
-	*/
-	/*
-	glm::mat3 rotationY = glm::mat3(
-		cosf(rotY), 0, sinf(rotY),
-		0, 1, 0,
-		-sinf(rotY), 0, cosf(rotY));
-	glm::mat3 rotationX = glm::mat3(1,0,0,
-									0,	cosf(rotX - glm::pi<float>()*0.5f), sinf(rotX - glm::pi<float>()*0.5f),
-									0,	-sinf(rotX - glm::pi<float>()*0.5f), cosf(rotX - glm::pi<float>()*0.5f));
-
-	glm::mat3 totalRotation = rotationY * rotationX;
-	this->mWorld = glm::mat4(glm::vec4(totalRotation[0], 0),
-		glm::vec4(totalRotation[1], 0),
-		glm::vec4(totalRotation[2], 0),
-		glm::vec4(mPosition.x, mPosition.y, mPosition.z, 1));
-	*/
 	
-	/*this->mWorld = {
-		cosf(rotY),				sinf(rotX-p)*sinf(rotY),		sinf(rotY),				0,
-		0,						cosf(rotY),					sinf(rotY),				0,
-		sinf(rotY),				cosf(rotX-p)*sinf(rotY)*-1.f,	cosf(rotX-p)*cosf(rotY),	0,
-		mPosition.x,			mPosition.y,				mPosition.z,			1
-	};*/
-	
-
 	float p = glm::pi<float>() * 0.5f;
 
 	this->mWorld =	glm::mat4(
@@ -111,7 +45,6 @@ void Arrow::update(float dt)
 		mTimeSinceLastEmmit = 0;
 	}
 
-	// check collision against moleratmen
 	if (mPlayerOwned)
 	{
 		for (int i = 0; i < pGameData->mMoleratmen && mAlive; i++)
@@ -139,7 +72,6 @@ void Arrow::update(float dt)
 					{
 						pGameData->pMoleratmen[i].imHit(damage, mPosition);
 
-						//mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 						if (!pGameData->pMoleratmen[i].getAlive()) {
 							pGameData->pGold++;
 							pGameData->pScore++;
@@ -224,6 +156,7 @@ Arrow::Arrow() : GameObject({0,-10,0}, 1.0f)
 	mSpeed = 1.f;
 	mGravitation = {0,-1,0};
 	mpModel = nullptr;
+	mSound = nullptr;
 	//mpSpecularMap = nullptr;
 	//mpNormalMap = nullptr;
 	pGameData = nullptr;
@@ -249,7 +182,8 @@ void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float tra
 	mVelocity = direction * travelSpeed;
 	mAlive = true;
 	mPiercing = true;
-
+	if (mSound != nullptr)
+		mSound->play();
 	mPiercings = 0;
 	for (int i = 0; i<ARROW_MAX_PIERCING_DEPTH; i++)
 		mpPiercedEnemies[i] = nullptr;

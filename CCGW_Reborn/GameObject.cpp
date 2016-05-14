@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include <iostream>
+#include <glm\gtc\type_ptr.hpp>
 
 bool GameObject::load( Model* model )
 {
@@ -10,18 +11,24 @@ bool GameObject::load( Model* model )
 void GameObject::update(const float &dt) {
 }
 
-void GameObject::render(const GLuint & programID)
+//void GameObject::renderAni(const GLuint & programID)
+void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
-	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-	mpModel->draw();
+	mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
+	animationTime += 0.01f;
+	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
+	glUniformMatrix4fv(animationLocation, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
+	//GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation,1, GL_FALSE, &mWorld[0][0]);
+	mpModel->drawAni();
 }
 
-void GameObject::render(const GLuint & programID, const glm::mat4 &viewMat)
+//void GameObject::renderNonAni(const GLuint & programID)
+void GameObject::renderNonAni( GLuint worldLocation )
 {
-	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &this->mWorld[0][0]);
-	mpModel->draw();
+	//GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
+	mpModel->drawNonAni();
 }
 
 glm::vec3 GameObject::getPosition() const
@@ -49,6 +56,18 @@ void GameObject::setWorld(glm::mat4 world)
 	mWorld = world;
 }
 
+void GameObject::loadSound(Sound* sound)
+{
+	if (!sound)
+	{
+		const char* error = Mix_GetError();
+		std::cout << "Mixer error: " << error << std::endl;
+	}
+	else
+		this->mSound = sound;
+	int x = 0;
+}
+
 GameObject::GameObject(const GameObject& ref)
 	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )
 {
@@ -65,7 +84,8 @@ GameObject::GameObject(glm::vec3 position = { 0, 0, 0 }, float scale = 1.0f)
 				0,				0,				scale,			0,
 				position.x,		position.y,		position.z,		1.0 
 	};
-
+	mSound = nullptr;
+	animationTime = 0;
 }
 
 GameObject::GameObject()
@@ -75,6 +95,7 @@ GameObject::GameObject()
 	mLookat = { 0, 0, -1 };
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	this->mBB = BoundingBox(mPosition, scale);
+	animationTime = 0;
 }
 
 GameObject::~GameObject()

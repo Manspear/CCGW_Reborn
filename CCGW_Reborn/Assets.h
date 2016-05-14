@@ -13,6 +13,8 @@ public:
 	virtual bool load(Assets* assets, string file) = 0;
 	/*Abstract function, don't call */
 	virtual void unload() = 0;
+
+	virtual ~Asset(){};
 };
 
 class Assets
@@ -51,7 +53,7 @@ public:
 	Assets& operator=(const Assets& ref);
 	Assets(const Assets& ref);
 	Assets();
-	~Assets();
+	virtual ~Assets();
 
 private:
 	map<string, Asset*> mAssets;

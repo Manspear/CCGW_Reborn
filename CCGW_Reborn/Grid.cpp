@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include "Tower.h"
 #include <iostream>
 
 bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
@@ -147,6 +148,168 @@ bool Grid::tileIs( int x, int y, uchar flags ) const
 	return ( ( getTile( x, y ) & flags ) > 0 );
 }
 
+void Grid::cull( const Frustum* frustum, Tower* towers, Tower** visible, int* max )
+{
+	*max = 0;
+
+	int baseOffset = 0;
+
+	for( int currentHierarchy = 0; currentHierarchy < GRID_MAX_HIERARCHIES; currentHierarchy++ )
+	{
+		if( frustum->intersect( mCullHierarchy[currentHierarchy].mBoundingBox ) )
+		{
+			for( int currentChild = 0; currentChild < 4; currentChild++ )
+			{
+				if( frustum->intersect( mCullHierarchy[currentHierarchy].mpChildren[currentChild].mBoundingBox ) )
+				{
+					for( int currentChildChild = 0; currentChildChild < 4; currentChildChild++ )
+					{
+						if (frustum->intersect(mCullHierarchy[currentHierarchy].mpChildren[currentChild].mBoundingBox))
+						{
+							for( int z=0; z<4; z++ )
+							{
+								for( int x=0; x<4; x++ )
+								{
+									int xouter = currentChild % 2;
+									int youter = currentChild / 2;
+
+									int xinner = currentChildChild % 2;
+									int yinner = currentChildChild / 2;
+
+									int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
+
+									int xglobal = index % mWidth;
+									int yglobal = index / mWidth;
+
+									glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
+
+									if (frustum->intersect(pos, 0.5f))
+										visible[(*max)++] = &towers[index];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		baseOffset += 16*16;
+	}
+
+	/*if( frustum->intersect( mTop.mBoundingBox ) )
+	{
+		for( int i=0; i<4; i++ )
+		{
+			if( frustum->intersect( mTop.mpChildren[i].mBoundingBox ) )
+			{
+				for( int j=0; j<4; j++ )
+				{
+					if( frustum->intersect( mTop.mpChildren[i].mpChildren[j].mBoundingBox ) )
+					{
+						for( int z = 0; z<4; z++ )
+						{
+							for( int x=0; x<4; x++ )
+							{
+								int xouter = i % 2;
+								int youter = i / 2;
+
+								int xinner = j % 2;
+								int yinner = j / 2;
+
+								int index = baseOffset + ( youter * mWidth * 8 + xouter * 8 ) + ( yinner * mWidth/2 * 8 + xinner * 4 ) + ( z * mWidth + x );
+
+								int xglobal = index % mWidth;
+								int yglobal = index / mWidth;
+
+								glm::vec3 pos( xglobal+0.5f, 1.0f, yglobal+0.5f );
+
+								if( frustum->intersect( pos, 0.5f ) )
+									visible[(*max)++] = &towers[index];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	baseOffset = 16*16;
+	if (frustum->intersect(mMiddle.mBoundingBox))
+	{
+		for (int i = 0; i<4; i++)
+		{
+			if (frustum->intersect(mMiddle.mpChildren[i].mBoundingBox))
+			{
+				for (int j = 0; j<4; j++)
+				{
+					if (frustum->intersect(mMiddle.mpChildren[i].mpChildren[j].mBoundingBox))
+					{
+						for (int z = 0; z<4; z++)
+						{
+							for (int x = 0; x<4; x++)
+							{
+								int xouter = i % 2;
+								int youter = i / 2;
+
+								int xinner = j % 2;
+								int yinner = j / 2;
+
+								int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
+
+								int xglobal = index % mWidth;
+								int yglobal = index / mWidth;
+
+								glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
+
+								if (frustum->intersect(pos, 0.5f))
+									visible[(*max)++] = &towers[index];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	baseOffset = 16 * 16 * 2;
+	if (frustum->intersect(mBottom.mBoundingBox))
+	{
+		for (int i = 0; i<4; i++)
+		{
+			if (frustum->intersect(mBottom.mpChildren[i].mBoundingBox))
+			{
+				for (int j = 0; j<4; j++)
+				{
+					if (frustum->intersect(mBottom.mpChildren[i].mpChildren[j].mBoundingBox))
+					{
+						for (int z = 0; z<4; z++)
+						{
+							for (int x = 0; x<4; x++)
+							{
+								int xouter = i % 2;
+								int youter = i / 2;
+
+								int xinner = j % 2;
+								int yinner = j / 2;
+
+								int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
+
+								int xglobal = index % mWidth;
+								int yglobal = index / mWidth;
+
+								glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
+
+								if (frustum->intersect(pos, 0.5f))
+									visible[(*max)++] = &towers[index];
+							}
+						}
+					}
+				}
+			}
+		}
+	}*/
+}
+
 void Grid::setTile( int x, int y, uchar flags )
 {
 	if( x >= 0 && x < mWidth && y >= 0 && y < mHeight )
@@ -187,29 +350,42 @@ int Grid::heuristic( sNode* start, sNode* end )
 	return ( difx*difx + dify*dify );
 }
 
-/*void Grid::debugRender( GLuint programID )
+void Grid::buildCullHierarchy( sBoxHier* parent, float scale )
 {
-	for( int z=0, i=0; z<mHeight; z++ )
+	if( scale > 4.0f )
 	{
-		for( int x=0; x<mWidth; x++, i++ )
+		parent->mpChildren = new sBoxHier[4];
+		for( int z = -1, i = 0; z<2; z++ )
 		{
-			uchar tile = mpGrid[i];
-			if( tile == TILE_BOX )
+			if( z == 0 ) continue;
+
+			for( int x = -1; x<2; x++ )
 			{
-				GLuint worldLocation = glGetUniformLocation( programID, "world" );
-				glm::mat4 world;
-				world *= glm::vec4(2, 2, 2, 1);
-				world[3][0] = x;
-				world[3][1] = 0.5f;
-				world[3][2] = z;
+				if( x == 0 ) continue;
+				
+				parent->mpChildren[i].mBoundingBox = parent->mBoundingBox;
+				parent->mpChildren[i].mBoundingBox.center += glm::vec3( x * scale*0.5f, 0.0f, z * scale*0.5f );
+				parent->mpChildren[i].mBoundingBox.hWidth *= 0.5f;
+				parent->mpChildren[i].mBoundingBox.hDepth *= 0.5f;
 
-				glUniformMatrix4fv( worldLocation, 1, GL_FALSE, &world[0][0] );
+				buildCullHierarchy( &parent->mpChildren[i], scale * 0.5f );
 
-				DEBUG_mesh->draw();
+				i++;
 			}
 		}
 	}
-}*/
+	else
+		parent->mpChildren = nullptr;
+}
+
+void Grid::destroyCullHierarchy( sBoxHier* parent )
+{
+	if( parent->mpChildren != nullptr )
+		for( int i=0; i<4; i++ )
+			destroyCullHierarchy( &parent->mpChildren[i] );
+
+	delete[] parent->mpChildren;
+}
 
 Grid::Grid( int width, int height)
 	: mWidth( width ), mHeight( height )
@@ -223,6 +399,89 @@ Grid::Grid( int width, int height)
 	{
 		mpGrid[i] = TILE_EMPTY;
 	}
+
+	/*mTop.mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 15.0f ), 32.0f );
+	mTop.mBoundingBox.hHeight = 2.0f;
+
+	buildCullHierarchy( &mTop, 16.0f );*/
+
+	mCullHierarchy[0].mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 15.0f ), 32.0f );
+	mCullHierarchy[0].mBoundingBox.hHeight = 2.0f;
+
+	mCullHierarchy[1].mBoundingBox = BoundingBox(glm::vec3(15.0f, 2.0f, 16.0f*2.0f + 15.0f), 32.0f);
+	mCullHierarchy[1].mBoundingBox.hHeight = 2.0f;
+
+	mCullHierarchy[2].mBoundingBox = BoundingBox(glm::vec3(15.0f, 2.0f, 16.0f*4.0f + 15.0f), 32.0f);
+	mCullHierarchy[2].mBoundingBox.hHeight = 2.0f;
+
+	for( int i=0; i<3; i++ )
+		buildCullHierarchy( &mCullHierarchy[i], 16.0f );
+
+	/*mTop.mpChildren = new sBoxHier[4];
+	for( int z=-1, i=0; z<2; z++ )
+	{
+		if( z == 0 ) continue;
+
+		for( int x=-1; x<2; x++ )
+		{
+			if( x == 0 ) continue;
+
+			mTop.mpChildren[i].mBoundingBox = BoundingBox( mTop.mBoundingBox.center+glm::vec3( x*8.0f, 0.0f, z*8.0f ), 16.0f );
+			mTop.mpChildren[i].mBoundingBox.hHeight = 2.0f;
+			mTop.mpChildren[i].mpChildren = new sBoxHier[4];
+
+			for( int innerZ = -1, innerI = 0; innerZ < 2; innerZ++ )
+			{
+				if( innerZ == 0 ) continue;
+
+				for( int innerX = -1; innerX < 2; innerX++ )
+				{
+					if( innerX == 0 ) continue;
+
+					mTop.mpChildren[i].mpChildren[innerI].mBoundingBox = BoundingBox( mTop.mpChildren[i].mBoundingBox.center + glm::vec3( innerX*4.0f, 0.0f, innerZ*4.0f ), 8.0f );
+					mTop.mpChildren[i].mpChildren[innerI].mBoundingBox.hHeight = 2.0f;
+					mTop.mpChildren[i].mpChildren[innerI].mpChildren = nullptr;
+					innerI++;
+				}
+			}
+
+			i++;
+		}
+	}*/
+
+	/*mMiddle.mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 16.0f*2.0f + 15.0f ), 32.0f );
+	mMiddle.mBoundingBox.hHeight = 2.0f;
+
+	buildCullHierarchy( &mMiddle, 16.0f );*/
+	
+	/*mMiddle.mBoundingBox = BoundingBox( glm::vec3( 8.0f, 0.0f, 16.0f+8.0f ), 8.0f );
+	for (int z = -1; z<2; z++)
+	{
+		for (int x = -1; x<2; x++)
+		{
+			if (x == 0 || z == 0) continue;
+
+			mMiddle.mpChildren[z * 2 + x].mBoundingBox = BoundingBox(mTop.mBoundingBox.center + glm::vec3(x*4.0f, 0.0f, z*4.0f), 4.0f);
+			mMiddle.mpChildren[z * 2 + x].mpChildren = nullptr;
+		}
+	}*/
+
+	/*mBottom.mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 16.0f*4.0f + 15.0f ), 32.0f );
+	mBottom.mBoundingBox.hHeight = 2.0f;
+
+	buildCullHierarchy( &mBottom, 16.0f );*/
+
+	/*mBottom.mBoundingBox = BoundingBox( glm::vec3( 8.0f, 0.0f, 32.0f+8.0f ), 8.0f );
+	for (int z = -1; z<2; z++)
+	{
+		for (int x = -1; x<2; x++)
+		{
+			if (x == 0 || z == 0) continue;
+
+			mBottom.mpChildren[z * 2 + x].mBoundingBox = BoundingBox(mTop.mBoundingBox.center + glm::vec3(x*4.0f, 0.0f, z*4.0f), 4.0f);
+			mBottom.mpChildren[z * 2 + x].mpChildren = nullptr;
+		}
+	}*/
 }
 
 Grid::Grid()
@@ -237,4 +496,7 @@ Grid::~Grid()
 	delete[] mFScore;
 	delete[] mPath;
 	delete[] mPath2;
+
+	for( int i=0; i<3; i++ )
+		destroyCullHierarchy( &mCullHierarchy[i] );
 }

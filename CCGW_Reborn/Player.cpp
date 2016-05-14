@@ -188,10 +188,11 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 	return dir;
 }
 
-void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
+//void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
+void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
-	GameObject::render(programID);
-	this->mWeapon.draw(programID);
+	GameObject::renderAni(worldLocation, animationLocation);
+	this->mWeapon.render(worldLocation);
 }
 
 void Player::setAlive(bool amIalive)
@@ -260,7 +261,8 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	rotX = glm::pi<float>() * -0.5f; 
 	mStrength = 0.0f;
 	mHealth = 100;
-	setScale( 0.1f );
+	daIndex = 0;
+	//setScale( 0.1f );
 }
 
 Player::~Player()

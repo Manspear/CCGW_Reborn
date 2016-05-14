@@ -2,9 +2,11 @@
 
 Model* Enemy::pBoundingBoxModel = nullptr;
 
-void Enemy::render( GLuint programID )
+//void Enemy::render( GLuint programID )
+void Enemy::render( GLuint worldLocation, GLuint animationLocation )
 {
-	GameObject::render( programID );
+	//GameObject::renderAni( programID );
+	GameObject::renderAni( worldLocation, animationLocation );
 	
 	// change to 1 to draw the path
 #if 0
@@ -38,10 +40,16 @@ void Enemy::load(Model* model, Emitter* emitter)
 void Enemy::imHit(float strength, glm::vec3 position)
 {
 	mLife -= strength;
+	if (mSound != nullptr)
+		mSound->play();
 	if (mLife <= 0) {
 		mAlive = false;
 	}
-	mEmitter.spawn(position, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
+	mEmitter.spawn(position, glm::vec3(0, -1.0f, 0), 1.0f);
+	mEmitter.spawn(position, glm::vec3(1.0f, -0.5f, 0), 1.0f);
+	mEmitter.spawn(position, glm::vec3(0, -0.5f, 1.0f), 1.0f);
+	mEmitter.spawn(position, glm::vec3(0, -0.5f, -1.0f), 1.0f);
+	mEmitter.spawn(position, glm::vec3(-1.0f, -0.5f, 0.0f), 1.0f);
 }
 
 void Enemy::setAlive( bool alive )

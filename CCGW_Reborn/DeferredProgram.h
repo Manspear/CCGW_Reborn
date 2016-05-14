@@ -8,6 +8,7 @@ public:
 	~DeferredProgram();
 
 	void use();
+	void use(GLuint frambuffer);
 	void unUse(); 
 
 	void enableTextures(GLuint nextShader) const;
@@ -15,6 +16,9 @@ public:
 
 	GLuint getViewPerspectiveLocation() const;
 	GLuint getCameraPositionLocation() const;
+	GLuint getFrameBuffer() const;
+	GLuint getWorldLocation() const;
+	GLuint getAnimationLocation() const;
 
 private:
 	GLuint mFBOid;
@@ -25,4 +29,6 @@ private:
 	GLuint mDepthTex;
 	GLuint mViewPerspectiveLocation;
 	GLuint mCameraPositionLocation;
+	GLuint mWorldLocation;
+	GLuint mAnimationLocation;
 };

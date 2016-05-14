@@ -25,7 +25,7 @@ void WaveSpawner::update( float deltaTime )
 void WaveSpawner::spawn()
 {
 	// start by getting the path for the moleratmen
-	sNode start = { 7, 0 }, end = { 7, 49 };
+	sNode start = { 7, 0 }, end = { 7, 47 };
 	if( pGameData->pGrid->findPath( start, end, mpPath, &mTargets ) )
 	{
 		incrementWave();
@@ -36,8 +36,8 @@ void WaveSpawner::spawn()
 		mDelay = 0.0f;
 
 		// TODO: Do something useful here
-		mSpawnMoleratmen = (mWave*mWave + 5) % pGameData->mMoleratmen;
-		mSpawnMolebats = (mWave * 2) % pGameData->mMolebats;
+		mSpawnMoleratmen = glm::min((mWave*2 + 3), pGameData->mMoleratmen);
+		mSpawnMolebats = glm::min((mWave + 1), pGameData->mMolebats);
 
 		// DEBUG: Remove this
 		for( int i=0; i<pGameData->mMoleratmen; i++ )
