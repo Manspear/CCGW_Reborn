@@ -11,7 +11,8 @@ public:
 	void use(GLuint frambuffer);
 	void unUse(); 
 
-	void enableTextures(GLuint nextShader) const;
+	//void enableTextures(GLuint nextShader) const;
+	void enableTextures(GLuint* textureLocations) const;
 	void disableTextures() const;
 
 	GLuint getViewPerspectiveLocation() const;
@@ -22,13 +23,21 @@ public:
 
 private:
 	GLuint mFBOid;
-	GLuint mNormalTex;
-	GLuint mDiffuseTex;
-	GLuint mAmbientTex;
-	GLuint mSpecularTex;
-	GLuint mDepthTex;
+	union
+	{
+		GLuint mTextures[5];
+		struct
+		{
+			GLuint mAmbientTex;
+			GLuint mDiffuseTex;
+			GLuint mSpecularTex;
+			GLuint mNormalTex;
+			GLuint mDepthTex;
+		};
+	};
 	GLuint mViewPerspectiveLocation;
 	GLuint mCameraPositionLocation;
 	GLuint mWorldLocation;
 	GLuint mAnimationLocation;
+	GLuint mTexSamplerLocation, mSpecularSamplerLocation, mNormalSamplerLocation;
 };

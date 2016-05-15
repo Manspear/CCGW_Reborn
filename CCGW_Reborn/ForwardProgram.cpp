@@ -7,7 +7,18 @@ ForwardProgram::ForwardProgram(){
 
 ForwardProgram::ForwardProgram(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) : ShaderProgram() {
 	compileShaders(vertexPath, fragmentPath, geometryPath);
+	
 	glUseProgram(mProgramID);
+
+	mAmbientLocation = glGetUniformLocation(mProgramID, "ambientT");
+	mDiffuseLocation = glGetUniformLocation(mProgramID, "diffuseT");
+	mSpecularLocation = glGetUniformLocation(mProgramID, "specularT");
+	mNormalLocation = glGetUniformLocation(mProgramID, "normalT");
+	mDepthLocation = glGetUniformLocation(mProgramID, "depthT");
+
+	mCameraPositionLocation = glGetUniformLocation(mProgramID, "cameraPos");
+	mInverseViewPerspectiveLocation = glGetUniformLocation(mProgramID, "invViewPerspective");
+
 	glUseProgram(0);
 }
 
@@ -35,4 +46,16 @@ void ForwardProgram::unUse() {
 	{
 		glDisableVertexAttribArray(i);
 	}
+}
+
+GLuint* ForwardProgram::getTextureLocations() const {
+	return (GLuint*)mTextureLocations;
+}
+
+GLuint ForwardProgram::getCameraPositionLocation() const {
+	return mCameraPositionLocation;
+}
+
+GLuint ForwardProgram::getInverseViewPerspectiveLocation() const {
+	return mInverseViewPerspectiveLocation;
 }

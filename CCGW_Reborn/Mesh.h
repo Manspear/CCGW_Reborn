@@ -30,7 +30,7 @@ public:
 private:
 	GLuint mVertexArray;
 	GLuint mVertexBuffer;
-	GLuint mIndexBuffer;
+	//GLuint mIndexBuffer;
 	int mSize;
 	int mMaterialIndex;
 };

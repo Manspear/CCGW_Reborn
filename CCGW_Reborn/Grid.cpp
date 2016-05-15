@@ -6,8 +6,8 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 {
 	bool result = false;
 
-	std::vector<sNode*> openList;
-	std::vector<sNode*> closedList;
+	mOpenList.clear();
+	mClosedList.clear();
 
 	// Initialize paths to default values.
 	// All scores should be above any reasonable value to ensure that the
@@ -27,15 +27,16 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 	
 	// Add inital node to the open list
 	sNode* first = &mPath[NODEAT(start.x,start.y)];
-	openList.push_back(first);
+	//openList.push_back(first);
+	mOpenList.push_back(first);
 
 	// Keep looping until the open list is empty and there are no more candidates for movement
-	while( openList.size() > 0 && !result )
+	while(mOpenList.size() > 0 && !result )
 	{
 		// Find the node in the open list that has the shortest approximated distance to the target
-		std::vector<sNode*>::iterator currentIT = openList.end();
+		std::vector<sNode*>::iterator currentIT = mOpenList.end();
 		int currentScore = 999999;
-		for( std::vector<sNode*>::iterator it = openList.begin(); it != openList.end(); it++ )
+		for( std::vector<sNode*>::iterator it = mOpenList.begin(); it != mOpenList.end(); it++ )
 		{
 			int score = mFScore[NODEAT((*it)->x,(*it)->y)];
 			if( score < currentScore )
@@ -46,7 +47,7 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 		}
 
 		// If no node was found, something has gone horribly wrong
-		if( currentIT == openList.end() )
+		if( currentIT == mOpenList.end() )
 			throw -1;
 
 		// If the best candidate is the goal, we have found a path
@@ -67,9 +68,9 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 		else
 		{
 			// Move candidate from open list to closed list, showing that we have visited it
-			closedList.push_back(*currentIT);
-			openList.erase( currentIT );
-			currentIT = closedList.end()-1;
+			mClosedList.push_back(*currentIT);
+			mOpenList.erase( currentIT );
+			currentIT = mClosedList.end()-1;
 
 			// Make sure we don't go out of bounds
 			int minx = (*currentIT)->x-1;
@@ -104,14 +105,14 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 						// Make sure the node has not already been visited
 						sNode* dir = &mPath[NODEAT(x,y)];
 						bool found = false;
-						for( std::vector<sNode*>::iterator it = closedList.begin(); it != closedList.end() && !found; it++ )
+						for( std::vector<sNode*>::iterator it = mClosedList.begin(); it != mClosedList.end() && !found; it++ )
 						{
 							if( (*it)->x == dir->x &&(*it)->y == dir->y )
 								found = true;
 						}
 
 						// Make sure the node is not already a candidate for visit
-						for (std::vector<sNode*>::iterator it = openList.begin(); it != openList.end() && !found; it++)
+						for (std::vector<sNode*>::iterator it = mOpenList.begin(); it != mOpenList.end() && !found; it++)
 						{
 							if ((*it)->x == dir->x && (*it)->y == dir->y)
 								found = true;
@@ -127,7 +128,7 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 							{
 								// Add node to open list
 								dir->parent = *currentIT;
-								openList.push_back( dir );
+								mOpenList.push_back( dir );
 
 								// Set score of node
 								mGScore[NODEAT(x,y)] = tscore;
@@ -178,13 +179,16 @@ void Grid::cull( const Frustum* frustum, Tower* towers, Tower** visible, int* ma
 
 									int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
 
-									int xglobal = index % mWidth;
-									int yglobal = index / mWidth;
+									if (towers[index].getAlive())
+									{
+										int xglobal = index % mWidth;
+										int yglobal = index / mWidth;
 
-									glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
+										glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
 
-									if (frustum->intersect(pos, 0.5f))
-										visible[(*max)++] = &towers[index];
+										if (frustum->intersect(pos, 0.5f))
+											visible[(*max)++] = &towers[index];
+									}
 								}
 							}
 						}
@@ -195,119 +199,6 @@ void Grid::cull( const Frustum* frustum, Tower* towers, Tower** visible, int* ma
 
 		baseOffset += 16*16;
 	}
-
-	/*if( frustum->intersect( mTop.mBoundingBox ) )
-	{
-		for( int i=0; i<4; i++ )
-		{
-			if( frustum->intersect( mTop.mpChildren[i].mBoundingBox ) )
-			{
-				for( int j=0; j<4; j++ )
-				{
-					if( frustum->intersect( mTop.mpChildren[i].mpChildren[j].mBoundingBox ) )
-					{
-						for( int z = 0; z<4; z++ )
-						{
-							for( int x=0; x<4; x++ )
-							{
-								int xouter = i % 2;
-								int youter = i / 2;
-
-								int xinner = j % 2;
-								int yinner = j / 2;
-
-								int index = baseOffset + ( youter * mWidth * 8 + xouter * 8 ) + ( yinner * mWidth/2 * 8 + xinner * 4 ) + ( z * mWidth + x );
-
-								int xglobal = index % mWidth;
-								int yglobal = index / mWidth;
-
-								glm::vec3 pos( xglobal+0.5f, 1.0f, yglobal+0.5f );
-
-								if( frustum->intersect( pos, 0.5f ) )
-									visible[(*max)++] = &towers[index];
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	baseOffset = 16*16;
-	if (frustum->intersect(mMiddle.mBoundingBox))
-	{
-		for (int i = 0; i<4; i++)
-		{
-			if (frustum->intersect(mMiddle.mpChildren[i].mBoundingBox))
-			{
-				for (int j = 0; j<4; j++)
-				{
-					if (frustum->intersect(mMiddle.mpChildren[i].mpChildren[j].mBoundingBox))
-					{
-						for (int z = 0; z<4; z++)
-						{
-							for (int x = 0; x<4; x++)
-							{
-								int xouter = i % 2;
-								int youter = i / 2;
-
-								int xinner = j % 2;
-								int yinner = j / 2;
-
-								int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
-
-								int xglobal = index % mWidth;
-								int yglobal = index / mWidth;
-
-								glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
-
-								if (frustum->intersect(pos, 0.5f))
-									visible[(*max)++] = &towers[index];
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	baseOffset = 16 * 16 * 2;
-	if (frustum->intersect(mBottom.mBoundingBox))
-	{
-		for (int i = 0; i<4; i++)
-		{
-			if (frustum->intersect(mBottom.mpChildren[i].mBoundingBox))
-			{
-				for (int j = 0; j<4; j++)
-				{
-					if (frustum->intersect(mBottom.mpChildren[i].mpChildren[j].mBoundingBox))
-					{
-						for (int z = 0; z<4; z++)
-						{
-							for (int x = 0; x<4; x++)
-							{
-								int xouter = i % 2;
-								int youter = i / 2;
-
-								int xinner = j % 2;
-								int yinner = j / 2;
-
-								int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
-
-								int xglobal = index % mWidth;
-								int yglobal = index / mWidth;
-
-								glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
-
-								if (frustum->intersect(pos, 0.5f))
-									visible[(*max)++] = &towers[index];
-							}
-						}
-					}
-				}
-			}
-		}
-	}*/
 }
 
 void Grid::setTile( int x, int y, uchar flags )
@@ -400,10 +291,8 @@ Grid::Grid( int width, int height)
 		mpGrid[i] = TILE_EMPTY;
 	}
 
-	/*mTop.mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 15.0f ), 32.0f );
-	mTop.mBoundingBox.hHeight = 2.0f;
-
-	buildCullHierarchy( &mTop, 16.0f );*/
+	mOpenList.reserve(10);
+	mClosedList.reserve(10);
 
 	mCullHierarchy[0].mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 15.0f ), 32.0f );
 	mCullHierarchy[0].mBoundingBox.hHeight = 2.0f;
@@ -416,72 +305,6 @@ Grid::Grid( int width, int height)
 
 	for( int i=0; i<3; i++ )
 		buildCullHierarchy( &mCullHierarchy[i], 16.0f );
-
-	/*mTop.mpChildren = new sBoxHier[4];
-	for( int z=-1, i=0; z<2; z++ )
-	{
-		if( z == 0 ) continue;
-
-		for( int x=-1; x<2; x++ )
-		{
-			if( x == 0 ) continue;
-
-			mTop.mpChildren[i].mBoundingBox = BoundingBox( mTop.mBoundingBox.center+glm::vec3( x*8.0f, 0.0f, z*8.0f ), 16.0f );
-			mTop.mpChildren[i].mBoundingBox.hHeight = 2.0f;
-			mTop.mpChildren[i].mpChildren = new sBoxHier[4];
-
-			for( int innerZ = -1, innerI = 0; innerZ < 2; innerZ++ )
-			{
-				if( innerZ == 0 ) continue;
-
-				for( int innerX = -1; innerX < 2; innerX++ )
-				{
-					if( innerX == 0 ) continue;
-
-					mTop.mpChildren[i].mpChildren[innerI].mBoundingBox = BoundingBox( mTop.mpChildren[i].mBoundingBox.center + glm::vec3( innerX*4.0f, 0.0f, innerZ*4.0f ), 8.0f );
-					mTop.mpChildren[i].mpChildren[innerI].mBoundingBox.hHeight = 2.0f;
-					mTop.mpChildren[i].mpChildren[innerI].mpChildren = nullptr;
-					innerI++;
-				}
-			}
-
-			i++;
-		}
-	}*/
-
-	/*mMiddle.mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 16.0f*2.0f + 15.0f ), 32.0f );
-	mMiddle.mBoundingBox.hHeight = 2.0f;
-
-	buildCullHierarchy( &mMiddle, 16.0f );*/
-	
-	/*mMiddle.mBoundingBox = BoundingBox( glm::vec3( 8.0f, 0.0f, 16.0f+8.0f ), 8.0f );
-	for (int z = -1; z<2; z++)
-	{
-		for (int x = -1; x<2; x++)
-		{
-			if (x == 0 || z == 0) continue;
-
-			mMiddle.mpChildren[z * 2 + x].mBoundingBox = BoundingBox(mTop.mBoundingBox.center + glm::vec3(x*4.0f, 0.0f, z*4.0f), 4.0f);
-			mMiddle.mpChildren[z * 2 + x].mpChildren = nullptr;
-		}
-	}*/
-
-	/*mBottom.mBoundingBox = BoundingBox( glm::vec3( 15.0f, 2.0f, 16.0f*4.0f + 15.0f ), 32.0f );
-	mBottom.mBoundingBox.hHeight = 2.0f;
-
-	buildCullHierarchy( &mBottom, 16.0f );*/
-
-	/*mBottom.mBoundingBox = BoundingBox( glm::vec3( 8.0f, 0.0f, 32.0f+8.0f ), 8.0f );
-	for (int z = -1; z<2; z++)
-	{
-		for (int x = -1; x<2; x++)
-		{
-			if (x == 0 || z == 0) continue;
-
-			mBottom.mpChildren[z * 2 + x].mBoundingBox = BoundingBox(mTop.mBoundingBox.center + glm::vec3(x*4.0f, 0.0f, z*4.0f), 4.0f);
-			mBottom.mpChildren[z * 2 + x].mpChildren = nullptr;
-		}
-	}*/
 }
 
 Grid::Grid()
