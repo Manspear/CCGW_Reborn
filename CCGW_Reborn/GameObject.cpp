@@ -14,12 +14,9 @@ void GameObject::update(const float &dt) {
 //void GameObject::renderAni(const GLuint & programID)
 void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
-	static bool doOnce = false;
-	if (!doOnce)
-	{
-		mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
-		doOnce = true;
-	}
+	
+    mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
+
 	animationTime += 0.01f;
 	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
 	glUniformMatrix4fv(animationLocation, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
