@@ -46,10 +46,10 @@ private:
 	GameData data;
 	int mTargets;
 	WaveSpawner* pWaveSpawner;
-	Tower** mVisibleTowers;
-	int mMaxTowers;
+	Tower** mpVisibleTowers;
+	int mVisibleTowers;
 
-	std::vector<GameObject> babylist;
+	//std::vector<GameObject> babylist;
 
 	int mGold;
 	int mScore;

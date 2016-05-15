@@ -81,7 +81,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	//Enemy::pBoundingBoxModel = boundingBoxModel;
 
-	GameObject tempBaby(glm::vec3(10, 1, -50), 1);
+	/*GameObject tempBaby(glm::vec3(10, 1, -50), 1);
 	tempBaby.load(babyModel);
 	float p = glm::pi<float>()*0.5f;
 	glm::mat4 rotmat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
@@ -93,9 +93,26 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for (int i = 0; i < 25; i++) {
 		babylist.push_back(GameObject(tempBaby));
 		babylist[i].setPosition(glm::vec3(6.5*(i / 5), 0.3, 100 + (i % 5)));
+	}*/
+
+	data.mBabies = 25;
+	data.pBabies = new GameObject[data.mBabies];
+
+	float p = glm::pi<float>()*0.5f;
+	glm::mat4 babyMat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
+		0, 0.2f, 0, 0,
+		sinf(p)*0.2f, 0, cosf(p)*0.2f, 0,
+		0, 0, 0, 1
+	);
+
+	for (int i = 0; i < data.mBabies; i++)
+	{
+		data.pBabies[i].load(babyModel);
+		babyMat[3][0] = 6.5f*(i / 5);
+		babyMat[3][1] = 0.3f;
+		babyMat[3][2] = 100 + (i % 5);
+		data.pBabies[i].setWorld(babyMat);
 	}
-
-
 
 	data.pGrid = new Grid(16, 48);
 	for( int i=0; i<16; i++ )
@@ -104,8 +121,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mTowers = 16*48;
 	data.pTowers = new Tower[data.mTowers];
 
-	mVisibleTowers = new Tower*[data.mTowers];
-	mMaxTowers = 0;
+	mpVisibleTowers = new Tower*[data.mTowers];
+	mVisibleTowers = 0;
 
 	Emitter towerEmitter;
 	data.pEmission->allocEmitter( &towerEmitter, 1000 );
@@ -178,7 +195,8 @@ Game::~Game() {
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
-	delete[] mVisibleTowers;
+	delete[] data.pBabies;
+	delete[] mpVisibleTowers;
 
 	data.pAssets->unload();
 	delete data.pAssets;
@@ -264,14 +282,18 @@ void Game::render()
 			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			data.pMolebats[i].renderNonAni( worldLocation );
 
-	for (int i = 0; i<mMaxTowers; i++)
-		if (mVisibleTowers[i]->getAlive())
+	/*for (int i = 0; i<mVisibleTowers; i++)
+		if (mpVisibleTowers[i]->getAlive())
 			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-			mVisibleTowers[i]->renderNonAni( worldLocation );
+			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
+
+	for (int i = 0; i < mVisibleTowers; i++)
+		mpVisibleTowers[i]->renderNonAni(worldLocation);
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-		babylist[i].renderNonAni(worldLocation);
+		//babylist[i].renderNonAni(worldLocation);
+		data.pBabies[i].renderNonAni(worldLocation);
 
 	//this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
 	mTacticalMarker.render( worldLocation );
@@ -313,7 +335,7 @@ void Game::update(Input* inputs, float dt)
 	if( doCull )
 		data.pCamera->updateFrustum();
 	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );
-	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mVisibleTowers, &mMaxTowers );
+	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
 
 	//std::cout << "Visible towers: " << mMaxTowers << std::endl;
 
@@ -360,12 +382,12 @@ void Game::update(Input* inputs, float dt)
 void Game::drawOnScreenQuad()
 {
 	data.pForwardProgram->use();
-	data.pDeferredProgramNonAni->enableTextures(data.pForwardProgram->getProgramID());
+	data.pDeferredProgramNonAni->enableTextures(data.pForwardProgram->getTextureLocations());
 
-	GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
-	glUniform3fv(cameraPos, 1, &data.pCamera->getPosition()[0]);
-	GLuint inverseViewPerspective = glGetUniformLocation(data.pForwardProgram->getProgramID(), "invViewPerspective");
-	glUniformMatrix4fv(inverseViewPerspective, 1, GL_FALSE, &glm::inverse(data.pCamera->getViewPerspective())[0][0]);
+	//GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
+	glUniform3fv(data.pForwardProgram->getCameraPositionLocation(), 1, &data.pCamera->getPosition()[0]);
+	//GLuint inverseViewPerspective = glGetUniformLocation(data.pForwardProgram->getProgramID(), "invViewPerspective");
+	glUniformMatrix4fv(data.pForwardProgram->getInverseViewPerspectiveLocation(), 1, GL_FALSE, &glm::inverse(data.pCamera->getViewPerspective())[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, testScreen);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));

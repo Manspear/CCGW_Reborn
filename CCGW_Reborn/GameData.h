@@ -8,6 +8,7 @@ class BillboardProgram;
 class Player;
 class Emission;
 class Grid;
+class GameObject;
 class Molebat;
 class Moleratman;
 class Tower;
@@ -28,6 +29,8 @@ struct GameData
 	Molebat* pMolebats;
 	int boxScale;
 	int mMolebats;
+	GameObject* pBabies;
+	int mBabies;
 	int mBabyCount;
 	Moleratman* pMoleratmen;
 	int mMoleratmen;

@@ -143,6 +143,12 @@ bool Mesh::load( MoleReader* reader, int index )
 	{
 		std::vector<sVertex> vertexList = reader->getVertexList( index );
 
+		glGenVertexArrays(1, &mVertexArray);
+		glBindVertexArray(mVertexArray);
+
+		for( int i=0; i<=4; i++ )
+			glEnableVertexAttribArray(i);
+
 		glGenBuffers(1, &mVertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(sVertex) * vertexList.size(), vertexList.data(), GL_STATIC_DRAW);
@@ -152,6 +158,8 @@ bool Mesh::load( MoleReader* reader, int index )
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 6));
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 8));
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 11));
+
+		glBindVertexArray(0);
 
 		mSize = vertexList.size();
 		mMaterialIndex = mesh.materialID;
@@ -163,6 +171,12 @@ bool Mesh::load( MoleReader* reader, int index )
 	else if (mesh.skelAnimVertexCount > 0)
 	{
 		std::vector<sSkelAnimVertex> vertexList = reader->getSkelVertexList(index);
+
+		glGenVertexArrays(1, &mVertexArray);
+		glBindVertexArray(mVertexArray);
+
+		for (int i = 0; i <= 6; i++)
+			glEnableVertexAttribArray(i);
 
 		glGenBuffers(1, &mVertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -198,14 +212,18 @@ void Mesh::unload()
 		glDeleteVertexArrays(1, &mVertexArray);
 	if (mVertexBuffer > 0)
 		glDeleteBuffers(1, &mVertexBuffer);
-	if (mIndexBuffer > 0)
-		glDeleteBuffers(1, &mIndexBuffer);
-	mVertexArray = mVertexBuffer = mIndexBuffer = 0;
+	//if (mIndexBuffer > 0)
+		//glDeleteBuffers(1, &mIndexBuffer);
+	mVertexArray = mVertexBuffer = 0; // mIndexBuffer = 0;
 }
 
 void Mesh::draw() 
 {
-	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+	glBindVertexArray(mVertexArray);
+	glDrawArrays(GL_TRIANGLES, 0, mSize);
+	glBindVertexArray(0);
+
+	/*glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
@@ -222,12 +240,16 @@ void Mesh::draw()
 	glVertexAttribIPointer(5, 4, GL_INT, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 14));
 	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(sSkelAnimVertex), (void*)(sizeof(float) * 14+sizeof(int)*4));
 	glDrawArrays(GL_TRIANGLES, 0, mSize);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 }
 
 void Mesh::drawNonAni()
 {
-	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+	glBindVertexArray(mVertexArray);
+	glDrawArrays(GL_TRIANGLES, 0, mSize);
+	glBindVertexArray(0);
+
+	/*glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
@@ -240,7 +262,7 @@ void Mesh::drawNonAni()
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 8));
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(sVertex), (void*)(sizeof(float) * 11));
 	glDrawArrays(GL_TRIANGLES, 0, mSize);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 }
 
 int Mesh::getMaterialIndex() const
@@ -252,17 +274,17 @@ Mesh& Mesh::operator=(const Mesh& ref)
 {
 	mVertexArray = ref.mVertexArray;
 	mVertexBuffer = ref.mVertexBuffer;
-	mIndexBuffer = ref.mIndexBuffer;
+	//mIndexBuffer = ref.mIndexBuffer;
 	return *this;
 }
 
 Mesh::Mesh(const Mesh& ref)
-	: mVertexArray(ref.mVertexArray), mVertexBuffer(ref.mVertexBuffer), mIndexBuffer(ref.mIndexBuffer)
+	: mVertexArray(ref.mVertexArray), mVertexBuffer(ref.mVertexBuffer), mSize( ref.mSize )//, mIndexBuffer(ref.mIndexBuffer)
 {
 }
 
 Mesh::Mesh()
-	: mVertexArray(0), mVertexBuffer(0), mIndexBuffer(0), mSize(0)
+	: mVertexArray(0), mVertexBuffer(0), mSize(0)//, mIndexBuffer(0), 
 {
 }
 
