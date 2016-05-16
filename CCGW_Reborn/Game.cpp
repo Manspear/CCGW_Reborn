@@ -258,7 +258,7 @@ void Game::render()
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
 	mGround.renderNonAni( worldLocation );
 
-	/*for (int i = 0; i<data.mMolebats; i++)
+	for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni( worldLocation );
 

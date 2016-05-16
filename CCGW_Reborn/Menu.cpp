@@ -28,6 +28,8 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 				mAllMenu[activeMenu].theMenu[i].mHighlighted = false;
 		}
 	}
+	else
+		updateNumbers(data);
 	if (mActiveField != nullptr) {
 			writeToField(inputs->getPressedKeys());			
 	}
