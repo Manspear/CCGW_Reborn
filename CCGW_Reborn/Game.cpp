@@ -34,7 +34,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pAssets = new Assets();
 	data.pCamera = new Camera( 45.0f, (float)gWidth/gHeight, 0.5f, 150.0f );
 	data.pDeferredProgram = new DeferredProgram("skinned.vertex", "skinned.pixel", "skinned.geometry");
-	//data.pDeferredProgram->setClear(false);
 	data.pDeferredProgramNonAni = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
@@ -44,7 +43,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
 	Emitter playerEmitter;
 
-		data.pEmission->allocEmitter(&playerEmitter, 100);
+	data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
@@ -101,7 +100,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for( int i=0; i<16; i++ )
 		data.pGrid->setTile( i, 0, TILE_BLOCKED );
 
-	data.mTowers = 16*48;
+	data.mTowers = 15*48;
 	data.pTowers = new Tower[data.mTowers];
 
 	mVisibleTowers = new Tower*[data.mTowers];
@@ -248,13 +247,13 @@ void Game::render()
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 
-	for (int i = 0; i<data.mTowers; i++)
 	for( int i=0; i<data.mTowers; i++ )
 		if (data.pTowers[i].getAlive())
 			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 	for (int i = 0; i < data.mBabyCount; i++)
 		babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-	this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+	if(tactical)
+		this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
 	data.pDeferredProgramNonAni->unUse();
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());

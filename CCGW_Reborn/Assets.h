@@ -13,6 +13,7 @@ public:
 	virtual bool load(Assets* assets, string file) = 0;
 	/*Abstract function, don't call */
 	virtual void unload() = 0;
+	virtual ~Asset() {};
 };
 
 class Assets

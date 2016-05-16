@@ -491,5 +491,5 @@ Model::Model()
 
 Model::~Model()
 {
-	delete this->mpMeshes;
+	
 }
