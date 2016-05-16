@@ -250,8 +250,6 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 30);
 			 mTacticalMarker.update( inputs, data );
 		 }
-
-		 data.pGrid->cull(data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers);
 	 }
 	 if (inputs->keyPressed(SDLK_t))
 	 {
@@ -283,7 +281,8 @@ void Game::render()
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 
 	for (int i = 0; i < mVisibleTowers; i++)
-		mpVisibleTowers[i]->render(worldLocation);
+		if( mpVisibleTowers[i]->getAlive() )
+			mpVisibleTowers[i]->render(worldLocation);
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
@@ -366,6 +365,10 @@ void Game::update(Input* inputs, float dt)
 			inputs->setMouseLock(false);
 			tactical = true;
 			mCounter = 0;
+
+			mVisibleTowers = data.mTowers;
+			for( int i=0; i<mVisibleTowers; i++ )
+				mpVisibleTowers[i] = &data.pTowers[i];
 		}
 	}
 	else
