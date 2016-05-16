@@ -42,6 +42,6 @@ private:
 	int mCurMolebats, mSpawnMolebats;
 	int mMoleratmanIndex, mMolebatIndex;
 
-	sNode* mpPath[5];
+	sNode* mpPath;
 	int mTargets;
 };

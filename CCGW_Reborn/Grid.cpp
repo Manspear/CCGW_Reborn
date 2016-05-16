@@ -179,15 +179,18 @@ void Grid::cull( const Frustum* frustum, Tower* towers, Tower** visible, int* ma
 
 									int index = baseOffset + (youter * mWidth * 8 + xouter * 8) + (yinner * mWidth / 2 * 8 + xinner * 4) + (z * mWidth + x);
 
-									if (towers[index].getAlive())
+									if (index < 721)
 									{
-										int xglobal = index % mWidth;
-										int yglobal = index / mWidth;
+										if (towers[index].getAlive())
+										{
+											int xglobal = index % mWidth;
+											int yglobal = index / mWidth;
 
-										glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
+											glm::vec3 pos(xglobal + 0.5f, 1.0f, yglobal + 0.5f);
 
-										if (frustum->intersect(pos, 0.5f))
-											visible[(*max)++] = &towers[index];
+											if (frustum->intersect(pos, 0.5f))
+												visible[(*max)++] = &towers[index];
+										}
 									}
 								}
 							}

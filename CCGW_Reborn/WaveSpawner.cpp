@@ -27,17 +27,8 @@ void WaveSpawner::spawn()
 {
 	// start by getting the path for the moleratmen
 	sNode start = { 7, 0 };
-	sNode end = { 1 , 47 };
-	
-	pGameData->pGrid->findPath(start, end, mpPath[0], &mTargets);
-	end = { 4 , 47 };
-	pGameData->pGrid->findPath(start, end, mpPath[1], &mTargets);
-	end = { 7 , 47 };
-	pGameData->pGrid->findPath(start, end, mpPath[2], &mTargets);
-	end = { 10 , 47 };
-	pGameData->pGrid->findPath(start, end, mpPath[3], &mTargets);
-	end = { 13 , 47 };
-	pGameData->pGrid->findPath(start, end, mpPath[4], &mTargets);
+	sNode end = { 7 , 47 };
+	pGameData->pGrid->findPath(start, end, mpPath, &mTargets);
 	
 	//if( pGameData->pGrid->findPath( start, end, mpPath[i], &mTargets ) )
 	//{
@@ -109,8 +100,7 @@ void WaveSpawner::spawnMoleratman()
 		m->setPosition( mPosition );
 		m->setAlive( true );
 		m->setLife( 50.0f );
-		int snorre = mMoleratmanIndex % 5;
-		m->setPath(mpPath[snorre], mTargets );
+		m->setPath(mpPath, mTargets );
 	}
 }
 
@@ -162,8 +152,7 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 	mMoleratmanIndex( ref.mMoleratmanIndex ), mMolebatIndex( ref.mMolebatIndex ),
 	mTargets( ref.mTargets )
 {
-	for (int i = 0; i < 5; i++)
-		mpPath[i] = new sNode[20*20];
+		mpPath = new sNode[20*20];
 }
 
 WaveSpawner::WaveSpawner(GameData* data)
@@ -174,12 +163,10 @@ WaveSpawner::WaveSpawner(GameData* data)
 	mMoleratmanIndex( 0 ), mMolebatIndex( 0 ),
 	mTargets( 0 )
 {
-	for (int i = 0; i < 5; i++)
-		mpPath[i] = new sNode[20 * 20];
+	mpPath = new sNode[20 * 20];
 }
 
 WaveSpawner::~WaveSpawner()
 {
-	for (int i = 0; i < 5; i++)
-		delete mpPath[i];
+	delete mpPath;
 }

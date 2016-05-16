@@ -49,10 +49,10 @@ void Moleratman::update(float dt, GameData* data)
 		rotY -= p;
 
 		mWorld = {
-			cosf(rotY),	0,		-sinf(rotY),	0,
-			0,				1,		0,				0,
-			sinf(rotY),		0,		cosf(rotY),		0,
-			mPosition.x,	mPosition.y,	mPosition.z, 1
+			cosf(rotY)/2,	0,		-sinf(rotY) / 2,	0,
+			0,				1.0f / 2.0f,		0,				0,
+			sinf(rotY) / 2,		0,		cosf(rotY) / 2,		0,
+			mPosition.x,	mPosition.y+1,	mPosition.z, 1
 		};
 	mBoundingBox.center = mPosition + glm::vec3( 0, 0.75f, 0 );
 
