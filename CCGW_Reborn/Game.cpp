@@ -103,7 +103,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for( int i=0; i<16; i++ )
 		data.pGrid->setTile( i, 0, TILE_BLOCKED );
 
-	data.mTowers = 16*48;
+	data.mTowers = 15*48;
 	data.pTowers = new Tower[data.mTowers];
 
 	mpVisibleTowers = new Tower*[data.mTowers];
@@ -124,6 +124,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
+	data.pPlayer->setAnimation(3);
 	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
@@ -136,6 +137,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
 		data.pMolebats[i].loadSound(sound);
+		data.pMolebats[i].setAnimation(0);
 	}
 
 	data.mMoleratmen = 50;
@@ -257,18 +259,27 @@ void Game::render()
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
 	mGround.renderNonAni( worldLocation );
-
-	for (int i = 0; i<data.mMolebats; i++)
+	data.pPlayer->renderArrows(worldLocation);
+	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni( worldLocation );
 
 	for (int i = 0; i<mVisibleTowers; i++)
 		if (mpVisibleTowers[i]->getAlive())
-			mpVisibleTowers[i]->renderNonAni( worldLocation );
-
-	for (int i = 0; i < mVisibleTowers; i++)
-		if( mpVisibleTowers[i]->getAlive() )
-			mpVisibleTowers[i]->render(worldLocation);
+			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
+	if (true)
+	{
+		for (int i = 0; i < data.mTowers; i++)
+			if (data.pTowers[i].getAlive())
+				data.pTowers[i].render(worldLocation);
+	}
+	else
+	{
+		for (int i = 0; i < mVisibleTowers; i++)
+			if (mpVisibleTowers[i]->getAlive())
+				mpVisibleTowers[i]->render(worldLocation);
+	}
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		data.pBabies[i].renderNonAni(worldLocation);
@@ -348,9 +359,6 @@ void Game::update(Input* inputs, float dt)
 			tactical = true;
 			mCounter = 0;
 
-			mVisibleTowers = data.mTowers;
-			for( int i=0; i<mVisibleTowers; i++ )
-				mpVisibleTowers[i] = &data.pTowers[i];
 		}
 	}
 	else

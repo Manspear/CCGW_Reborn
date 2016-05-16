@@ -1,4 +1,5 @@
 #include "WaveSpawner.h"
+#include <random>
 
 void WaveSpawner::update( float deltaTime )
 {
@@ -25,27 +26,30 @@ void WaveSpawner::update( float deltaTime )
 void WaveSpawner::spawn()
 {
 	// start by getting the path for the moleratmen
-	sNode start = { 7, 0 }, end = { 7, 47 };
-	if( pGameData->pGrid->findPath( start, end, mpPath, &mTargets ) )
-	{
-		incrementWave();
+	sNode start = { 7, 0 };
+	sNode end = { 7 , 47 };
+	pGameData->pGrid->findPath(start, end, mpPath, &mTargets);
+	
+	//if( pGameData->pGrid->findPath( start, end, mpPath[i], &mTargets ) )
+	//{
+	incrementWave();
 
-		mCurMoleratmen = 0;
-		mCurMolebats = 0;
+	mCurMoleratmen = 0;
+	mCurMolebats = 0;
 
-		mDelay = 0.0f;
+	mDelay = 0.0f;
 
-		// TODO: Do something useful here
-		mSpawnMoleratmen = glm::min((mWave*2 + 3), pGameData->mMoleratmen);
-		mSpawnMolebats = glm::min((mWave + 1), pGameData->mMolebats);
+	// TODO: Do something useful here
+	mSpawnMoleratmen = glm::min((mWave*2 + 3), pGameData->mMoleratmen);
+	mSpawnMolebats = glm::min((mWave + 1), pGameData->mMolebats);
 
-		// DEBUG: Remove this
-		for( int i=0; i<pGameData->mMoleratmen; i++ )
-			pGameData->pMoleratmen[i].setAlive( false );
+	// DEBUG: Remove this
+	for( int i=0; i<pGameData->mMoleratmen; i++ )
+		pGameData->pMoleratmen[i].setAlive( false );
 
-		for (int i = 0; i<pGameData->mMolebats; i++)
-			pGameData->pMolebats[i].setAlive(false);
-	}
+	for (int i = 0; i<pGameData->mMolebats; i++)
+		pGameData->pMolebats[i].setAlive(false);
+	//}
 }
 
 
@@ -96,7 +100,7 @@ void WaveSpawner::spawnMoleratman()
 		m->setPosition( mPosition );
 		m->setAlive( true );
 		m->setLife( 50.0f );
-		m->setPath( mpPath, mTargets );
+		m->setPath(mpPath, mTargets );
 	}
 }
 
@@ -148,7 +152,7 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 	mMoleratmanIndex( ref.mMoleratmanIndex ), mMolebatIndex( ref.mMolebatIndex ),
 	mTargets( ref.mTargets )
 {
-	mpPath = new sNode[20*20];
+		mpPath = new sNode[20*20];
 }
 
 WaveSpawner::WaveSpawner(GameData* data)
@@ -159,10 +163,10 @@ WaveSpawner::WaveSpawner(GameData* data)
 	mMoleratmanIndex( 0 ), mMolebatIndex( 0 ),
 	mTargets( 0 )
 {
-	mpPath = new sNode[20*20];
+	mpPath = new sNode[20 * 20];
 }
 
 WaveSpawner::~WaveSpawner()
 {
-	delete[] mpPath;
+	delete mpPath;
 }

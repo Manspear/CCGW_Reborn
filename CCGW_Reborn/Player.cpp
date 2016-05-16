@@ -19,6 +19,7 @@ float Player::getYOffset() {
 
 void Player::update(const Input* inputs, const float &dt)
 {
+	mWorld = glm::mat4();
 	bool canJump = false;
 
 	if (inputs->buttonDown(0))
@@ -120,7 +121,7 @@ void Player::update(const Input* inputs, const float &dt)
 	};
 
 
-	// #fuckedup maths, https://en.wikipedia.org/wiki/Rotation_matrix for formula, might gimbalock??(but probably not)
+	// #fuckedup maths, https://en.wikipedia.org/wiki/Rotation_matrix for formula
 	glm::vec3 axis = glm::normalize(glm::cross(tempLookat, glm::vec3(0, 1, 0)));
 	glm::mat3 ucm = { 0,-axis.z, axis.y,
 						axis.z, 0, -axis.x,
@@ -145,8 +146,7 @@ void Player::update(const Input* inputs, const float &dt)
 
 	//this->mRotation.z = 
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
-	mWorld = rotatematrix * mWorld;
-	
+	mWorld = rotatematrix * glm::scale(mWorld, glm::vec3(0.1f, 0.1f, 0.1f));
 	mWorld[3][0] = mPosition.x;
 	mWorld[3][1] = mPosition.y;
 	mWorld[3][2] = mPosition.z;
@@ -160,7 +160,6 @@ void Player::update(const Input* inputs, const float &dt)
 			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset, 0);
 			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
-			//mWeapon->shoot(tempPos, la, rotation, mStrength);
 			mWeapon.shoot(tempPos, la, rotation, mStrength);
 		}
 		mStrength = 0;
@@ -189,9 +188,12 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 }
 
 //void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
+
 void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
-	//GameObject::renderAni(worldLocation, animationLocation);
+	GameObject::renderAni(worldLocation, animationLocation);
+}
+void Player::renderArrows(GLuint worldLocation) {
 	this->mWeapon.render(worldLocation);
 }
 
@@ -258,7 +260,7 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, yoffset, 1, 1 };
 	mMaxSpeed = 10;
 	speedY = 0;
-	rotX = glm::pi<float>() * -0.5f; 
+	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
 	mHealth = 100;
 	daIndex = 0;
