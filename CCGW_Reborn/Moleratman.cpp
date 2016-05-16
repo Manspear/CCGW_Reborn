@@ -3,6 +3,8 @@
 
 void Moleratman::update(float dt, GameData* data)
 {
+	Enemy::update( dt );
+
 	if (mCurrent >= 0)
 	{
 		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0.0f, pPath[mCurrent].y * pGameData->boxScale);
@@ -58,6 +60,13 @@ void Moleratman::update(float dt, GameData* data)
 	glm::vec3 headOffset = mLookat*0.5f;
 	headOffset.y = 1.5f;
 	mHeadBox.center = mPosition + headOffset;
+}
+
+void Moleratman::imHit( float strength, glm::vec3 position )
+{
+	Enemy::imHit( strength, position );
+
+	mAnimator.push( 2, false, 5.0f );
 }
 
 //void Moleratman::render( GLuint programID )

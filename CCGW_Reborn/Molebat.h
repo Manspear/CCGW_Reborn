@@ -17,6 +17,8 @@ public:
 	//void render( GLuint programID );
 	void render( GLuint worldLocation, GLuint animationLocation );
 
+	void imHit( float strength, glm::vec3 position );
+
 	void setGameData( GameData* data );
 
 	Molebat& operator=( const Molebat& ref );

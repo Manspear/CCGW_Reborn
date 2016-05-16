@@ -19,6 +19,8 @@ float Player::getYOffset() {
 
 void Player::update(const Input* inputs, const float &dt)
 {
+	GameObject::update( dt );
+
 	mWorld = glm::mat4();
 	bool canJump = false;
 
@@ -238,13 +240,18 @@ bool Player::checkMove(glm::vec3 coord) {
 	return !intersect;
 }
 
-void Player::takeDamage(float damage) 
+void Player::takeDamage(int damage) 
 {
 	this->mHealth -= damage;
 }
 
 bool Player::isAlive() {
 	return this->mHealth > 0;
+}
+
+int Player::getHealth() const
+{
+	return mHealth;
 }
 
 Player::Player() 
@@ -262,7 +269,7 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
-	mHealth = 100;
+	mHealth = 90;
 	daIndex = 0;
 	//setScale( 0.1f );
 }

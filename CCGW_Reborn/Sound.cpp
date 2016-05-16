@@ -47,7 +47,8 @@ void Sound::setChannel( int channel )
 
 void Sound::setLooping( bool looping )
 {
-	mLooping = looping;
+	if (this != nullptr)
+		mLooping = looping;
 }
 
 int Sound::getChannel() const
