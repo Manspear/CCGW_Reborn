@@ -15,7 +15,7 @@ void GameObject::update(const float &dt) {
 void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
 	
-    mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
+    mpModel->updateAnimation(1.f, mAnimation, animationTime, mWorld);
 
 	animationTime += 0.01f;
 	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
@@ -58,6 +58,11 @@ void GameObject::setWorld(glm::mat4 world)
 	mWorld = world;
 }
 
+void GameObject::setAnimation( int animation )
+{
+	mAnimation = animation;
+}
+
 void GameObject::loadSound(Sound* sound)
 {
 	if (!sound)
@@ -71,7 +76,7 @@ void GameObject::loadSound(Sound* sound)
 }
 
 GameObject::GameObject(const GameObject& ref)
-	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )
+	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel ), mAnimation( ref.mAnimation)
 {
 
 }
@@ -88,6 +93,7 @@ GameObject::GameObject(glm::vec3 position = { 0, 0, 0 }, float scale = 1.0f)
 	};
 	mSound = nullptr;
 	animationTime = 0;
+	mAnimation = 0;
 }
 
 GameObject::GameObject()
@@ -98,6 +104,7 @@ GameObject::GameObject()
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	this->mBB = BoundingBox(mPosition, scale);
 	animationTime = 0;
+	mAnimation = 0;
 }
 
 GameObject::~GameObject()

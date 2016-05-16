@@ -5,7 +5,6 @@ void Moleratman::update(float dt, GameData* data)
 {
 	if (mCurrent >= 0)
 	{
-		// TODO: Factor out box scale
 		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0.0f, pPath[mCurrent].y * pGameData->boxScale);
 
 		float dist = glm::distance(mPosition, glm::vec3(target));
@@ -45,7 +44,7 @@ void Moleratman::update(float dt, GameData* data)
 		mAlive = false;
 	}
 
-		float p = glm::pi<float>()*0.5f;
+		float p = glm::pi<float>()*1.5f;
 		rotY -= p;
 
 		mWorld = {

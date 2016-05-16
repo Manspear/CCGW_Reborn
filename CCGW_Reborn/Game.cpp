@@ -57,8 +57,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
@@ -121,6 +121,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].setAlive( false );
 	}
 
+
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 	mGround.load(terrainModel);
@@ -140,9 +141,11 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mMoleratmen = 50;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
-		data.pMoleratmen[i].load(enemyModel, &enemyEmitter);
+		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
+		data.pMoleratmen[i].setAnimation( 1);
+		data.pMoleratmen[i].setScale(0.1f);
 	}
 
 	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
@@ -255,7 +258,7 @@ void Game::render()
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
 	mGround.renderNonAni( worldLocation );
 
-	for (int i = 0; i<data.mMolebats; i++)
+	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni( worldLocation );
 
@@ -264,7 +267,8 @@ void Game::render()
 			mpVisibleTowers[i]->renderNonAni( worldLocation );
 
 	for (int i = 0; i < mVisibleTowers; i++)
-		mpVisibleTowers[i]->renderNonAni(worldLocation);
+		if( mpVisibleTowers[i]->getAlive() )
+			mpVisibleTowers[i]->render(worldLocation);
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		data.pBabies[i].renderNonAni(worldLocation);
@@ -284,6 +288,10 @@ void Game::render()
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
+
+	for( int i=0; i<data.mMolebats; i++ )
+		if( data.pMolebats[i].getAlive() )
+			data.pMolebats[i].renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
@@ -339,6 +347,10 @@ void Game::update(Input* inputs, float dt)
 			inputs->setMouseLock(false);
 			tactical = true;
 			mCounter = 0;
+
+			mVisibleTowers = data.mTowers;
+			for( int i=0; i<mVisibleTowers; i++ )
+				mpVisibleTowers[i] = &data.pTowers[i];
 		}
 	}
 	else
