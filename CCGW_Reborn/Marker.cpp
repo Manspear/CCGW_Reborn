@@ -107,6 +107,9 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 //void Marker::render(const GLuint & programID)
 void Marker::render( GLuint worldLocation )
 {
+	for( int i=0; i<3; i++ )
+		mWorld[i][i] = 1.0f;
+
 	//GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
