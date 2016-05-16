@@ -22,7 +22,7 @@ public:
 	virtual void update(const float &dt);
 	/*Abstract method. Don't call.*/
 	//virtual void renderAni(const GLuint &programID);
-	virtual void renderAni( GLuint worldLocation, GLuint animationLocation );
+	virtual void renderAni( GLuint worldLocation, GLuint animationLocation, int animationTake );
 	//virtual void render2(const GLuint &programID);
 	//virtual void renderNonAni(const GLuint &programID);
 	virtual void renderNonAni( GLuint worldLocation );
