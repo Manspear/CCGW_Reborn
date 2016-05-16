@@ -114,8 +114,12 @@ void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 
 void Menu::updateNumbers(GameData * data)
 {
-	if( activeMenu == LOSING_SCREEN )
-		return;
+	int divider = 100;
+	for (int i = 0; i < 3; i++) {
+		int balle = data->pGold % divider;
+		mAllMenu[ACTION_HUD].theNumbers[i].sampleX = balle;
+		divider /= 10;
+	}
 }
 
 void Menu::setPauseState(MENU theMenu, Input* inputs)
@@ -202,16 +206,7 @@ void Menu::buildAMenu(std::string build, MENU menu)
 			s2 >> x >> y;
 			mAllMenu[menu].theNumbers.push_back(Number{ glm::vec2(x, y), 0 });
 		}
-		else {
-			mActiveField = &mAllMenu[menu].theMenu.back();
-			s2 >> x;
-			std::vector<int> aVector;
-			while (!s2.eof()) {
-				s2 >> a;
-				aVector.push_back(a);
-			}
-			writeToField(&aVector);
-		}
+		nrOrButt = ' ';
 		s2.clear();
 	}
 }
