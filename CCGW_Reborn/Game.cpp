@@ -252,6 +252,9 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 30);
 			 mTacticalMarker.update( inputs, data );
 		 }
+
+		 data.pCamera->updateFrustum();
+		 data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
 	 }
 	 if (inputs->keyPressed(SDLK_t))
 	 {
@@ -281,18 +284,10 @@ void Game::render()
 		if (mpVisibleTowers[i]->getAlive())
 			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
-	if (true)
-	{
-		for (int i = 0; i < data.mTowers; i++)
-			if (data.pTowers[i].getAlive())
-				data.pTowers[i].render(worldLocation);
-	}
-	else
-	{
-		for (int i = 0; i < mVisibleTowers; i++)
-			if (mpVisibleTowers[i]->getAlive())
-				mpVisibleTowers[i]->render(worldLocation);
-	}
+
+	for (int i = 0; i < mVisibleTowers; i++)
+		if (mpVisibleTowers[i]->getAlive())
+			mpVisibleTowers[i]->render(worldLocation);
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
@@ -339,16 +334,11 @@ void Game::update(Input* inputs, float dt)
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
 
-	static bool doCull = true;
-	if( doCull )
-		data.pCamera->updateFrustum();
+	data.pCamera->updateFrustum();
 	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );
 	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
 
 	//std::cout << "Visible towers: " << mMaxTowers << std::endl;
-
-	if( inputs->keyReleased( SDLK_c ) )
-		doCull = !doCull;
 
 	bool waveDone = true;
 	for (int i = 0; i < data.mMoleratmen; i++)
