@@ -65,8 +65,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation_with_stagger.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation_with_1_stagger.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
@@ -118,7 +118,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for( int i=0; i<16; i++ )
 		data.pGrid->setTile( i, 0, TILE_BLOCKED );
 
-	data.mTowers = 15*48;
+	data.mTowers = 16*48;
 	data.pTowers = new Tower[data.mTowers];
 
 	mpVisibleTowers = new Tower*[data.mTowers];
@@ -156,7 +156,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
 		data.pMolebats[i].loadSound(sound);
-		data.pMolebats[i].setAnimation(0);
+		data.pMolebats[i].setAnimation(1);
 	}
 
 	data.mMoleratmen = 50;
@@ -165,7 +165,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
-		data.pMoleratmen[i].setAnimation( 1);
+		data.pMoleratmen[i].setAnimation( 1 );
 		data.pMoleratmen[i].setScale(0.1f);
 	}
 

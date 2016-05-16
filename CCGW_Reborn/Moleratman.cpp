@@ -60,6 +60,13 @@ void Moleratman::update(float dt, GameData* data)
 	mHeadBox.center = mPosition + headOffset;
 }
 
+void Moleratman::imHit( float strength, glm::vec3 position )
+{
+	Enemy::imHit( strength, position );
+
+	mAnimator.push( 2, false );
+}
+
 //void Moleratman::render( GLuint programID )
 void Moleratman::render( GLuint worldLocation, GLuint animationLocation )
 {

@@ -11,6 +11,7 @@
 #include "BoundingBox.h"
 #include "Model.h"
 #include "Sound.h"
+#include "Animation.h"
 
 class GameObject
 {
@@ -38,8 +39,10 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	float rotY;
 	float scale;
 	Sound* mSound;
-	float animationTime;
-	int mAnimation;
+	//float animationTime;
+	//int mAnimation;
+
+	Animator mAnimator;
 
 	BoundingBox mBB;
 

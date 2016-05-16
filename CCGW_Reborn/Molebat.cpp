@@ -122,6 +122,13 @@ void Molebat::render( GLuint worldLocation, GLuint animationLocation )
 #endif
 }
 
+void Molebat::imHit( float strength, glm::vec3 position )
+{
+	Enemy::imHit( strength, position );
+
+	mAnimator.push( 2, false );
+}
+
 void Molebat::setGameData( GameData* data )
 {
 	pGameData = data;
