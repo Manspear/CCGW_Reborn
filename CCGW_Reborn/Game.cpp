@@ -301,7 +301,7 @@ void Game::render()
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
 	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
-	data.pPlayer->renderAni( worldLocation, animationLocation );
+	data.pPlayer->renderAni( worldLocation, animationLocation, 1);
 
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )

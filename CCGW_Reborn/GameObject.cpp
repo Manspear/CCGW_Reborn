@@ -12,10 +12,10 @@ void GameObject::update(const float &dt) {
 }
 
 //void GameObject::renderAni(const GLuint & programID)
-void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
+void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation, int animationTake )
 {
 	
-    mpModel->updateAnimation(1.f, mAnimation, animationTime, mWorld);
+    mpModel->updateAnimation(1.f, animationTake, animationTime, mWorld);
 
 	animationTime += 0.01f;
 	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
