@@ -7,7 +7,7 @@
 #include "Emitter.h"
 #include "Texture.h"
 
-#define ENEMY_RENDER_HITBOX 1
+#define ENEMY_RENDER_HITBOX 0
 
 //Abstract class for enemies.
 class Enemy : public GameObject

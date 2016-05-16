@@ -20,6 +20,7 @@ public:
 	bool isAlive();
 	float getYOffset();
 	Weapon mWeapon;
+	void renderArrows(GLuint worldLocation);
 	
 	Player();
 	Player(GameData* data, Emitter* emitter);

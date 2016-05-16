@@ -63,10 +63,10 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
+	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
@@ -118,7 +118,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for( int i=0; i<16; i++ )
 		data.pGrid->setTile( i, 0, TILE_BLOCKED );
 
-	data.mTowers = 16*48;
+	data.mTowers = 15*48;
 	data.pTowers = new Tower[data.mTowers];
 
 	mpVisibleTowers = new Tower*[data.mTowers];
@@ -139,6 +139,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
+	data.pPlayer->setAnimation(3);
 	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
@@ -155,30 +156,24 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
 		data.pMolebats[i].loadSound(sound);
+		data.pMolebats[i].setAnimation(0);
 	}
 
 	data.mMoleratmen = 50;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
-		data.pMoleratmen[i].load(enemyModel, &enemyEmitter);
+		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
+		data.pMoleratmen[i].setAnimation( 1);
+		data.pMoleratmen[i].setScale(0.1f);
 	}
 
 	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
 	data.pPlayer->mWeapon.loadSound(sound);
 
 	pWaveSpawner = new WaveSpawner( &data );
-	pWaveSpawner->setPosition({ 14,0,-10 });
-	sound = data.pAssets->load<Sound>( "Sounds/monstersound.wav" );
-	if( !sound )
-	{
-		const char* error = Mix_GetError();
-		std::cout << "Mixer error: " << error << std::endl;
-	}
-	else
- 		sound->play();
-	
+	pWaveSpawner->setPosition({ 14,0,-10 });	
 }
 
 Game::~Game() {
@@ -276,19 +271,28 @@ void Game::render()
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
 
 	mGround.renderNonAni( worldLocation );
-
-	for (int i = 0; i<data.mMolebats; i++)
+	data.pPlayer->renderArrows(worldLocation);
+	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-			data.pMolebats[i].renderNonAni( worldLocation );
+			data.pMolebats[i].renderNonAni( worldLocation );*/
 
 	/*for (int i = 0; i<mVisibleTowers; i++)
 		if (mpVisibleTowers[i]->getAlive())
 			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
-
-	for (int i = 0; i < mVisibleTowers; i++)
-		mpVisibleTowers[i]->renderNonAni(worldLocation);
+	if (true)
+	{
+		for (int i = 0; i < data.mTowers; i++)
+			if (data.pTowers[i].getAlive())
+				data.pTowers[i].render(worldLocation);
+	}
+	else
+	{
+		for (int i = 0; i < mVisibleTowers; i++)
+			if (mpVisibleTowers[i]->getAlive())
+				mpVisibleTowers[i]->render(worldLocation);
+	}
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
@@ -306,12 +310,16 @@ void Game::render()
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
 	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
-	data.pPlayer->renderAni( worldLocation, animationLocation );
+	data.pPlayer->render( worldLocation, animationLocation);
 
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
 			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
+
+	for( int i=0; i<data.mMolebats; i++ )
+		if( data.pMolebats[i].getAlive() )
+			data.pMolebats[i].renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
@@ -367,6 +375,7 @@ void Game::update(Input* inputs, float dt)
 			inputs->setMouseLock(false);
 			tactical = true;
 			mCounter = 0;
+
 		}
 	}
 	else
