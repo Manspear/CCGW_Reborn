@@ -17,7 +17,7 @@ class GameObject
 public:
 	bool load( Model* model );
 	virtual void update(const float &dt);
-	virtual void renderAni( GLuint worldLocation, GLuint animationLocation );
+	virtual void renderAni( GLuint worldLocation, GLuint animationLocation, int animationTake);
 	virtual void renderNonAni( GLuint worldLocation );
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );

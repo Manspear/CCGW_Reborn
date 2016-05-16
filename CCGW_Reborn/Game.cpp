@@ -271,7 +271,7 @@ void Game::render()
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
 
 	mGround.renderNonAni( worldLocation );
-
+	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
@@ -301,16 +301,16 @@ void Game::render()
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
 	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
-	data.pPlayer->renderAni( worldLocation, animationLocation, 1);
+	data.pPlayer->render( worldLocation, animationLocation);
 
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
-			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
+			data.pMoleratmen[i].renderAni( worldLocation, animationLocation, 1 );
 
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
-			data.pMolebats[i].renderAni( worldLocation, animationLocation );
+			data.pMolebats[i].renderAni( worldLocation, animationLocation, 0 );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );

@@ -191,7 +191,9 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 
 void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
-	//GameObject::renderAni(worldLocation, animationLocation);
+	GameObject::renderAni(worldLocation, animationLocation,1);
+}
+void Player::renderArrows(GLuint worldLocation) {
 	this->mWeapon.render(worldLocation);
 }
 
