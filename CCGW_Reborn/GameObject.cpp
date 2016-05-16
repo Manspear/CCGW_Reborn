@@ -63,10 +63,10 @@ void GameObject::setWorld(glm::mat4 world)
 	mWorld = world;
 }
 
-void GameObject::setAnimation( int animation )
+void GameObject::setAnimation( int animation, bool looping, float speed )
 {
 	//mAnimation = animation;
-	mAnimator.push( animation, true );
+	mAnimator.push( animation, looping, speed );
 }
 
 void GameObject::loadSound(Sound* sound)

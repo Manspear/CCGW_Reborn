@@ -195,7 +195,7 @@ bool Model::load(Assets* assets, std::string file)
 
 	for( int curAnimation=0; curAnimation<maxAnimationStateCount; curAnimation++ )
 	{
-		sAnimation animation = { curAnimation, 1.0f };
+		sAnimation animation = { curAnimation };
 
 		for( int curMesh=0; curMesh < mainHeader.meshCount; curMesh++ )
 		{

@@ -1,9 +1,9 @@
 #include "Animation.h"
 #include "Model.h"
 
-void Animator::push( int animation, bool loop )
+void Animator::push( int animation, bool loop, float speed )
 {
-	sTake take = { animation, loop };
+	sTake take = { animation, loop, speed };
 	mStack.push(take);
 	mElapsed = 0.0f;
 }
@@ -24,7 +24,7 @@ void Animator::update( float dt )
 	if( !mStack.empty() )
 	{		
 		sAnimation* animation = pModel->getAnimation(mStack.top().mIndex);
-		mElapsed += dt*animation->mSpeed;
+		mElapsed += dt*mStack.top().mSpeed;
 		if( mElapsed >= animation->mDuration )
 		{
 			if( mStack.top().mLooping )

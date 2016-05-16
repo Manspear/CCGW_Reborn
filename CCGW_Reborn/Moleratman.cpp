@@ -64,7 +64,7 @@ void Moleratman::imHit( float strength, glm::vec3 position )
 {
 	Enemy::imHit( strength, position );
 
-	mAnimator.push( 2, false );
+	mAnimator.push( 2, false, 5.0f );
 }
 
 //void Moleratman::render( GLuint programID )

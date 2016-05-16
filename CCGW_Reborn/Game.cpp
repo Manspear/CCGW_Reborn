@@ -139,7 +139,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
-	data.pPlayer->setAnimation(3);
+	data.pPlayer->setAnimation(3, true, 1.0f);
 	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
@@ -156,7 +156,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
 		data.pMolebats[i].loadSound(sound);
-		data.pMolebats[i].setAnimation(1);
+		data.pMolebats[i].setAnimation(1, true, 2.0f );
 	}
 
 	data.mMoleratmen = 50;
@@ -165,7 +165,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
-		data.pMoleratmen[i].setAnimation( 1 );
+		data.pMoleratmen[i].setAnimation( 1, true, 4.0f );
 		data.pMoleratmen[i].setScale(0.1f);
 	}
 

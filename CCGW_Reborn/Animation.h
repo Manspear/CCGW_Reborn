@@ -9,14 +9,14 @@
 struct sAnimation
 {
 	int mTake;
-	float mSpeed, mDuration;
+	float mDuration;
 };
 
 class Model;
 class Animator
 {
 public:
-	void push( int animation, bool loop );
+	void push( int animation, bool loop, float speed = 1.0f );
 	void pop();
 	void clear();
 	void update( float dt );
@@ -29,7 +29,7 @@ public:
 	~Animator();
 
 private:
-	struct sTake { int mIndex; bool mLooping; };
+	struct sTake { int mIndex; bool mLooping; float mSpeed; };
 
 	Model* pModel;
 	std::stack<sTake> mStack;
