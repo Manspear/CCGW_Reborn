@@ -104,17 +104,18 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 	return buildTowers;
 }
 
-void Marker::render(const GLuint & programID)
+//void Marker::render(const GLuint & programID)
+void Marker::render( GLuint worldLocation )
 {
-	GLuint world = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world, 1, GL_FALSE, &mWorld[0][0]);
+	//GLuint world = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	mpModel->drawNonAni();
 	for (int i = 0; i < mMarkedIndex.size(); i++) {
 		mWorld[3][0] = mMarkedIndex[i].x;
 		mWorld[3][1] = 1.0f;
 		mWorld[3][2] = mMarkedIndex[i].y;
-		glUniformMatrix4fv(world, 1, GL_FALSE, &mWorld[0][0]);
+		glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 		mpModel->drawNonAni();
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

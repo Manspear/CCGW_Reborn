@@ -10,6 +10,7 @@
 #include "global_variables.h"
 #include "BoundingBox.h"
 #include "Model.h"
+#include "Sound.h"
 
 class GameObject
 {
@@ -20,13 +21,16 @@ public:
 	/*Abstract method. Don't call.*/
 	virtual void update(const float &dt);
 	/*Abstract method. Don't call.*/
-	virtual void renderAni(const GLuint &programID);
+	//virtual void renderAni(const GLuint &programID);
+	virtual void renderAni( GLuint worldLocation, GLuint animationLocation );
 	//virtual void render2(const GLuint &programID);
-	virtual void renderNonAni(const GLuint &programID);
+	//virtual void renderNonAni(const GLuint &programID);
+	virtual void renderNonAni( GLuint worldLocation );
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
 	void setWorld(glm::mat4 world);
+	void loadSound(Sound* sound);
 
 	GameObject(const GameObject& ref);
 	GameObject(glm::vec3 position, float scale);
@@ -39,6 +43,7 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	float rotX;
 	float rotY;
 	float scale;
+	Sound* mSound;
 	float animationTime;
 
 	BoundingBox mBB;

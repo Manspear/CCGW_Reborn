@@ -11,21 +11,25 @@ bool GameObject::load( Model* model )
 void GameObject::update(const float &dt) {
 }
 
-void GameObject::renderAni(const GLuint & programID)
+//void GameObject::renderAni(const GLuint & programID)
+void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
-	mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
+	
+    mpModel->updateAnimation(1.f, 0, animationTime, mWorld);
+
 	animationTime += 0.01f;
-	GLuint world = glGetUniformLocation(programID, "animationMatrices");
-	glUniformMatrix4fv(world, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
-	GLuint world2 = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world2,1, GL_FALSE, &mWorld[0][0]);
+	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
+	glUniformMatrix4fv(animationLocation, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
+	//GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation,1, GL_FALSE, &mWorld[0][0]);
 	mpModel->drawAni();
 }
 
-void GameObject::renderNonAni(const GLuint & programID)
+//void GameObject::renderNonAni(const GLuint & programID)
+void GameObject::renderNonAni( GLuint worldLocation )
 {
-	GLuint world2 = glGetUniformLocation(programID, "world");
-	glUniformMatrix4fv(world2, 1, GL_FALSE, &mWorld[0][0]);
+	//GLuint world2 = glGetUniformLocation(programID, "world");
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 	mpModel->drawNonAni();
 }
 
@@ -54,6 +58,18 @@ void GameObject::setWorld(glm::mat4 world)
 	mWorld = world;
 }
 
+void GameObject::loadSound(Sound* sound)
+{
+	if (!sound)
+	{
+		const char* error = Mix_GetError();
+		std::cout << "Mixer error: " << error << std::endl;
+	}
+	else
+		this->mSound = sound;
+	int x = 0;
+}
+
 GameObject::GameObject(const GameObject& ref)
 	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )
 {
@@ -70,6 +86,7 @@ GameObject::GameObject(glm::vec3 position = { 0, 0, 0 }, float scale = 1.0f)
 				0,				0,				scale,			0,
 				position.x,		position.y,		position.z,		1.0 
 	};
+	mSound = nullptr;
 	animationTime = 0;
 }
 

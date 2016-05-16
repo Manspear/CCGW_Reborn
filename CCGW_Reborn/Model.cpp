@@ -4,73 +4,140 @@
 #include <glm\gtx\transform.hpp>
 #include <glm\gtx\euler_angles.hpp>
 #define SLOW_LAUNCH 1
+/**
+Seamless blending between animations:
+Have a list of "take-weights".
+The current animation's weight "increases quickly" to 100%,
+while the other animations "decrease as quickly" to 0%.
+TempFramesOver && TempFramesUnder will contain key-values that are "combinations" of the different "active" layers.
 
+A consequence of this blending would be that the below code would run for all the animation layers all the time (only a "if weight == 0"
+limiting it). The code "could" run the risk of making lag happen.
+**/
 void Model::updateAnimation(float speedFactor, int take, float currTime, glm::mat4x4 worldMat)
 {
-
-	/**
-	More efficient algorithm:
-	Save the frame i was just at. Save the take along wiht the frame.
-
-	**/
-
-	worldMat = glm::mat4();
-	//Keep this on watch...
-	float targetTime = speedFactor * currTime;
-	std::vector<sKeyFrame> tempFrames;
-	mpJointList;
-	for (int i = 0; i < mpJointList.size(); i++)
+	if (Model::mpJointList.size() > 0)
 	{
-		float jointMaxTime = mpJointList[i].keyFramesByTake[take].back().keyTime;
-		targetTime = std::fmod(targetTime, jointMaxTime);
-		//Find the right keyframe based on time
-		int currKeyIndex;
-		const int frameCount = mpJointList[i].keyFramesByTake[take].size();
-		//will pick the key with the time value that 
-		//represents the "currTime" the best.
-		int closestKey;
-		float prevDiff = -1337;
-		for (int j = 0; j < frameCount; j++)
-		{
-			if (prevDiff == -1337)
-			{	 
-				closestKey = j;
-				prevDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
-			}
-			else {
-				float currDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
-				if (currDiff < prevDiff)
-				{
-					closestKey = j;
-					prevDiff = currDiff;
-				}
-			}
-			if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
-			{
-				closestKey = j;
-				break;
-			}
-			//mpJointList[i].keyFramesByTake[0][take][j];
-		}
 		/**
-		Now save this value in a "temporary final list of frames"
+		More efficient algorithm:
+		Save the frame i was just at. Save the take along wiht the frame.
+
 		**/
-		
-		tempFrames.push_back(mpJointList[i].keyFramesByTake[take][closestKey]);
-	}
-	//Find the root joint.
-	int rootKey = 0;
-	for (int j = 0; j < mpJointList.size(); j++)
-	{
-		//If the joint has no parentjoint... That is: if it's the root.
-		if (mpJointList[j].jointData.parentJointID < 0)
+
+		worldMat = glm::mat4();
+		//Keep this on watch...
+		float targetTime = speedFactor * currTime;
+		//std::vector<sKeyFrame> tempFrames;
+		//std::vector<sKeyFrame> tempFramesUnder;
+		//std::vector<sKeyFrame> tempFramesOver;
+		tempFramesUnder.clear();
+		tempFramesOver.clear();
+		mpJointList;
+
+		for (int i = 0; i < mpJointList.size(); i++)
 		{
-			rootKey = j;
+			float jointMaxTime = mpJointList[i].keyFramesByTake[take].back().keyTime;
+			targetTime = std::fmod(targetTime, jointMaxTime);
+			//Find the right keyframe based on time
+			int currKeyIndex;
+			const int frameCount = mpJointList[i].keyFramesByTake[take].size();
+			////will pick the key with the time value that 
+			////represents the "currTime" the best.
+			//int closestKey;
+
+			//float prevDiff = -1337;
+
+			//for (int j = 0; j < frameCount; j++)
+			//{
+			//	if (prevDiff == -1337)
+			//	{	 
+			//		closestKey = j;
+			//		prevDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
+			//	}
+			//	else {
+			//		float currDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
+			//		if (currDiff < prevDiff)
+			//		{
+			//			closestKey = j;
+			//			prevDiff = currDiff;
+			//		}
+			//	}
+			//	if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
+			//	{
+			//		closestKey = j;
+			//		break;
+			//	}
+			//	//mpJointList[i].keyFramesByTake[0][take][j];
+			//}
+
+			int closestKeyPos;
+			int closestKeyNeg;
+			float prevDiffPos = -1337;
+			float prevDiffNeg = -1337;
+
+			for (int j = 0; j < frameCount; j++)
+			{
+				if (targetTime < 0.0000001f)
+				{
+					closestKeyPos = j;
+					closestKeyNeg = j;
+					break;
+				}
+				if ((prevDiffPos == -1337) && (prevDiffNeg == -1337))
+				{
+					closestKeyPos = j;
+					closestKeyNeg = j;
+					float diff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
+					closestKeyPos = diff;
+					closestKeyNeg = -10000000000.f;
+					prevDiffPos = diff;
+					prevDiffNeg = -10000000000.f;
+				}
+				else {
+					float currDiff = targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime;
+
+					//if keyTime was larger than targetTime
+					if ((currDiff > prevDiffNeg) && (currDiff < 0.f))
+					{
+						closestKeyNeg = j;
+						prevDiffNeg = currDiff;
+					}
+					//if keyTime was smaller than targetTime
+					if ((currDiff < prevDiffPos) && (currDiff > 0.f))
+					{
+						closestKeyPos = j;
+						prevDiffPos = currDiff;
+					}
+				}
+				if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
+				{
+					closestKeyNeg = j;
+					closestKeyPos = j;
+					break;
+				}
+				//mpJointList[i].keyFramesByTake[0][take][j];
+			}
+
+			/**
+			Now save this value in a "temporary final list of frames"
+			**/
+			tempFramesUnder.push_back(mpJointList[i].keyFramesByTake[take][closestKeyPos]);
+			tempFramesOver.push_back(mpJointList[i].keyFramesByTake[take][closestKeyNeg]);
 		}
+		//Find the root joint.
+		int rootKey = 0;
+		for (int j = 0; j < mpJointList.size(); j++)
+		{
+			//If the joint has no parentjoint... That is: if it's the root.
+			if (mpJointList[j].jointData.parentJointID < 0)
+			{
+				rootKey = j;
+			}
+		}
+
+
+		recursiveUpdateJointMatrixList(worldMat, tempFramesUnder, tempFramesOver, targetTime, rootKey);
 	}
-
-
-	recursiveUpdateJointMatrixList(worldMat, tempFrames, rootKey);
 }
 
 void shit() {
@@ -127,16 +194,12 @@ void shit() {
 	//that "final transform" to them. Etc...
 }
 
-bool Model::load( Assets* assets, std::string file )
+bool Model::load(Assets* assets, std::string file)
 {
 	bool result = true;
 	MoleReader assetData;
-	
-#if SLOW_LAUNCH
-	assetData.readFromBinary( file.c_str() );
-#else
-	moleReader.readFromBinary( "Models/wallBox.mole" );
-#endif
+
+	assetData.readFromBinary(file.c_str());
 
 	/**
 	Will now get all of the joints and their keyframes and their modelchildren into a single list, and order them based on jointID.
@@ -161,7 +224,7 @@ bool Model::load( Assets* assets, std::string file )
 				tempJoint.keyFramesByTake.push_back(currFrameList);
 			}
 			tempJoint.jointData = currJoint;
-			if(currJoint.meshChildCount > 0)
+			if (currJoint.meshChildCount > 0)
 				tempJoint.meshChildren = assetData.getJointMeshChildList(i, j);
 			mpJointList.push_back(tempJoint);
 		}
@@ -174,10 +237,10 @@ bool Model::load( Assets* assets, std::string file )
 
 	sortJointsByID();
 	mpJointList;
-	if(mpJointList.size() > 0)
+	if (mpJointList.size() > 0)
 		makeJointHierarchy();
 	jointMatrixList.resize(mpJointList.size());
-	
+
 	mMeshes = assetData.getMeshList().size();
 	mMaps = assetData.getMaterialList().size();
 
@@ -186,8 +249,8 @@ bool Model::load( Assets* assets, std::string file )
 	mpSpecularMaps = new Texture*[mMaps];
 	mpNormalMaps = new Texture*[mMaps];
 
-	for( int i=0; i<mMeshes && result; i++ )
-		result = result && mpMeshes[i].load( &assetData, i );
+	for (int i = 0; i<mMeshes && result; i++)
+		result = result && mpMeshes[i].load(&assetData, i);
 
 	for (int i = 0; i < mMaps && result; i++)
 	{
@@ -195,14 +258,22 @@ bool Model::load( Assets* assets, std::string file )
 		mpDiffuseMaps[i] = assets->load<Texture>(material.diffuseTexture);
 		mpSpecularMaps[i] = assets->load<Texture>(material.specularTexture);
 		mpNormalMaps[i] = assets->load<Texture>(material.normalTexture);
-	
+
 		if (mpDiffuseMaps[i] == nullptr)
 		{
 			mpDiffuseMaps[i] = assets->load<Texture>("Models/cube.png");
 		}
 	}
 
-return result;
+	int frameSize = 0;
+	for (int i = 0; i < mpJointList.size(); i++)
+		for (int j = 0; j < mpJointList[i].keyFramesByTake.size(); j++)
+			frameSize += mpJointList[i].keyFramesByTake[j].size();
+
+	tempFramesOver.reserve(frameSize);
+	tempFramesUnder.reserve(frameSize);
+
+	return result;
 }
 
 void Model::unload()
@@ -220,7 +291,7 @@ void Model::unload()
 		mpJointList[i].keyFramesByTake.clear();
 		mpJointList[i].meshChildren.clear();
 	}
-	
+
 	mMeshes = mMaps = 0;
 
 	// No need to unload the textures, Assets will take care of that
@@ -322,7 +393,7 @@ void Model::makeJointHierarchy()
 	How will the joint hierarchy be saved? Well you tell me.
 	**/
 	int rootKey;
-	for(int i = 0; i < mpJointList.size(); i++)
+	for (int i = 0; i < mpJointList.size(); i++)
 	{
 		if (mpJointList[i].jointData.parentJointID < 0)
 			rootKey = i;
@@ -343,37 +414,136 @@ void Model::recursiveMakeJointHierarchy(int parentID)
 	}
 }
 
-void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std::vector<sKeyFrame> tempFrames, int currJointID)
+////The transform has to apply even when there's no children.
+////mpJointList[currJointID].jointData;
+//
+///*float tempInvBindPose[16];
+//for (int i = 0; i < 16; i++)
+//tempInvBindPose[i] = mpJointList[currJointID].jointData->globalBindPoseInverse[i];
+//glm::mat4 invBPose = convertToMat4(tempInvBindPose);*/
+//
+//glm::mat4 invBPose = glm::make_mat4(mpJointList[currJointID].jointData.globalBindPoseInverse);
+//
+////Now get the key-
+//glm::mat4 keyRMat = convertToRotMat(tempFrames[currJointID].keyRotate);
+//glm::mat4 keySMat = convertToScaleMat(tempFrames[currJointID].keyScale);
+//glm::mat4 keyTMat = convertToTransMat(tempFrames[currJointID].keyPos);
+//
+////glm::mat4 invinv = glm::inverse( invBPose );
+//
+////glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
+////glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
+////VVVVVVVVVVVVVVV THIS WORKS WELL REMEMBER
+//glm::mat4 keyTransform = parentTransformMatrix *  keyTMat * keySMat * keyRMat;
+////glm::mat4 keyTransform = parentTransformMatrix * keyTMat * keySMat * keyRMat;
+////Now "remove" the bindpose from the joint
+//glm::mat4 pureKeyTransform = keyTransform * invBPose;
+////glm::mat4 pureKeyTransform = invBPose * keyTransform;
+//glm::mat4 finalTransform = pureKeyTransform;
+////glm::mat4 finalTransform = keyTransform;// * parentTransformMatrix;
+//
+//
+//
+//jointMatrixList[currJointID] = finalTransform;
+//
+//for (int i = 0; i < mpJointList[currJointID].jointChildren.size(); i++)
+//{
+//	//glm::mat4 junky;
+//	//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
+//	//VVVVVVVVVVVVVVVVVVVVVVVVV THIS ONE WORKS WELL REMEMBER
+//	recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
+//
+//	//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
+//
+//	//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
+//}
+///**
+//THink I've gotta transform the children so that they are in "spaces related to their parent's"
+//**/
+
+/**
+iVal will be multiplied with arr1. 1-iVal with arr2
+**/
+void Model::myLerp(float arr1[3], float arr2[3], float fillArr[3], float iVal)
 {
-	//The transform has to apply even when there's no children.
-	mpJointList[currJointID].jointData;
+	fillArr[0] = (arr1[0] * (1 - iVal)) + (arr2[0] * (iVal));
+	fillArr[1] = (arr1[1] * (1 - iVal)) + (arr2[1] * (iVal));
+	fillArr[2] = (arr1[2] * (1 - iVal)) + (arr2[2] * (iVal));
+}
 
-	/*float tempInvBindPose[16];
-	for (int i = 0; i < 16; i++)
-		tempInvBindPose[i] = mpJointList[currJointID].jointData->globalBindPoseInverse[i];
-	glm::mat4 invBPose = convertToMat4(tempInvBindPose);*/
 
-	glm::mat4 invBPose = glm::make_mat4( mpJointList[currJointID].jointData.globalBindPoseInverse );
+void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID)
+{
+	mpJointList;
+	glm::mat4 invBPose = glm::make_mat4(mpJointList[currJointID].jointData.globalBindPoseInverse);
 
 	//Now get the key-
-	glm::mat4 keyRMat = convertToRotMat(tempFrames[currJointID].keyRotate);
-	glm::mat4 keySMat= convertToScaleMat(tempFrames[currJointID].keyScale);	
-	glm::mat4 keyTMat = convertToTransMat(tempFrames[currJointID].keyPos);
+	//glm::mat4 keyRMatUnder = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
+	//glm::mat4 keySMatUnder = convertToScaleMat(tempFramesUnder[currJointID].keyScale);
+	//glm::mat4 keyTMatUnder = convertToTransMat(tempFramesUnder[currJointID].keyPos);
 
-	//glm::mat4 invinv = glm::inverse( invBPose );
+	//glm::mat4 keyRMatOver = convertToRotMat(tempFramesOver[currJointID].keyRotate);
+	//glm::mat4 keySMatOver = convertToScaleMat(tempFramesOver[currJointID].keyScale);
+	//glm::mat4 keyTMatOver = convertToTransMat(tempFramesOver[currJointID].keyPos);
+	glm::mat4 interpolTrans;
+	glm::mat4 interpolRot;
+	glm::mat4 interpolScale;
+	float newRotVals[3];
+	float newTranVals[3];
+	float newScaleVals[3];
 
-	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
-	//glm::mat4 keyTransform = keyTMat * keyRMat * keySMat;
+	float diffKeys = tempFramesOver[currJointID].keyTime - tempFramesUnder[currJointID].keyTime;
+	if (diffKeys == 0)
+	{
+		//interpolTrans = convertToTransMat(tempFramesUnder[currJointID].keyPos);
+		convertToTransMat(tempFramesUnder[currJointID].keyPos, &interpolTrans);
+		//interpolRot = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
+		convertToRotMat(tempFramesUnder[currJointID].keyRotate, &interpolRot);
+		//interpolScale = convertToScaleMat(tempFramesUnder[currJointID].keyScale);
+		convertToScaleMat(tempFramesUnder[currJointID].keyScale, &interpolScale);
+	}
+	else
+	{
+		float diffUnderTime = abs(currTime - tempFramesUnder[currJointID].keyTime);
+		//float diffOverTime = tempFramesOver[currJointID].keyTime - currTime;
+
+		float underAffect = diffUnderTime / diffKeys;
+		//float overAffect = 1.f - underAffect;
+		//float overAffect = diffOverTime / diffKeys;
+
+		myLerp(tempFramesUnder[currJointID].keyRotate, tempFramesOver[currJointID].keyRotate, newRotVals, underAffect);
+		//interpolRot = convertToRotMat(newRotVals);
+		convertToRotMat(newRotVals, &interpolRot);
+
+		myLerp(tempFramesUnder[currJointID].keyPos, tempFramesOver[currJointID].keyPos, newTranVals, underAffect);
+		//interpolTrans = convertToTransMat(newTranVals);
+		convertToTransMat(newTranVals, &interpolTrans);
+
+		myLerp(tempFramesUnder[currJointID].keyScale, tempFramesOver[currJointID].keyScale, newScaleVals, underAffect);
+		//interpolScale = convertToScaleMat(newScaleVals);
+		convertToScaleMat(newScaleVals, &interpolScale);
+	}
+
+	/*interpolTrans = convertToTransMat(tempFramesUnder[currJointID].keyPos);
+	interpolRot = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
+	interpolScale = convertToScaleMat(tempFramesUnder[currJointID].keyScale);*/
+
 	//VVVVVVVVVVVVVVV THIS WORKS WELL REMEMBER
-	glm::mat4 keyTransform = parentTransformMatrix *  keyTMat * keySMat * keyRMat;
+	//glm::mat4 keyTransform = parentTransformMatrix *  keyTMat * keySMat * keyRMat;
+	//glm::mat4 TSRMat = convertToTSR(newTranVals, newScaleVals, newRotVals);
+	//glm::mat4 keyTransform1 = parentTransformMatrix *  TSRMat;
+
+	glm::mat4 keyTransform = parentTransformMatrix *interpolTrans * interpolScale * interpolRot;
+
+	//glm::mat4 keyTransform = TSRMat * parentTransformMatrix;
 	//glm::mat4 keyTransform = parentTransformMatrix * keyTMat * keySMat * keyRMat;
 	//Now "remove" the bindpose from the joint
-	glm::mat4 pureKeyTransform = keyTransform * invBPose;
-	//glm::mat4 pureKeyTransform = invBPose * keyTransform;
-	glm::mat4 finalTransform = pureKeyTransform;
-	//glm::mat4 finalTransform = keyTransform;// * parentTransformMatrix;
 
-	
+	glm::mat4 finalTransform = keyTransform * invBPose;
+
+	//glm::mat4 pureKeyTransform = invBPose * keyTransform;
+
+	//glm::mat4 finalTransform = keyTransform;// * parentTransformMatrix;
 
 	jointMatrixList[currJointID] = finalTransform;
 
@@ -382,10 +552,11 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 		//glm::mat4 junky;
 		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
 		//VVVVVVVVVVVVVVVVVVVVVVVVV THIS ONE WORKS WELL REMEMBER
-		recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
-		
-		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
+		//recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
 
+		recursiveUpdateJointMatrixList(keyTransform, tempFramesUnder, tempFramesOver, currTime, mpJointList[currJointID].jointChildren[i]);
+
+		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 	}
 	/**
@@ -393,7 +564,8 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	**/
 }
 
-glm::mat4 Model::convertToTransMat(float inputArr[3])
+//glm::mat4 Model::convertToTransMat(float inputArr[3])
+void Model::convertToTransMat(float inputArr[3], glm::mat4* result)
 {
 	//glm::mat4 output =
 	//{
@@ -402,58 +574,175 @@ glm::mat4 Model::convertToTransMat(float inputArr[3])
 	//	0.f, 0.f, 1.f, inputArr[2],
 	//	0.f, 0.f, 0.f, 1.f
 	//};
-	glm::mat4 output =
+
+	/*glm::mat4 output =
+	{
+	1.f, 0.f, 0.f, 0.f,
+	0.f, 1.f, 0.f, 0.f,
+	0.f, 0.f, 1.f, 0.f,
+	inputArr[0],  inputArr[1], inputArr[2], 1.f
+	};*/
+
+	for (int i = 0; i < 3; i++)
+		(*result)[3][i] = inputArr[i];
+}
+
+//glm::mat4 Model::convertToRotMat(float in[3])
+void Model::convertToRotMat(float in[3], glm::mat4* result)
+{
+	using namespace glm;
+	/*mat4 rotX =
+	{
+	1.f,			0.f,					0.f,				0.f,
+	0.f,		    cosf(in[0]),	    sinf(in[0]),	0.f,
+	0.f,		    -sinf(in[0]),     cosf(in[0]),  0.f,
+	0.f,			0.f,					0.f,				1.f
+	};
+	mat4 rotY =
+	{
+	cosf(in[1]),	0.f,			-sinf(in[1]),		0.f,
+	0.f,				1.f,			0.f,					0.f,
+	sinf(in[1]),  0.f,			cosf(in[1]),		0.f,
+	0.f,				0.f,			0.f,					1.f
+	};
+	mat4 rotZ =
+	{
+	cosf(in[2]),	sinf(in[2]),		0.f,				0.f,
+	-sinf(in[2]), cosf(in[2]),		0.f,				0.f,
+	0.f,				0.f,					1.f,				0.f,
+	0.f,				0.f,					0.f,				1.f
+	};
+
+	mat4 rotMatrix = rotX * rotY * rotZ;*/
+
+	//mat4 rotYZ = 
+	//{
+	//	cosf(in[1])*cosf(in[2]), cosf(in[1])*sinf(in[2]), -sinf(in[1]), 0.f,
+	//	-sinf(in[2]), cosf(in[2]), 0.f, 0.f,
+	//	sinf(in[1])*cosf(in[2]), sinf(in[1])*sinf(in[2]), cosf(in[1]), 0.f,
+	//	0.f, 0.f, 0.f, 1.f
+	//};
+	//mat4 rotNewXYZ = rotX * rotYZ;
+
+	*result =
+	{
+		cosf(in[1]) * cosf(in[2]), cosf(in[1]) * sinf(in[2]), -sinf(in[1]), 0.f,
+		cosf(in[0]) * (-sinf(in[2])) + sinf(in[0]) * sinf(in[1]) * cosf(in[2]), cosf(in[0]) * cosf(in[2]) + sinf(in[0]) * sinf(in[1]) * sinf(in[2]), sinf(in[0]) * cosf(in[1]), 0.f,
+		-sinf(in[0]) * (-sinf(in[2])) + cosf(in[0]) * sinf(in[1]) * cosf(in[2]), (-sinf(in[0])) * cosf(in[2]) + cosf(in[0]) * sinf(in[1]) * sinf(in[2]), cosf(in[0]) * cosf(in[1]), 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+
+	/*mat4 rotXYZ2 =
+	{
+	cosf(in[1])*cosf(in[2]), cosf(in[1]) * sinf(in[2]) * cos(in[0]) + -1.f * sinf(in[1]) * -1.f * sinf(in[0]), cosf(in[1]) * sinf(in[2]) * sinf(in[0]), 0.f,
+	-1.f * sinf(in[2]), cosf(in[2]) * cosf(in[0]), cosf(in[2]) * sinf(in[0]), 0.f,
+	sin(in[1])*cosf(in[2]), sinf(in[1])*sinf(in[2])*cosf(in[0]) + cosf(in[1]) * -1.f * sin(in[2]), sinf(in[1]) * sinf(in[2]) * sinf(in[0]) + cosf(in[1]) * cosf(in[0]), 0.f,
+	0.f, 0.f, 0.f, 1.f
+	};*/
+	/*mat4 rotXYZ3 =
+	{
+	cosf(in[1])*cosf(in[2]), cosf(in[1]) * sinf(in[2]) * cos(in[0]) + sinf(in[1]) * sinf(in[0]), cosf(in[1]) * sinf(in[2]) * sinf(in[0]), 0.f,
+	-sinf(in[2]), cosf(in[2]) * cosf(in[0]), cosf(in[2]) * sinf(in[0]), 0.f,
+	sin(in[1])*cosf(in[2]), sinf(in[1])*sinf(in[2])*cosf(in[0]) + cosf(in[1]) * -sin(in[2]), sinf(in[1]) * sinf(in[2]) * sinf(in[0]) + cosf(in[1]) * cosf(in[0]), 0.f,
+	0.f, 0.f, 0.f, 1.f
+	};*/
+	//return rotXYZ;
+	//return rotXYZ3;
+	//return rotMatrix;
+	//return rotX * rotY * rotZ;
+
+}
+
+//glm::mat4 Model::convertToScaleMat(float inputArr[3])
+void Model::convertToScaleMat(float inputArr[3], glm::mat4* result)
+{
+	/*glm::mat4 output =
+	{
+	inputArr[0],			0.f,			0.f,	 0.f,
+	0.f,	inputArr[1],			0.f,	 0.f,
+	0.f,			0.f,	inputArr[2],	 0.f,
+	0.f,			0.f,	        0.f,	 1.f
+	};
+	return output;*/
+
+	for (int i = 0; i < 3; i++)
+		(*result)[i][i] = inputArr[i];
+}
+
+glm::mat4 Model::convertToTSR(float iT[3], float iS[3], float iR[3])
+{
+	//Translate
+	//	1.f, 0.f, 0.f, 0.f,
+	//	0.f, 1.f, 0.f, 0.f,
+	//	0.f, 0.f, 1.f, 0.f,
+	//	iT[0], iT[1], iT[2], 1.f
+	//SCALE
+	//		    iS[0],			0.f,			0.f,	 0.f,
+	//			0.f,	        iS[1],			0.f,	 0.f,
+	//			0.f,			0.f,	        iS[2],	 0.f,
+	//			0.f,			0.f,	        0.f,	 1.f
+	//ROTATE
+	//cosf(in[1]) * cosf(in[2]), cosf(in[1]) * sinf(in[2]), -sinf(in[1]), 0.f,
+	//cosf(in[0]) * (-sinf(in[2])) + sinf(in[0]) * sinf(in[1]) * cosf(in[2]), cosf(in[0]) * cosf(in[2]) + sinf(in[0]) * sinf(in[1]) * sinf(in[2]), sinf(in[0]) * cosf(in[1]), 0.f,
+	//-sinf(in[0]) * (-sinf(in[2])) + cosf(in[0]) * sinf(in[1]) * cosf(in[2]), (-sinf(in[0])) * cosf(in[2]) + cosf(in[0]) * sinf(in[1]) * sinf(in[2]), cosf(in[0]) * cosf(in[1]), 0.f,
+	//0.f, 0.f, 0.f, 1.f
+
+	//SR
+	/**
+	iS[0] * (cosf(iR[1]) * cosf(iR[2])),                                                            iS[0] * (cosf(iR[1]) * sinf(iR[2])),                                                           iS[0] * (-sinf(iR[1])),              0.f,
+	iS[1] * (cosf(iR[0]) * iS[1] * (-sinf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))),     iS[1] * ((cosf(iR[0]) * cosf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))),             iS[1] * sinf(iR[0]) * cosf(iR[1]),   0.f,
+	iS[2] * ((-sinf(iR[0]) * (-sinf(iR[2]))) + (cosf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))),          iS[2] * (((-sinf(iR[0])) * cosf(iR[2])) + (cosf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))),          iS[2] * cosf(iR[0]) * cosf(iR[1]),   0.f,
+	0.f,                                                                                  0.f,                                                                        0.f,                         1.f
+	**/
+	//TSR
+	/**
+	iT[0] * iS[0] * (cosf(iR[1]) * cosf(iR[2])),                                                            iT[0] * iS[0] * (cosf(iR[1]) * sinf(iR[2])),                                                           iT[0] * iS[0] * (-sinf(iR[1])),              0.f,
+	iT[1] * iS[1] * (cosf(iR[0]) * iS[1] * (-sinf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))),     iT[1] * iS[1] * ((cosf(iR[0]) * cosf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))),             iT[1] * iS[1] * sinf(iR[0]) * cosf(iR[1]),   0.f,
+	iT[2] * iS[2] * ((-sinf(iR[0]) * (-sinf(iR[2]))) + (cosf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))),          iT[2] * iS[2] * (((-sinf(iR[0])) * cosf(iR[2])) + (cosf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))),          iT[2] * iS[2] * cosf(iR[0]) * cosf(iR[1]),   0.f,
+	0.f,                                                                                                   0.f,                                                                                                   0.f,                                         1.f
+
+	**/
+	/*glm::mat4 TSR =
+	{
+	iT[0] * iS[0] * (cosf(iR[1]) * cosf(iR[2])), iT[0] * iS[0] * (cosf(iR[1]) * sinf(iR[2])), iT[0] * iS[0] * (-sinf(iR[1])), 0.f,
+	iT[1] * iS[1] * (cosf(iR[0]) * iS[1] * (-sinf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))), iT[1] * iS[1] * ((cosf(iR[0]) * cosf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))), iT[1] * iS[1] * sinf(iR[0]) * cosf(iR[1]), 0.f,
+	iT[2] * iS[2] * ((-sinf(iR[0]) * (-sinf(iR[2]))) + (cosf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))), iT[2] * iS[2] * (((-sinf(iR[0])) * cosf(iR[2])) + (cosf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))), iT[2] * iS[2] * cosf(iR[0]) * cosf(iR[1]), 0.f,
+	0.f, 0.f, 0.f, 1.f
+	};*/
+
+	glm::mat4 trans =
 	{
 		1.f, 0.f, 0.f, 0.f,
 		0.f, 1.f, 0.f, 0.f,
 		0.f, 0.f, 1.f, 0.f,
-		inputArr[0],  inputArr[1], inputArr[2], 1.f
+		iT[0], iT[1], iT[2], 1.f
+	};
+	glm::mat4 rot =
+	{
+		cosf(iR[1]) * cosf(iR[2]), cosf(iR[1]) * sinf(iR[2]), -sinf(iR[1]), 0.f,
+		cosf(iR[0]) * (-sinf(iR[2])) + sinf(iR[0]) * sinf(iR[1]) * cosf(iR[2]), cosf(iR[0]) * cosf(iR[2]) + sinf(iR[0]) * sinf(iR[1]) * sinf(iR[2]), sinf(iR[0]) * cosf(iR[1]), 0.f,
+		-sinf(iR[0]) * (-sinf(iR[2])) + cosf(iR[0]) * sinf(iR[1]) * cosf(iR[2]), (-sinf(iR[0])) * cosf(iR[2]) + cosf(iR[0]) * sinf(iR[1]) * sinf(iR[2]), cosf(iR[0]) * cosf(iR[1]), 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+	glm::mat4 scal =
+	{
+		iS[0],			0.f,			0.f,	 0.f,
+		0.f,	        iS[1],			0.f,	 0.f,
+		0.f,			0.f,	        iS[2],	 0.f,
+		0.f,			0.f,	        0.f,	 1.f
 	};
 
-	return output;
-}
+	glm::mat4 srlol = trans * scal * rot;
 
-glm::mat4 Model::convertToRotMat(float inputArr[3])
-{
-	using namespace glm;
-	mat4 rotX = 
+	glm::mat4 tsr =
 	{
-		1.f,			0.f,					0.f,				0.f,
-		0.f,		    cosf(inputArr[0]),	    sinf(inputArr[0]),	0.f,
-		0.f,		    -sinf(inputArr[0]),     cosf(inputArr[0]),  0.f,
-		0.f,			0.f,					0.f,				1.f
-	};
-	mat4 rotY =
-	{
-		cosf(inputArr[1]),	0.f,			-sinf(inputArr[1]),		0.f,
-		0.f,				1.f,			0.f,					0.f,
-		sinf(inputArr[1]),  0.f,			cosf(inputArr[1]),		0.f,
-		0.f,				0.f,			0.f,					1.f
-	};
-	mat4 rotZ =
-	{
-		cosf(inputArr[2]),	sinf(inputArr[2]),		0.f,				0.f,
-		-sinf(inputArr[2]), cosf(inputArr[2]),		0.f,				0.f,
-		0.f,				0.f,					1.f,				0.f,
-		0.f,				0.f,					0.f,				1.f
+		iS[0] * (cosf(iR[1]) * cosf(iR[2])),                                                            iS[0] * (cosf(iR[1]) * sinf(iR[2])),                                                           iS[0] * (-sinf(iR[1])),              0.f,
+		iS[1] * (cosf(iR[0]) * iS[1] * (-sinf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))),     iS[1] * ((cosf(iR[0]) * cosf(iR[2])) + (sinf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))),             iS[1] * sinf(iR[0]) * cosf(iR[1]),   0.f,
+		iS[2] * ((-sinf(iR[0]) * (-sinf(iR[2]))) + (cosf(iR[0]) * sinf(iR[1]) * cosf(iR[2]))),          iS[2] * (((-sinf(iR[0])) * cosf(iR[2])) + (cosf(iR[0]) * sinf(iR[1]) * sinf(iR[2]))),          iS[2] * cosf(iR[0]) * cosf(iR[1]),   0.f,
+		iT[0],                                                                                  iT[1],                                                                        iT[2],                         1.f
 	};
 
-	//mat4 rotMatrix = rotX * rotY * rotZ;
-	
-	//return rotMatrix;
-	return rotX * rotY * rotZ;
-}
-
-glm::mat4 Model::convertToScaleMat(float inputArr[3])
-{
-	glm::mat4 output = 
-	{
-		inputArr[0],			0.f,			0.f,	 0.f,
-				0.f,	inputArr[1],			0.f,	 0.f,
-				0.f,			0.f,	inputArr[2],	 0.f,
-				0.f,			0.f,	        0.f,	 1.f
-	};
-	return output;
+	return tsr;
 }
 
 glm::mat4 Model::convertToMat4(float inputArr[16])
@@ -467,21 +756,21 @@ glm::mat4 Model::convertToMat4(float inputArr[16])
 	};
 	/*glm::mat4 output =
 	{
-		inputArr[0], inputArr[1], inputArr[2], inputArr[3],
-		inputArr[4], inputArr[5], inputArr[6], inputArr[7],
-		inputArr[8], inputArr[9], inputArr[10], inputArr[11],
-		inputArr[12], inputArr[13], inputArr[14], inputArr[15]
+	inputArr[0], inputArr[1], inputArr[2], inputArr[3],
+	inputArr[4], inputArr[5], inputArr[6], inputArr[7],
+	inputArr[8], inputArr[9], inputArr[10], inputArr[11],
+	inputArr[12], inputArr[13], inputArr[14], inputArr[15]
 	};*/
 
 	return output;
 }
 
-Model& Model::operator=( const Model& ref )
+Model& Model::operator=(const Model& ref)
 {
 	return *this;
 }
 
-Model::Model( const Model& ref )
+Model::Model(const Model& ref)
 {
 }
 
@@ -491,5 +780,5 @@ Model::Model()
 
 Model::~Model()
 {
-	
+	//delete this->mpMeshes;
 }

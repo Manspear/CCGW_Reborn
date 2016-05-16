@@ -55,16 +55,10 @@ public:
 	int getHeight() const;
 	sNode* getPath();
 
-	//void debugRender( GLuint programID );
-
 	//Grid( int width, int height, tempMesh* mesh);
 	Grid( int width, int height );
 	Grid();
 	~Grid();
-
-	/*sBoxHier mTop;
-	sBoxHier mMiddle;
-	sBoxHier mBottom;*/
 
 	sBoxHier mCullHierarchy[GRID_MAX_HIERARCHIES];
 
@@ -80,7 +74,6 @@ private:
 	sNode* mPath;
 	sNode* mPath2;
 
-	
-
-	//tempMesh* DEBUG_mesh;
+	std::vector<sNode*> mOpenList;
+	std::vector<sNode*> mClosedList;
 };

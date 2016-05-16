@@ -14,7 +14,8 @@ class Enemy : public GameObject
 {
 public:
 	//Render the enemy.
-	void render( GLuint programID );
+	//void render( GLuint programID );
+	void render( GLuint worldLocation, GLuint animationLocation );
 
 	//Set the path that this enemy should follow.
 	void setPath( sNode* path, int max );

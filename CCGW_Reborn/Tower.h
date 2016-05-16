@@ -11,13 +11,14 @@ class Tower : public GameObject
 public:
 	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Emitter* emitter );
 	void update(GameData* gameData, const float &dt);
-	void render(const GLuint &programID);
+	//void render(const GLuint &programID);
+	void render( GLuint worldLocation );
 
 	void setAlive( bool alive );
 	void setHasBallista( bool hasBallista );
 	bool getAlive() const;
 	bool getHasBallista() const;
-
+	Weapon mWeapon;
 	//Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale);
 	Tower();
 	~Tower();
@@ -25,8 +26,6 @@ private:
 	float mFireRate;
 	float mReloadTime;
 	float mRange;
-	//Weapon* mpWeapon;
-	Weapon mWeapon;
 	bool mWeaponReady;
 	bool mShooting;
 	float mDistanceToTarget;

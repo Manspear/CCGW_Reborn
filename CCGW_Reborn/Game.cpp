@@ -43,7 +43,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
 	Emitter playerEmitter;
 
-	data.pEmission->allocEmitter(&playerEmitter, 100);
+		data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
@@ -63,13 +63,14 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole"); 
+	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
+
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
@@ -80,7 +81,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	//Enemy::pBoundingBoxModel = boundingBoxModel;
 
-	GameObject tempBaby(glm::vec3(10, 1, -50), 1);
+	/*GameObject tempBaby(glm::vec3(10, 1, -50), 1);
 	tempBaby.load(babyModel);
 	float p = glm::pi<float>()*0.5f;
 	glm::mat4 rotmat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
@@ -92,9 +93,26 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for (int i = 0; i < 25; i++) {
 		babylist.push_back(GameObject(tempBaby));
 		babylist[i].setPosition(glm::vec3(6.5*(i / 5), 0.3, 100 + (i % 5)));
+	}*/
+
+	data.mBabies = 25;
+	data.pBabies = new GameObject[data.mBabies];
+
+	float p = glm::pi<float>()*0.5f;
+	glm::mat4 babyMat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
+		0, 0.2f, 0, 0,
+		sinf(p)*0.2f, 0, cosf(p)*0.2f, 0,
+		0, 0, 0, 1
+	);
+
+	for (int i = 0; i < data.mBabies; i++)
+	{
+		data.pBabies[i].load(babyModel);
+		babyMat[3][0] = 6.5f*(i / 5);
+		babyMat[3][1] = 0.3f;
+		babyMat[3][2] = 100 + (i % 5);
+		data.pBabies[i].setWorld(babyMat);
 	}
-
-
 
 	data.pGrid = new Grid(16, 48);
 	for( int i=0; i<16; i++ )
@@ -103,8 +121,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mTowers = 15*48;
 	data.pTowers = new Tower[data.mTowers];
 
-	mVisibleTowers = new Tower*[data.mTowers];
-	mMaxTowers = 0;
+	mpVisibleTowers = new Tower*[data.mTowers];
+	mVisibleTowers = 0;
 
 	Emitter towerEmitter;
 	data.pEmission->allocEmitter( &towerEmitter, 1000 );
@@ -119,20 +137,24 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 
 
-
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
-	data.pPlayer->setScale(0.2f);
 	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
+	//mTowerModel.load( playerModel );
+	//mTowerModel.setScale( data.boxScale );
+	//mMoleratman.load( enemyModel );
+	//mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
+	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i < data.mMolebats; i++ )
 	{
 		data.pMolebats[i].load(molebatModel, &enemyEmitter);
 		data.pMolebats[i].setGameData( &data );
+		data.pMolebats[i].loadSound(sound);
 	}
 
 	data.mMoleratmen = 50;
@@ -140,11 +162,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for (int i = 0; i < data.mMoleratmen; i++) {
 		data.pMoleratmen[i].load(enemyModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
+		data.pMoleratmen[i].loadSound(sound);
 	}
+
+	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
+	data.pPlayer->mWeapon.loadSound(sound);
 
 	pWaveSpawner = new WaveSpawner( &data );
 	pWaveSpawner->setPosition({ 14,0,-10 });
-	Sound* sound = data.pAssets->load<Sound>( "Sounds/chant.wav" );
+	sound = data.pAssets->load<Sound>( "Sounds/monstersound.wav" );
 	if( !sound )
 	{
 		const char* error = Mix_GetError();
@@ -152,10 +178,12 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	}
 	else
  		sound->play();
+	
 }
 
 Game::~Game() {
 	delete data.pDeferredProgram;
+	delete data.pDeferredProgramNonAni;
 	delete data.pForwardProgram;
 	delete data.pBillboardProgram;
 	delete data.pPlayer;
@@ -167,7 +195,8 @@ Game::~Game() {
 	delete pWaveSpawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
-	delete data.pDeferredProgramNonAni;
+	delete[] data.pBabies;
+	delete[] mpVisibleTowers;
 
 	data.pAssets->unload();
 	delete data.pAssets;
@@ -242,26 +271,47 @@ void Game::render()
 {
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	//mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+
+	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+
+	mGround.renderNonAni( worldLocation );
+
 	for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
-			data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			data.pMolebats[i].renderNonAni( worldLocation );
 
-	for( int i=0; i<data.mTowers; i++ )
-		if (data.pTowers[i].getAlive())
-			data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+	/*for (int i = 0; i<mVisibleTowers; i++)
+		if (mpVisibleTowers[i]->getAlive())
+			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
+
+	for (int i = 0; i < mVisibleTowers; i++)
+		mpVisibleTowers[i]->renderNonAni(worldLocation);
+
 	for (int i = 0; i < data.mBabyCount; i++)
-		babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-	if(tactical)
-		this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
+		//babylist[i].renderNonAni(worldLocation);
+		data.pBabies[i].renderNonAni(worldLocation);
+
+	//this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
+	mTacticalMarker.render( worldLocation );
+
 	data.pDeferredProgramNonAni->unUse();
+
+	worldLocation = data.pDeferredProgram->getWorldLocation();
+	GLuint animationLocation = data.pDeferredProgram->getAnimationLocation();
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
-	data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
+	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
+	data.pPlayer->renderAni( worldLocation, animationLocation );
+
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
-			data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
+			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
+			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
@@ -285,7 +335,7 @@ void Game::update(Input* inputs, float dt)
 	if( doCull )
 		data.pCamera->updateFrustum();
 	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );
-	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mVisibleTowers, &mMaxTowers );
+	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
 
 	//std::cout << "Visible towers: " << mMaxTowers << std::endl;
 
@@ -332,12 +382,12 @@ void Game::update(Input* inputs, float dt)
 void Game::drawOnScreenQuad()
 {
 	data.pForwardProgram->use();
-	data.pDeferredProgramNonAni->enableTextures(data.pForwardProgram->getProgramID());
+	data.pDeferredProgramNonAni->enableTextures(data.pForwardProgram->getTextureLocations());
 
-	GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
-	glUniform3fv(cameraPos, 1, &data.pCamera->getPosition()[0]);
-	GLuint inverseViewPerspective = glGetUniformLocation(data.pForwardProgram->getProgramID(), "invViewPerspective");
-	glUniformMatrix4fv(inverseViewPerspective, 1, GL_FALSE, &glm::inverse(data.pCamera->getViewPerspective())[0][0]);
+	//GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
+	glUniform3fv(data.pForwardProgram->getCameraPositionLocation(), 1, &data.pCamera->getPosition()[0]);
+	//GLuint inverseViewPerspective = glGetUniformLocation(data.pForwardProgram->getProgramID(), "invViewPerspective");
+	glUniformMatrix4fv(data.pForwardProgram->getInverseViewPerspectiveLocation(), 1, GL_FALSE, &glm::inverse(data.pCamera->getViewPerspective())[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, testScreen);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));

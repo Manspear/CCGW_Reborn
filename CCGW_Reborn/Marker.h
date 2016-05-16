@@ -6,7 +6,8 @@ class Marker : public GameObject {
 public:
 	void update(const Player* gameData);
 	bool update(const Input * inputs, GameData &gameData);
-	virtual void render(const GLuint &programID);
+	//virtual void render(const GLuint &programID);
+	void render( GLuint worldLocation );
 	std::vector<glm::vec2> getMarkedTiles();
 	void resetMarkedTiles();
 	Marker();

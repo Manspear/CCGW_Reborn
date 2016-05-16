@@ -188,10 +188,11 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 	return dir;
 }
 
-void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
+//void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
+void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
-	GameObject::renderAni(programID);
-	this->mWeapon.draw(programID);
+	GameObject::renderAni(worldLocation, animationLocation);
+	this->mWeapon.render(worldLocation);
 }
 
 void Player::setAlive(bool amIalive)

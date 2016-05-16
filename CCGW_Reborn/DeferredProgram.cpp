@@ -13,6 +13,12 @@ DeferredProgram::DeferredProgram(const std::string& vertexPath, const std::strin
 	glUseProgram( mProgramID );
 	mViewPerspectiveLocation = glGetUniformLocation( mProgramID, "viewProjection" );
 	mCameraPositionLocation = glGetUniformLocation( mProgramID, "cameraPos" );
+	mWorldLocation = glGetUniformLocation( mProgramID, "world");
+	mAnimationLocation = glGetUniformLocation( mProgramID, "animationMatrices" );
+
+	mTexSamplerLocation = glGetUniformLocation(mProgramID, "texSampler");
+	mSpecularSamplerLocation = glGetUniformLocation(mProgramID, "specularSampler");
+	mNormalSamplerLocation = glGetUniformLocation(mProgramID, "normalSampler");
 	glUseProgram( 0 );
 
 	//Initializing framebuffer
@@ -86,26 +92,18 @@ void DeferredProgram::use() {
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	GLuint texLocation = glGetUniformLocation( mProgramID, "texSampler" );
-	GLuint specularLocation = glGetUniformLocation( mProgramID, "specularSampler" );
-	GLuint normalLocation = glGetUniformLocation( mProgramID, "normalSampler" );
-
-	glUniform1i( texLocation, 0 );
-	glUniform1i( specularLocation, 1 );
-	glUniform1i( normalLocation, 2 );
+	glUniform1i(mTexSamplerLocation, 0 );
+	glUniform1i(mSpecularSamplerLocation, 1 );
+	glUniform1i(mNormalSamplerLocation, 2 );
 }
 
 void DeferredProgram::use(GLuint frameBuffer) {
 	glUseProgram(mProgramID);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-	GLuint texLocation = glGetUniformLocation(mProgramID, "texSampler");
-	GLuint specularLocation = glGetUniformLocation(mProgramID, "specularSampler");
-	GLuint normalLocation = glGetUniformLocation(mProgramID, "normalSampler");
-
-	glUniform1i(texLocation, 0);
-	glUniform1i(specularLocation, 1);
-	glUniform1i(normalLocation, 2);
+	glUniform1i(mTexSamplerLocation, 0);
+	glUniform1i(mSpecularSamplerLocation, 1);
+	glUniform1i(mNormalSamplerLocation, 2);
 }
 
 void DeferredProgram::unUse() {
@@ -113,25 +111,24 @@ void DeferredProgram::unUse() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DeferredProgram::enableTextures(GLuint nextShader) const{
+/*void DeferredProgram::enableTextures(GLuint nextShader) const{
 	GLuint texLocation = glGetUniformLocation(nextShader, "ambientT");
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mAmbientTex);
-	glUniform1i(texLocation, 0);
+	glUniform1i(mAmbientLocation, 0);
 
 	texLocation = glGetUniformLocation(nextShader, "diffuseT");
-	glUniform1i(texLocation, 1);
+	glUniform1i(mDiffuseLocation, 1);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, mDiffuseTex);
 
 	texLocation = glGetUniformLocation(nextShader, "specularT");
-	glUniform1i(texLocation, 2);
+	glUniform1i(mSpecularLocation, 2);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, mSpecularTex);
 
-
 	texLocation = glGetUniformLocation(nextShader, "normalT");
-	glUniform1i(texLocation, 3);
+	glUniform1i(mNormalLocation, 3);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, mNormalTex);
 
@@ -139,10 +136,19 @@ void DeferredProgram::enableTextures(GLuint nextShader) const{
 	glUniform1i(texLocation, 4);
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D,mDepthTex);
+}*/
+
+void DeferredProgram::enableTextures(GLuint* textureLocations) const {
+	for (int i = 0; i < 5; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, mTextures[i]);
+		glUniform1i(textureLocations[i], i);
+	}
 }
 
 void DeferredProgram::disableTextures() const {
-	glActiveTexture(GL_TEXTURE5);
+	/*glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glActiveTexture(GL_TEXTURE4);
@@ -158,7 +164,13 @@ void DeferredProgram::disableTextures() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);*/
+	
+	for (int i = 0; i < 5; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 
 GLuint DeferredProgram::getViewPerspectiveLocation() const {
@@ -172,4 +184,14 @@ GLuint DeferredProgram::getCameraPositionLocation() const {
 GLuint DeferredProgram::getFrameBuffer() const
 {
 	return mFBOid;
+}
+
+GLuint DeferredProgram::getWorldLocation() const
+{
+	return mWorldLocation;
+}
+
+GLuint DeferredProgram::getAnimationLocation() const
+{
+	return mAnimationLocation;
 }
