@@ -78,9 +78,15 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 //void Tower::render(const GLuint & programID)
 void Tower::render( GLuint worldLocation )
 {
+	// TODO: Please fix, don't ship
+	float ypos = mWorld[3][1];
+	mWorld[3][1] = 0.0f;
+
 	GameObject::renderNonAni(worldLocation);
 	if (mShooting)
 		mWeapon.render( worldLocation );
+
+	mWorld[3][1] = ypos;
 }
 
 void Tower::setAlive( bool alive )

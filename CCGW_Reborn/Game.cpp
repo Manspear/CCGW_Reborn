@@ -63,10 +63,10 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
 
-	Model* playerModel = data.pAssets->load<Model>("Models/klara42_demo.mole");
+	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation_linear.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation.mole");
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
@@ -160,25 +160,18 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.mMoleratmen = 50;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
-		data.pMoleratmen[i].load(enemyModel, &enemyEmitter);
+		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
+		data.pMoleratmen[i].setAnimation( 1);
+		data.pMoleratmen[i].setScale(0.1f);
 	}
 
 	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
 	data.pPlayer->mWeapon.loadSound(sound);
 
 	pWaveSpawner = new WaveSpawner( &data );
-	pWaveSpawner->setPosition({ 14,0,-10 });
-	sound = data.pAssets->load<Sound>( "Sounds/monstersound.wav" );
-	if( !sound )
-	{
-		const char* error = Mix_GetError();
-		std::cout << "Mixer error: " << error << std::endl;
-	}
-	else
- 		sound->play();
-	
+	pWaveSpawner->setPosition({ 14,0,-10 });	
 }
 
 Game::~Game() {
@@ -257,6 +250,8 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 			 data.pCamera->tacticalMovement(data.pPlayer->tacticalUpdate(inputs, dt, data), 30);
 			 mTacticalMarker.update( inputs, data );
 		 }
+
+		 data.pGrid->cull(data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers);
 	 }
 	 if (inputs->keyPressed(SDLK_t))
 	 {
@@ -277,10 +272,10 @@ void Game::render()
 
 	mGround.renderNonAni( worldLocation );
 
-	for (int i = 0; i<data.mMolebats; i++)
+	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-			data.pMolebats[i].renderNonAni( worldLocation );
+			data.pMolebats[i].renderNonAni( worldLocation );*/
 
 	/*for (int i = 0; i<mVisibleTowers; i++)
 		if (mpVisibleTowers[i]->getAlive())
@@ -288,7 +283,7 @@ void Game::render()
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 
 	for (int i = 0; i < mVisibleTowers; i++)
-		mpVisibleTowers[i]->renderNonAni(worldLocation);
+		mpVisibleTowers[i]->render(worldLocation);
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
@@ -306,12 +301,16 @@ void Game::render()
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
 	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
-	data.pPlayer->renderAni( worldLocation, animationLocation );
+	data.pPlayer->renderAni( worldLocation, animationLocation, 1);
 
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
 			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
 			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
+
+	for( int i=0; i<data.mMolebats; i++ )
+		if( data.pMolebats[i].getAlive() )
+			data.pMolebats[i].renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
