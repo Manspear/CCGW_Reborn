@@ -59,7 +59,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation.mole");
-	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
@@ -103,7 +103,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	for( int i=0; i<16; i++ )
 		data.pGrid->setTile( i, 0, TILE_BLOCKED );
 
-	data.mTowers = 16*47;
+	data.mTowers = 16*48;
 	data.pTowers = new Tower[data.mTowers];
 
 	mpVisibleTowers = new Tower*[data.mTowers];
@@ -125,7 +125,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 	data.pPlayer->setAnimation(3);
-	mGround.load(terrainModel);
+	//mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 
@@ -258,7 +258,7 @@ void Game::render()
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
-	mGround.renderNonAni( worldLocation );
+	//mGround.renderNonAni( worldLocation );
 	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
@@ -270,15 +270,17 @@ void Game::render()
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 	if (tactical)
 	{
-		for (int i = 0; i < data.mTowers; i++)
+		for (int i = 0; i < data.mTowers; i++) {
 			if (data.pTowers[i].getAlive())
 				data.pTowers[i].render(worldLocation);
+		}
 	}
 	else
 	{
-		for (int i = 0; i < mVisibleTowers; i++)
+		for (int i = 0; i < mVisibleTowers; i++) {
 			if (mpVisibleTowers[i]->getAlive())
 				mpVisibleTowers[i]->render(worldLocation);
+		}
 	}
 
 	for (int i = 0; i < data.mBabyCount; i++)
@@ -296,14 +298,14 @@ void Game::render()
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
 	data.pPlayer->renderAni( worldLocation, animationLocation );
 
-	for( int i=0; i<data.mMoleratmen; i++ )
-		if( data.pMoleratmen[i].getAlive() )
-			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
-
-	for( int i=0; i<data.mMolebats; i++ )
-		if( data.pMolebats[i].getAlive() )
-			data.pMolebats[i].renderAni( worldLocation, animationLocation );
-	
+	for (int i = 0; i < data.mMoleratmen; i++) {
+		if (data.pMoleratmen[i].getAlive())
+			data.pMoleratmen[i].renderAni(worldLocation, animationLocation);
+	}
+	for (int i = 0; i < data.mMolebats; i++) {
+		if (data.pMolebats[i].getAlive())
+			data.pMolebats[i].renderAni(worldLocation, animationLocation);
+	}
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
 

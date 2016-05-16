@@ -41,34 +41,6 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 			//Find the right keyframe based on time
 			int currKeyIndex;
 			const int frameCount = mpJointList[i].keyFramesByTake[take].size();
-			////will pick the key with the time value that 
-			////represents the "currTime" the best.
-			//int closestKey;
-
-			//float prevDiff = -1337;
-
-			//for (int j = 0; j < frameCount; j++)
-			//{
-			//	if (prevDiff == -1337)
-			//	{	 
-			//		closestKey = j;
-			//		prevDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
-			//	}
-			//	else {
-			//		float currDiff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
-			//		if (currDiff < prevDiff)
-			//		{
-			//			closestKey = j;
-			//			prevDiff = currDiff;
-			//		}
-			//	}
-			//	if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
-			//	{
-			//		closestKey = j;
-			//		break;
-			//	}
-			//	//mpJointList[i].keyFramesByTake[0][take][j];
-			//}
 
 			int closestKeyPos;
 			int closestKeyNeg;
@@ -81,6 +53,12 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 				{
 					closestKeyPos = j;
 					closestKeyNeg = j;
+					break;
+				}
+				if ((jointMaxTime - targetTime) < 0.000001f ) 
+				{
+					closestKeyPos = frameCount - 1;
+					closestKeyNeg = frameCount - 1;
 					break;
 				}
 				if ((prevDiffPos == -1337) && (prevDiffNeg == -1337))
@@ -138,60 +116,6 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 
 		recursiveUpdateJointMatrixList(worldMat, tempFramesUnder, tempFramesOver, targetTime, rootKey);
 	}
-}
-
-void shit() {
-	/**
-	Now multiply "The Root" with the current keyframe-values, and then multiply that matrix with the worldpos-values.
-	The root now has a "final transform".
-	Then for each root-child, multiply it's bind matrix with the keyframematrix, and then with it's parent matrix.
-
-	But first: find the root-joint.
-
-	bindpose * keyframe * inversebindpose
-
-	GlobalInverseBindPose -> One for each joint.
-	Multiply it with all of the matrix transform matrices
-	You multiply it with all of the keyFrameMatrices.
-
-	KEYFRAME * INVERSEBINDPOSE! THAS IT!
-	**/
-	/**
-	Perform the requisite transforms on the root.
-	We only care about the rotation.
-	**/
-
-	/**
-	1. Get the key-transform for root.
-	2. InverseBIndPose on it
-	3. Multiply it with the input "transform-vector"
-	**/
-	//float tempInvBindPose[16];
-	//for (int i = 0; i < 16; i++)
-	//	tempInvBindPose[i] = mpJointList[rootKey].jointData->globalBindPoseInverse[i];
-	//
-	//glm::mat4 invBPose = convertToMat4(tempInvBindPose);
-
-	////Now get the key-transform
-	//glm::mat4 keySMat = convertToScaleMat(tempFrames[rootKey].keyScale);
-	//glm::mat4 keyRMat = convertToRotMat(tempFrames[rootKey].keyRotate);
-	//glm::mat4 keyTMat = convertToTransMat(tempFrames[rootKey].keyPos);
-	//glm::mat4 keyTransform = keySMat * keyRMat * keyTMat;
-	////Now "remove" the bindpose from the joint
-	///**
-	//Inversebindpose MIGHT mean that all of the joints enter their "origo", wherefrom they can get scaled, rotated, etc
-	//without lokking funny.
-	//**/
-	//glm::mat4 pureKeyTransform = keyTransform * invBPose;
-	////Now modify it with the worldMatrix
-	//glm::mat4 finalRootMatrix = pureKeyTransform * worldMat;
-	//
-	////Saving the root matrix in the matrix array.
-	//jointMatrixList[rootKey] = finalRootMatrix;
-
-	//Now loop through the root's children, and apply the root-matrix to their
-	//"final transform". Then loop through the children's children and apply 
-	//that "final transform" to them. Etc...
 }
 
 bool Model::load(Assets* assets, std::string file)

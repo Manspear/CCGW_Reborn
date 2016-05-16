@@ -19,7 +19,7 @@ struct Number {
 };
 
 enum MENU {
-	MAIN_MENU, ACTION_HUD, LOSING_SCREEN, VICTORY_SCREEN, HIGHSCORE_SCREEN
+	MAIN_MENU, ACTION_HUD, LOSING_SCREEN, VICTORY_SCREEN, HIGHSCORE_SCREEN, PAUSE_SCREEN
 };
 
 class Menu {
@@ -74,11 +74,13 @@ private:
 	Button addButton(float startX, float startY, float width, float height, char type, std::string texPath);
 	void setPauseState(MENU theMenu, Input* input);
 	void writeToField(std::vector<int>* keyVector);
-	void writeToHighScore();
+	void writeToFieldString(std::string theString);
+	void pausedMenu(Input* inputs);
+	void writeToHighScore(GameData* data);
 	void readFromHighScore();
 
-	int mHighscore;
-	string highscoreHolder;
+	string highscoreHolder, mWaveScore, mBabyScore, mGoldScore;
+	int cursorHolder;
 	std::vector<AMenu> mAllMenu;
 	Button* mActiveField;
 	bool mRunning;

@@ -1,4 +1,16 @@
-b -0.16 -0.3 0.3 0.15 q Models/menu/continue.png
+b -0.372 0.47 0.3 0.15 a Models/menu/invisible.png
+b -0.292 0.47 0.3 0.15 a Models/menu/invisible.png
+b -0.172 0.47 0.3 0.15 a Models/menu/invisible.png
+b -0.08 0.47 0.3 0.15 a Models/menu/invisible.png
 
-b -0.14 -0.05 0.3 0.15 a Models/menu/invisible.png
-b -1.15 -1.15 2.3 2.3 d Models/menu/highscore.png
+b -0.372 0.387 0.3 0.15 a Models/menu/invisible.png
+b -0.292 0.387 0.3 0.15 a Models/menu/invisible.png
+b -0.172 0.387 0.3 0.15 a Models/menu/invisible.png
+b -0.08 0.387 0.3 0.15 a Models/menu/invisible.png
+
+b -0.372 0.304 0.3 0.15 a Models/menu/invisible.png
+b -0.292 0.304 0.3 0.15 a Models/menu/invisible.png
+b -0.172 0.304 0.3 0.15 a Models/menu/invisible.png
+b -0.08 0.304 0.3 0.15 a Models/menu/invisible.png
+
+b -1.5 -1.3 3.0 2.6 d Models/menu/highscorelist.png

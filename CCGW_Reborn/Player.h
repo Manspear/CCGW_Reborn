@@ -16,8 +16,9 @@ public:
 	float getRot() const;
 	bool checkMove(glm::vec3 coord);
 	void setAlive(bool amIalive);
-	void takeDamage(float damage);
+	void takeDamage(int damage);
 	bool isAlive();
+	int getHealth() const;
 	float getYOffset();
 	Weapon mWeapon;
 	void renderArrows(GLuint worldLocation);
@@ -34,7 +35,7 @@ private:
 	glm::vec3 mDirection;
 	GameData* pGameData;
 	int daIndex;
-	float mHealth;
+	int mHealth;
 
 	float mRot;
  };
