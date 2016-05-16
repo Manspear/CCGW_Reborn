@@ -13,6 +13,8 @@ public:
 	//void render( GLuint programID );
 	void render( GLuint worldLocation, GLuint animationLocation );
 
+	void imHit( float strength, glm::vec3 position );
+
 	Moleratman& operator=( const Moleratman& ref );
 	Moleratman( const Moleratman& ref );
 	Moleratman();

@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include <glm\gtx\matrix_operation.hpp>
 #include <Mole\MoleReader.h>
+#include "Animation.h"
 
 class Model : public Asset
 {
@@ -30,6 +31,8 @@ public:
 	void drawAni();
 	void drawNonAni();
 
+	sAnimation* getAnimation( int index );
+	int getAnimationCount() const;
 	Texture* getDiffuseMap(int index) const;
 	Texture* getSpecularMap(int index) const;
 	Texture* getNormalMap(int index) const;
@@ -49,6 +52,7 @@ private:
 	std::vector<sModelMesh> mpMeshList;
 	std::vector<sKeyFrame> tempFramesOver;
 	std::vector<sKeyFrame> tempFramesUnder;
+	std::vector<sAnimation> mAnimations;
 
 	void sortJointsByID();
 	void makeJointHierarchy();

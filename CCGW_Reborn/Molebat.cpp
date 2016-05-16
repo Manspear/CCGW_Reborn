@@ -2,6 +2,8 @@
 
 void Molebat::update(float dt)
 {
+	Enemy::update( dt );
+
 	mTimeSinceLastHit += dt;
 	glm::vec3 newPos = mPosition;
 	glm::vec3 movement;
@@ -120,6 +122,13 @@ void Molebat::render( GLuint worldLocation, GLuint animationLocation )
 
 	glPolygonMode( GL_FRONT, GL_FILL );
 #endif
+}
+
+void Molebat::imHit( float strength, glm::vec3 position )
+{
+	Enemy::imHit( strength, position );
+
+	mAnimator.push( 2, false );
 }
 
 void Molebat::setGameData( GameData* data )

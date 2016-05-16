@@ -19,6 +19,8 @@ float Player::getYOffset() {
 
 void Player::update(const Input* inputs, const float &dt)
 {
+	GameObject::update( dt );
+
 	mWorld = glm::mat4();
 	bool canJump = false;
 

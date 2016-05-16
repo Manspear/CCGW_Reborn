@@ -131,6 +131,8 @@ bool Model::load(Assets* assets, std::string file)
 	file. Don't have to keep hold of millions of vertices.
 	**/
 
+	int maxAnimationStateCount = 0;
+
 	const sMainHeader mainHeader = assetData.getMainHeader();
 	for (int i = 0; i < mainHeader.meshCount; i++)
 	{
@@ -141,6 +143,8 @@ bool Model::load(Assets* assets, std::string file)
 		{
 			sModelJoint tempJoint;
 			const sJoint currJoint = assetData.getJoint(i, j);
+
+			maxAnimationStateCount = currJoint.animationStateCount;
 
 			for (int k = 0; k < currJoint.animationStateCount; k++)
 			{
@@ -187,6 +191,29 @@ bool Model::load(Assets* assets, std::string file)
 		{
 			mpDiffuseMaps[i] = assets->load<Texture>("Models/cube.png");
 		}
+	}
+
+	for( int curAnimation=0; curAnimation<maxAnimationStateCount; curAnimation++ )
+	{
+		sAnimation animation = { curAnimation };
+
+		for( int curMesh=0; curMesh < mainHeader.meshCount; curMesh++ )
+		{
+			const sMesh mesh = assetData.getMesh(curMesh);
+			for( int curJoint=0; curJoint < mesh.jointCount; curJoint++ )
+			{
+				const sJoint joint = assetData.getJoint(curMesh,curJoint);
+				if( joint.animationStateCount >= curAnimation )
+				{
+					const std::vector<sKeyFrame> keyframes = assetData.getKeyList(curMesh,curJoint,curAnimation);
+					if( keyframes.size() > 0 )
+						if( keyframes.back().keyTime > animation.mDuration )
+							animation.mDuration = keyframes.rbegin()->keyTime;
+				}
+			}
+		}
+
+		mAnimations.push_back(animation);
 	}
 
 	int frameSize = 0;
@@ -275,6 +302,18 @@ void Model::drawNonAni()
 		}
 		mpMeshes[i].drawNonAni();
 	}
+}
+
+sAnimation* Model::getAnimation( int index )
+{
+	if( index < mAnimations.size() )
+		return ( mAnimations.data() + index );
+	return nullptr;
+}
+
+int Model::getAnimationCount() const
+{
+	return mAnimations.size();
 }
 
 Texture* Model::getDiffuseMap(int index) const

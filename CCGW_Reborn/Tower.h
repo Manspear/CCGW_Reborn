@@ -9,10 +9,12 @@
 class Tower : public GameObject
 {
 public:
-	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Emitter* emitter );
+	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Model* headModel, Emitter* emitter );
 	void update(GameData* gameData, const float &dt);
 	//void render(const GLuint &programID);
-	void render( GLuint worldLocation );
+	void renderNonAni( GLuint worldLocation );
+	void renderAni( GLuint worldLocation, GLuint animationLocation );
+	void renderArrows( GLuint worldLocation );
 
 	void setAlive( bool alive );
 	void setHasBallista( bool hasBallista );
@@ -32,7 +34,7 @@ private:
 	float mStrength;
 	Moleratman* targetEnemy;
 	bool mAlive, mHasBallista;
-	Model *mpBoxModel, *mpBallistaModel;
+	Model *mpBoxModel, *mpBallistaModel, *mpHeadModel;
 	
 	bool arrowShot(const float &dt, GameData* data);
 };
