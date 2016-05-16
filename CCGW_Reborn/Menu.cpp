@@ -6,18 +6,12 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 	if (inputs->getQuit())
 		return false;
 	if (inputs->keyPressed(SDLK_ESCAPE))
-	{
-		mActive = true;
-		activeMenu = MAIN_MENU;
-		inputs->setMouseVisible(true);
-		inputs->setMouseLock(false);
-	}
-	if (state == GAME_LOST) {
-		activeMenu = LOSING_SCREEN;
-		mActive = true;
-		inputs->setMouseVisible(true);
-		inputs->setMouseLock(false);
-	}
+		setPauseState(MAIN_MENU, inputs);
+	else if (state == GAME_LOST) 
+		setPauseState(LOSING_SCREEN, inputs);
+	else if (state == GAME_WON) 
+		setPauseState(VICTORY_SCREEN, inputs);
+
 	if (activeMenu != ACTION_HUD) {
 		int x = inputs->mousePosition().x;
 		int y = (inputs->mousePosition().y * -1) + gHeight;
@@ -70,6 +64,18 @@ void Menu::writeToHighScore()
 	file.close();
 }
 
+void Menu::readFromHighScore()
+{
+	ifstream file;
+	istringstream ss;
+	string aString;
+	file.open("models/menu/highscore.txt");
+	std::getline(file, aString);
+	ss.str(aString);
+	ss >> mHighscore >> highscoreHolder;
+	file.close();
+}
+
 void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 {
 	switch (type) {
@@ -99,6 +105,7 @@ void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
 		break;
 	case 'a':
 		mActiveField = &mAllMenu[activeMenu].theMenu[index];
+		mAllMenu[activeMenu].theMenu[index].mHighlighted = true;
 		break;
 	}
 }
@@ -107,6 +114,14 @@ void Menu::updateNumbers(GameData * data)
 {
 	if( activeMenu == LOSING_SCREEN )
 		return;
+}
+
+void Menu::setPauseState(MENU theMenu, Input* inputs)
+{
+	mActive = true;
+	activeMenu = theMenu;
+	inputs->setMouseVisible(true);
+	inputs->setMouseLock(false);
 }
 
 void Menu::render()
@@ -301,6 +316,7 @@ Menu::Menu()
 	mActiveField = nullptr;
 	mActive = true;
 	mRunning = true;
+	readFromHighScore();
 	posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");;
 	numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");;
 	buttonTex = glGetUniformLocation(menuShader->getProgramID(), "texSampler");
@@ -309,8 +325,9 @@ Menu::Menu()
 	buildAMenu("menuBuild.txt", MAIN_MENU);
 	buildAMenu("actionBuild.txt", ACTION_HUD);
 	buildAMenu("losingBuild.txt", LOSING_SCREEN);
+	buildAMenu("victoryBuild.txt", VICTORY_SCREEN);
+	buildAMenu("highscoreBuild.txt", HIGHSCORE_SCREEN);
 	activeMenu = MAIN_MENU;
-
 	addNumber(0.05, 0.07);
 }
 

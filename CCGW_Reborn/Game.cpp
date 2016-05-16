@@ -55,14 +55,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pScore = 0;
 	data.pGold = 5;
 
-	/*Model* playerModel = data.pAssets->load<Model>( "Models/jointCube.mole" );
-	Model* boxModel = data.pAssets->load<Model>("Models/jointCube.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/jointCube.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/jointCube.mole");
-	Model* terrainModel = data.pAssets->load<Model>("Models/jointCube.mole");
-	Model* markerModel = data.pAssets->load<Model>("Models/jointCube.mole");
-	Model* boundingBoxModel = data.pAssets->load<Model>("Models/jointCube.mole");*/
-
 	Model* playerModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat_animation.mole");
@@ -70,13 +62,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
-
-	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
-	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
-	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
-	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
 
 	//Enemy::pBoundingBoxModel = boundingBoxModel;
@@ -136,16 +121,11 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pTowers[i].setAlive( false );
 	}
 
-
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
-	//mTowerModel.load( playerModel );
-	//mTowerModel.setScale( data.boxScale );
-	//mMoleratman.load( enemyModel );
-	//mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
 	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
@@ -170,7 +150,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	pWaveSpawner = new WaveSpawner( &data );
 	pWaveSpawner->setPosition({ 14,0,-10 });
-	sound = data.pAssets->load<Sound>( "Sounds/monstersound.wav" );
+	sound = data.pAssets->load<Sound>( "Sounds/chant.wav" );
+	sound->setLooping(true);
 	if( !sound )
 	{
 		const char* error = Mix_GetError();
@@ -271,32 +252,25 @@ void Game::render()
 {
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	//mGround.renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
-
 	mGround.renderNonAni( worldLocation );
 
 	for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
-			//data.pMolebats[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			data.pMolebats[i].renderNonAni( worldLocation );
 
-	/*for (int i = 0; i<mVisibleTowers; i++)
+	for (int i = 0; i<mVisibleTowers; i++)
 		if (mpVisibleTowers[i]->getAlive())
-			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
+			mpVisibleTowers[i]->renderNonAni( worldLocation );
 
 	for (int i = 0; i < mVisibleTowers; i++)
 		mpVisibleTowers[i]->renderNonAni(worldLocation);
 
 	for (int i = 0; i < data.mBabyCount; i++)
-		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-		//babylist[i].renderNonAni(worldLocation);
 		data.pBabies[i].renderNonAni(worldLocation);
 
-	//this->mTacticalMarker.render(data.pDeferredProgramNonAni->getProgramID());
-	mTacticalMarker.render( worldLocation );
+	if (tactical)
+		mTacticalMarker.render( worldLocation );
 
 	data.pDeferredProgramNonAni->unUse();
 
@@ -305,12 +279,10 @@ void Game::render()
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
-	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
 	data.pPlayer->renderAni( worldLocation, animationLocation );
 
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )
-			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
 			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
