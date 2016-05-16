@@ -77,7 +77,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
-	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista.mole");
+	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista_base_animation.mole");
+	Model* ballistaHeadModel = data.pAssets->load<Model>( "Models/ballista_base_animation.mole" );
 
 	//Enemy::pBoundingBoxModel = boundingBoxModel;
 
@@ -132,7 +133,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	{
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
-		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, &towerEmitter );
+		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, ballistaModel, ballistaHeadModel, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
 
@@ -286,8 +287,13 @@ void Game::render()
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 
 	for (int i = 0; i < mVisibleTowers; i++)
-		if (mpVisibleTowers[i]->getAlive())
-			mpVisibleTowers[i]->render(worldLocation);
+	{
+		if (mpVisibleTowers[i]->getAlive() && !mpVisibleTowers[i]->getHasBallista())
+		{
+			//mpVisibleTowers[i]->render(worldLocation);
+			mpVisibleTowers[i]->renderNonAni(worldLocation);
+		}
+	}
 
 	for (int i = 0; i < data.mBabyCount; i++)
 		//babylist[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
@@ -306,6 +312,15 @@ void Game::render()
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
 	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
 	data.pPlayer->render( worldLocation, animationLocation);
+
+	for (int i = 0; i < mVisibleTowers; i++)
+	{
+		if (mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista())
+		{
+			//mpVisibleTowers[i]->render(worldLocation);
+			mpVisibleTowers[i]->renderAni(worldLocation,animationLocation);
+		}
+	}
 
 	for( int i=0; i<data.mMoleratmen; i++ )
 		if( data.pMoleratmen[i].getAlive() )

@@ -25,12 +25,15 @@ void Animator::update( float dt )
 	{		
 		sAnimation* animation = pModel->getAnimation(mStack.top().mIndex);
 		mElapsed += dt*mStack.top().mSpeed;
+
 		if( mElapsed >= animation->mDuration )
 		{
 			if( mStack.top().mLooping )
 				mElapsed -= animation->mDuration;
-			else
+			else if( mStack.size() > 1 )
 				pop();
+			else // if this is the only animation and it's not looping, stop on the last keyframe
+				mElapsed = animation->mDuration;
 		}
 	}
 }

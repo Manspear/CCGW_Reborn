@@ -2,6 +2,8 @@
 
 void Molebat::update(float dt)
 {
+	Enemy::update( dt );
+
 	mTimeSinceLastHit += dt;
 	glm::vec3 newPos = mPosition;
 	glm::vec3 movement;

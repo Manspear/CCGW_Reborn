@@ -10,7 +10,7 @@ bool GameObject::load( Model* model )
 }
 
 void GameObject::update(const float &dt) {
-	//mAnimator.update(dt);
+	mAnimator.update(dt);
 }
 
 //void GameObject::renderAni(const GLuint & programID)
@@ -21,7 +21,6 @@ void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 	mpModel->updateAnimation( 1.0f, mAnimator.getCurrentAnimation()->mTake, mAnimator.getElapsed(), mWorld );
 
 	//animationTime += 0.01f;
-	mAnimator.update(0.01f);
 
 	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
 	glUniformMatrix4fv(animationLocation, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));

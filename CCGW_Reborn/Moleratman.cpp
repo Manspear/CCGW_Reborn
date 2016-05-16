@@ -3,6 +3,8 @@
 
 void Moleratman::update(float dt, GameData* data)
 {
+	Enemy::update( dt );
+
 	if (mCurrent >= 0)
 	{
 		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0.0f, pPath[mCurrent].y * pGameData->boxScale);
