@@ -25,9 +25,16 @@ public:
 	void renderArrows(GLuint worldLocation);
 	
 	Player();
-	Player(GameData* data, Emitter* emitter);
+	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
+	enum
+	{
+		ANIM_RUN = 1,
+		ANIM_RELOAD,
+		ANIM_SHOOT,
+	};
+
 	float yoffset;
 	float speedY;
 	float mMaxSpeed;
@@ -37,6 +44,8 @@ private:
 	GameData* pGameData;
 	int daIndex;
 	int mHealth;
+
+	Emitter mEmitter;
 
 	float mRot;
  };

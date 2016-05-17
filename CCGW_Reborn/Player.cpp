@@ -31,6 +31,12 @@ void Player::update(const Input* inputs, const float &dt)
 	if (inputs->buttonDown(0))
 	{
 		mStrength > 4 ? mStrength = 4 : mStrength += dt;
+
+		if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
+		{
+			mAnimator.clear();
+			mAnimator.push( ANIM_SHOOT, false, 2.0f, 0.5f );
+		}
 	}
 		//mWeapon->update(dt);
 	mWeapon.update( dt );
@@ -166,6 +172,12 @@ void Player::update(const Input* inputs, const float &dt)
 			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
 			mWeapon.shoot(tempPos, la, rotation, mStrength);
+
+			//mAnimator.push( 3, false, 5.0f );
+
+			mAnimator.clear();
+			mAnimator.push( ANIM_RUN, true, 1.0f );
+			mAnimator.push( ANIM_RELOAD, false, 1.0f );
 		}
 		mStrength = 0;
 	}
@@ -246,6 +258,14 @@ bool Player::checkMove(glm::vec3 coord) {
 void Player::takeDamage(int damage) 
 {
 	this->mHealth -= damage;
+
+	glm::vec3 pos = mPosition + glm::vec3( 0, 1, 0 );
+
+	mEmitter.spawn(pos, glm::vec3(0, -1.0f, 0), 1.0f, 0.5f, glm::vec2( 0.5f ), glm::vec2( 0.4f ) );
+	mEmitter.spawn(pos, glm::vec3(1.0f, -0.5f, 0), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
+	mEmitter.spawn(pos, glm::vec3(0, -0.5f, 1.0f), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
+	mEmitter.spawn(pos, glm::vec3(0, -0.5f, -1.0f), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
+	mEmitter.spawn(pos, glm::vec3(-1.0f, -0.5f, 0.0f), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
 }
 
 bool Player::isAlive() {
@@ -260,11 +280,11 @@ int Player::getHealth() const
 Player::Player() 
 {}
 
-Player::Player(GameData* data, Emitter* emitter) : GameObject()
+Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : GameObject()
 {
 	this->pGameData = data;
 	//mWeapon = new Weapon(true, data);
-	mWeapon.load( data, true, emitter);
+	mWeapon.load( data, true, smokeEmitter);
 	mPosition = glm::vec3( 1, 1, 1 );
 	yoffset = -0.5f;
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, yoffset, 1, 1 };
@@ -275,6 +295,7 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	mHealth = 100;
 	daIndex = 0;
 	//setScale( 0.1f );
+	mEmitter = *bloodEmitter;
 }
 
 Player::~Player()

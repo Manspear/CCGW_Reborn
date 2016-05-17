@@ -5,11 +5,12 @@
 #include "Player.h"
 #include "Moleratman.h"
 
+#define TOWER_MODELS 7
 
 class Tower : public GameObject
 {
 public:
-	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Model* headModel, Emitter* emitter );
+	bool load( GameData* data, glm::vec3 position, Model** models, Emitter* emitter );
 	void update(GameData* gameData, const float &dt);
 	//void render(const GLuint &programID);
 	void renderNonAni( GLuint worldLocation );
@@ -34,7 +35,17 @@ private:
 	float mStrength;
 	Moleratman* targetEnemy;
 	bool mAlive, mHasBallista;
-	Model *mpBoxModel, *mpBallistaModel, *mpHeadModel;
+
+	union
+	{
+		Model* mpModels[TOWER_MODELS];
+		struct
+		{
+			Model *mpBaseModel, *mpLidModel, *mpCrossbowModel;
+			Model *mpSmallCylinderModel, *mpMidCylinderModel;
+			Model *mpLowWheelModel, *mpHighWheelModel;
+		};
+	};
 	
 	bool arrowShot(const float &dt, GameData* data);
 };

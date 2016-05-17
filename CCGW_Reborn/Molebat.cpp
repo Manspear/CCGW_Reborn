@@ -27,7 +27,7 @@ void Molebat::update(float dt)
 		for (int i = 0; i < pGameData->mMolebats; i++)
 		{
 			// set the to "attack" animation layer. 
-			pGameData->pMolebats[i].setAnimation(3, false, 2.0f);
+			pGameData->pMolebats[i].playAnimation(3, false, 2.0f);
 		}
 
 		pGameData->pPlayer->takeDamage(10);
