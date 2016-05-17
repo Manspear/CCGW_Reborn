@@ -131,9 +131,11 @@ void Player::update(const Input* inputs, const float &dt)
 								0,0,0,1
 	};
 
-	glm::mat4 rmat = { cosf(rotX), 0, sinf(rotX),0,
+	float rotatePlayer = -PI / 2;
+
+	glm::mat4 rmat = { cosf(rotX + rotatePlayer), 0, sinf(rotX + rotatePlayer),0,
 		0,1,0,0,
-		-sinf(rotX), 0, cosf(rotX),0,
+		-sinf(rotX + rotatePlayer), 0, cosf(rotX + rotatePlayer),0,
 		0,0,0,1
 	};
 
@@ -283,10 +285,10 @@ int Player::getHealth() const
 	return mHealth;
 }
 
-Player::Player() 
+Player::Player() : PI(glm::pi<float>())
 {}
 
-Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : GameObject()
+Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : GameObject(), PI(glm::pi<float>())
 {
 	this->pGameData = data;
 	//mWeapon = new Weapon(true, data);

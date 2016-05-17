@@ -40,6 +40,7 @@ private:
 	float mMaxSpeed;
 	float mSpeed;
 	float mStrength;
+	const float PI;
 	glm::vec3 mDirection;
 	GameData* pGameData;
 	int daIndex;
