@@ -263,7 +263,7 @@ void Game::render()
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
-	//mGround.renderNonAni( worldLocation );
+	mGround.renderNonAni( worldLocation );
 	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
