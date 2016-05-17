@@ -24,7 +24,7 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->buttonDown(0))
 	{
-		mStrength > 4 ? mStrength = 2 : mStrength += dt;
+		mStrength > 4 ? mStrength = 4 : mStrength += dt;
 	
 	}
 		//mWeapon->update(dt);
@@ -39,17 +39,22 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyDown(SDLK_w))
 	{
+		this->setAnimation(2);
 		mSpeed = mMaxSpeed;
 		dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 	}
 	if (inputs->keyDown(SDLK_s))
 	{
+
+		this->setAnimation(1);
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>();
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
 	if (inputs->keyDown(SDLK_a))
 	{
+
+		this->setAnimation(3);
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>() * 0.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
@@ -98,8 +103,7 @@ void Player::update(const Input* inputs, const float &dt)
 		mPosition.y = 0.0;
 		speedY = 0;
 		canJump = true;
-	}
-
+	} 
 	if (inputs->keyPressed(SDLK_SPACE) && canJump)
 		speedY += 15;
 
@@ -157,7 +161,7 @@ void Player::update(const Input* inputs, const float &dt)
 		if (mStrength > 0.25f)
 		{
 			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
-			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset, 0);
+			glm::vec3 tempPos = this->mPosition - glm::vec3(0, 2*yoffset, 0) - glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f ;
 			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
 			mWeapon.shoot(tempPos, la, rotation, mStrength);

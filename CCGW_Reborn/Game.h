@@ -21,6 +21,7 @@
 #include "Moleratman.h"
 #include "Sound.h"
 #include "Model.h"
+#include "Shadow.h"
 
 enum State {
 	GAME_LOST, GAME_WON, GAME_PLAYING

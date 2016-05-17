@@ -13,6 +13,7 @@ class Molebat;
 class Moleratman;
 class Tower;
 class Game;
+class Shadow;
 struct GameData
 {
 	Assets* pAssets;
@@ -23,6 +24,7 @@ struct GameData
 	ForwardProgram* pForwardProgram;
 	ForwardProgram* pMenuProgram;
 	BillboardProgram* pBillboardProgram;
+	Shadow* pShadowProgram;
 	Player* pPlayer;
 	Emission* pEmission;
 	Grid* pGrid;

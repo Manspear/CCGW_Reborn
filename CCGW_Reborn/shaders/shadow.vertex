@@ -1,0 +1,21 @@
+#version 420 core
+
+layout(location=0) in vec3 pos ;
+layout(location=5) in ivec4 influences ;
+layout(location=6) in vec4 weights ;
+
+
+uniform mat4 animationMatrices[32];
+uniform mat4 world;
+uniform mat4 VPmat;
+
+void main()
+{
+	vec4 vpos = vec4( 0.0, 0.0, 0.0, 0.0 );
+	for( int i=0; i<4; i++ )
+	{
+		vpos += ( animationMatrices[influences[i]] * vec4( pos, 1.0 ) ) * weights[i];
+	}
+
+	gl_Position = VPmat * world * vec4( vpos.xyz, 1.0 );
+}
