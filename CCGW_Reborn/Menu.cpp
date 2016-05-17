@@ -4,7 +4,7 @@
 
 void Menu::moveMarker(float power)
 {
-	mAllMenu[ACTION_HUD].theMenu[0].move = glm::vec2(0, 0.05 * power);
+	mAllMenu[ACTION_HUD].theMenu[0].move = glm::vec2(0, 0.055 * power);
 }
 
 bool Menu::update(Input * inputs, GameData* data, State state)

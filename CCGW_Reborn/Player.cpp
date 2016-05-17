@@ -30,8 +30,7 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->buttonDown(0))
 	{
-		mStrength > 4 ? mStrength = 2 : mStrength += dt;
-	
+		mStrength > 4 ? mStrength = 4 : mStrength += dt;
 	}
 		//mWeapon->update(dt);
 	mWeapon.update( dt );

@@ -59,7 +59,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation_with_stagger.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animations.mole");
-	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 
@@ -71,22 +71,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 	Model* ballistaModel = data.pAssets->load<Model>("Models/ballista_base_animation.mole");
 	Model* ballistaHeadModel = data.pAssets->load<Model>( "Models/ballista_base_animation.mole" );
-
-	//Enemy::pBoundingBoxModel = boundingBoxModel;
-
-	/*GameObject tempBaby(glm::vec3(10, 1, -50), 1);
-	tempBaby.load(babyModel);
-	float p = glm::pi<float>()*0.5f;
-	glm::mat4 rotmat(cosf(p)*0.2f, 0, -sinf(p)*0.2f, 0,
-		0, 0.2f, 0, 0,
-		sinf(p)*0.2f, 0, cosf(p)*0.2f, 0,
-		0, 0, 0, 1
-	);
-	tempBaby.setWorld(rotmat);
-	for (int i = 0; i < 25; i++) {
-		babylist.push_back(GameObject(tempBaby));
-		babylist[i].setPosition(glm::vec3(6.5*(i / 5), 0.3, 100 + (i % 5)));
-	}*/
 
 	data.mBabies = 25;
 	data.pBabies = new GameObject[data.mBabies];
@@ -133,13 +117,9 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 	data.pPlayer->setAnimation(3, true, 1.0f);
-	//mGround.load(terrainModel);
+	mGround.load(terrainModel);
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
-	//mTowerModel.load( playerModel );
-	//mTowerModel.setScale( data.boxScale );
-	//mMoleratman.load( enemyModel );
-	//mMoleratman.setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 
 	data.mMolebats = 15;
 	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
