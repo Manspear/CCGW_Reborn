@@ -32,7 +32,10 @@ void Animator::update( float dt )
 			if( take.mLooping )
 				mElapsed -= animation->mDuration*take.mScale;
 			else if( mStack.size() > 1 )
+			{
+				mElapsed = 0.0f;
 				pop();
+			}
 			else // if this is the only animation and it's not looping, stop on the last keyframe
 				mElapsed = animation->mDuration*take.mScale;
 		}
