@@ -24,7 +24,7 @@ public:
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
 	void setWorld(glm::mat4 world);
-	void setAnimation( int animation, bool looping, float speed = 1.0f );
+	void playAnimation( int animation, bool looping, float speed = 1.0f );
 	void loadSound(Sound* sound);
 
 	GameObject(const GameObject& ref);

@@ -27,6 +27,13 @@ public:
 	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
+	enum
+	{
+		ANIM_RUN = 1,
+		ANIM_RELOAD,
+		ANIM_SHOOT,
+	};
+
 	float yoffset;
 	float speedY;
 	float mMaxSpeed;

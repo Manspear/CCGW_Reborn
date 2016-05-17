@@ -62,7 +62,7 @@ void GameObject::setWorld(glm::mat4 world)
 	mWorld = world;
 }
 
-void GameObject::setAnimation( int animation, bool looping, float speed )
+void GameObject::playAnimation( int animation, bool looping, float speed )
 {
 	//mAnimation = animation;
 	mAnimator.push( animation, looping, speed );

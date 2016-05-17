@@ -1,9 +1,9 @@
 #include "Animation.h"
 #include "Model.h"
 
-void Animator::push( int animation, bool loop, float speed )
+void Animator::push( int animation, bool loop, float speed, float scale )
 {
-	sTake take = { animation, loop, speed };
+	sTake take = { animation, loop, speed, scale };
 	mStack.push(take);
 	mElapsed = 0.0f;
 }
@@ -22,18 +22,19 @@ void Animator::clear()
 void Animator::update( float dt )
 {
 	if( !mStack.empty() )
-	{		
-		sAnimation* animation = pModel->getAnimation(mStack.top().mIndex);
-		mElapsed += dt*mStack.top().mSpeed;
+	{
+		sTake& take = mStack.top();
+		sAnimation* animation = pModel->getAnimation(take.mIndex);
+		mElapsed += dt*take.mSpeed;
 
-		if( mElapsed >= animation->mDuration )
+		if( mElapsed >= animation->mDuration*take.mScale )
 		{
-			if( mStack.top().mLooping )
-				mElapsed -= animation->mDuration;
+			if( take.mLooping )
+				mElapsed -= animation->mDuration*take.mScale;
 			else if( mStack.size() > 1 )
 				pop();
 			else // if this is the only animation and it's not looping, stop on the last keyframe
-				mElapsed = animation->mDuration;
+				mElapsed = animation->mDuration*take.mScale;
 		}
 	}
 }
@@ -46,6 +47,11 @@ void Animator::setModel( Model* model )
 sAnimation* Animator::getCurrentAnimation()
 {
 	return pModel->getAnimation(mStack.top().mIndex);
+}
+
+int Animator::getCurrentTake()
+{
+	return mStack.top().mIndex;
 }
 
 float Animator::getElapsed() const
