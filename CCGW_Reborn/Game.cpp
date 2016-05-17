@@ -50,7 +50,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pEmission->allocEmitter(&enemyEmitter, 50);
 	enemyEmitter.load(bloodTexture);
 
-	data.pPlayer = new Player(&data, &playerEmitter);
+	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
 	data.pScore = 0;
 	data.pGold = 5;

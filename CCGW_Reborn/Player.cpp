@@ -243,6 +243,14 @@ bool Player::checkMove(glm::vec3 coord) {
 void Player::takeDamage(int damage) 
 {
 	this->mHealth -= damage;
+
+	glm::vec3 pos = mPosition + glm::vec3( 0, 1, 0 );
+
+	mEmitter.spawn(pos, glm::vec3(0, -1.0f, 0), 1.0f, 0.5f, glm::vec2( 0.5f ), glm::vec2( 0.4f ) );
+	mEmitter.spawn(pos, glm::vec3(1.0f, -0.5f, 0), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
+	mEmitter.spawn(pos, glm::vec3(0, -0.5f, 1.0f), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
+	mEmitter.spawn(pos, glm::vec3(0, -0.5f, -1.0f), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
+	mEmitter.spawn(pos, glm::vec3(-1.0f, -0.5f, 0.0f), 1.0f, 0.5f, glm::vec2(0.5f), glm::vec2(0.4f));
 }
 
 bool Player::isAlive() {
@@ -257,11 +265,11 @@ int Player::getHealth() const
 Player::Player() 
 {}
 
-Player::Player(GameData* data, Emitter* emitter) : GameObject()
+Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : GameObject()
 {
 	this->pGameData = data;
 	//mWeapon = new Weapon(true, data);
-	mWeapon.load( data, true, emitter);
+	mWeapon.load( data, true, smokeEmitter);
 	mPosition = glm::vec3( 1, 1, 1 );
 	yoffset = -0.5f;
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, yoffset, 1, 1 };
@@ -272,6 +280,7 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	mHealth = 90;
 	daIndex = 0;
 	//setScale( 0.1f );
+	mEmitter = *bloodEmitter;
 }
 
 Player::~Player()

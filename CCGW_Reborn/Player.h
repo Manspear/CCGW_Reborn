@@ -24,7 +24,7 @@ public:
 	void renderArrows(GLuint worldLocation);
 	
 	Player();
-	Player(GameData* data, Emitter* emitter);
+	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
 	float yoffset;
@@ -36,6 +36,8 @@ private:
 	GameData* pGameData;
 	int daIndex;
 	int mHealth;
+
+	Emitter mEmitter;
 
 	float mRot;
  };
