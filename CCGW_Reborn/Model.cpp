@@ -49,13 +49,13 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 
 			for (int j = 0; j < frameCount; j++)
 			{
-				if (targetTime < 0.0000001f)
+				if (targetTime < 0.01f)
 				{
 					closestKeyPos = j;
 					closestKeyNeg = j;
 					break;
 				}
-				if ((jointMaxTime - targetTime) < 0.000001f ) 
+				if ((jointMaxTime - targetTime) < 0.01f ) 
 				{
 					closestKeyPos = frameCount - 1;
 					closestKeyNeg = frameCount - 1;
