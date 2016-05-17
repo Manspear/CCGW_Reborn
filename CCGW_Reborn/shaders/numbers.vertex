@@ -13,7 +13,7 @@ void main(){
 	gl_Position = vec4(pos + position, -0.4,1);
 	texOut.y = texPos.y;
 	if (texPos.x > 0)
-		texOut.x = number / 36;
+		texOut.x = (number + 1) / 36;
 	else
-		texOut.x = (number - 1) / 36;
+		texOut.x = number / 36;
 }

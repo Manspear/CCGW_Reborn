@@ -2,7 +2,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm\gtx\vector_angle.hpp>
 
-bool Tower::load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Emitter* emitter )
+bool Tower::load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Model* headModel, Emitter* emitter )
 {
 	//mpWeapon = new Weapon( false, data );
 	mWeapon.load( data, false, emitter );
@@ -10,12 +10,15 @@ bool Tower::load( GameData* data, glm::vec3 position, Model* boxModel, Model* ba
 	setScale( data->boxScale / 2 );
 	mpModel = mpBoxModel = boxModel;
 	mpBallistaModel = ballistaModel;
+	mpHeadModel = headModel;
 
 	return true;
 }
 
 void Tower::update(GameData* gameData, const float & dt)
 {
+	GameObject::update( dt );
+
 	if( mHasBallista )
 	{
 		if (mWeaponReady)
@@ -76,7 +79,7 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 }
 
 //void Tower::render(const GLuint & programID)
-void Tower::render( GLuint worldLocation )
+/*void Tower::render( GLuint worldLocation )
 {
 	// TODO: Please fix, don't ship
 	float ypos = mWorld[3][1];
@@ -87,6 +90,26 @@ void Tower::render( GLuint worldLocation )
 		mWeapon.render( worldLocation );
 
 	mWorld[3][1] = ypos;
+}*/
+
+void Tower::renderNonAni( GLuint worldLocation )
+{
+	mpModel = mpBoxModel;
+	GameObject::renderNonAni( worldLocation );
+}
+
+void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
+{
+	mpModel = mpBallistaModel;
+	GameObject::renderAni( worldLocation, animationLocation );
+
+	/*mpModel = mpHeadModel;
+	GameObject::renderAni( worldLocation, animationLocation );*/
+}
+
+void Tower::renderArrows( GLuint worldLocation )
+{
+	mWeapon.render( worldLocation );
 }
 
 void Tower::setAlive( bool alive )
@@ -98,6 +121,9 @@ void Tower::setHasBallista( bool hasBallista )
 {
 	mHasBallista = hasBallista;
 	mpModel = ( hasBallista ? mpBallistaModel : mpBoxModel );
+
+	mAnimator.setModel(mpBallistaModel);
+	mAnimator.push( 0, true );
 }
 
 bool Tower::getAlive() const

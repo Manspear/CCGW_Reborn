@@ -2,6 +2,8 @@
 
 void Molebat::update(float dt)
 {
+	Enemy::update( dt );
+
 	mTimeSinceLastHit += dt;
 	glm::vec3 newPos = mPosition;
 	glm::vec3 movement;
@@ -20,6 +22,14 @@ void Molebat::update(float dt)
 		movement += dir;
 	}
 	else if(mTimeSinceLastHit > 1){
+
+		// play the molebats attack animation
+		for (int i = 0; i < pGameData->mMolebats; i++)
+		{
+			// set the to "attack" animation layer. 
+			pGameData->pMolebats[i].setAnimation(3, false, 2.0f);
+		}
+
 		pGameData->pPlayer->takeDamage(10);
 		mTimeSinceLastHit = 0;
 	}
@@ -120,6 +130,13 @@ void Molebat::render( GLuint worldLocation, GLuint animationLocation )
 
 	glPolygonMode( GL_FRONT, GL_FILL );
 #endif
+}
+
+void Molebat::imHit( float strength, glm::vec3 position )
+{
+	Enemy::imHit( strength, position );
+
+	mAnimator.push( 2, false );
 }
 
 void Molebat::setGameData( GameData* data )

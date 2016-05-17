@@ -11,6 +11,7 @@
 #include "BoundingBox.h"
 #include "Model.h"
 #include "Sound.h"
+#include "Animation.h"
 
 class GameObject
 {
@@ -23,7 +24,7 @@ public:
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
 	void setWorld(glm::mat4 world);
-	void setAnimation( int animation );
+	void setAnimation( int animation, bool looping, float speed = 1.0f );
 	void loadSound(Sound* sound);
 
 	GameObject(const GameObject& ref);
@@ -38,8 +39,10 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	float rotY;
 	float scale;
 	Sound* mSound;
-	float animationTime;
-	int mAnimation;
+	//float animationTime;
+	//int mAnimation;
+
+	Animator mAnimator;
 
 	BoundingBox mBB;
 
