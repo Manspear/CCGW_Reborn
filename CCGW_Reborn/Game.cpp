@@ -59,7 +59,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
 	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animations.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animations.mole");
-	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 
