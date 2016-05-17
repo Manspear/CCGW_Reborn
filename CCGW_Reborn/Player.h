@@ -14,6 +14,7 @@ public:
 	glm::vec3 getMovingDirection(glm::vec3 v1, glm::vec3 v2);
 	glm::vec3 getLookAt() const;
 	float getRot() const;
+	float getStrength() const;
 	bool checkMove(glm::vec3 coord);
 	void setAlive(bool amIalive);
 	void takeDamage(int damage);

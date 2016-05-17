@@ -13,6 +13,10 @@ float Player::getRot() const
 {
 	return rotX;
 }
+float Player::getStrength() const
+{
+	return mStrength;
+}
 float Player::getYOffset() {
 	return this->yoffset;
 }
@@ -201,7 +205,7 @@ void Player::renderArrows(GLuint worldLocation) {
 
 void Player::setAlive(bool amIalive)
 {
-	mHealth = 25;
+	mHealth = 100;
 }
 
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
@@ -269,7 +273,7 @@ Player::Player(GameData* data, Emitter* emitter) : GameObject()
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
-	mHealth = 90;
+	mHealth = 100;
 	daIndex = 0;
 	//setScale( 0.1f );
 }
