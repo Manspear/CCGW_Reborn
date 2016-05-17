@@ -131,6 +131,12 @@ void Player::update(const Input* inputs, const float &dt)
 								0,0,0,1
 	};
 
+	glm::mat4 rmat = { cosf(rotX), 0, sinf(rotX),0,
+		0,1,0,0,
+		-sinf(rotX), 0, cosf(rotX),0,
+		0,0,0,1
+	};
+
 
 	// #fuckedup maths, https://en.wikipedia.org/wiki/Rotation_matrix for formula
 	glm::vec3 axis = glm::normalize(glm::cross(tempLookat, glm::vec3(0, 1, 0)));
@@ -157,7 +163,7 @@ void Player::update(const Input* inputs, const float &dt)
 
 	//this->mRotation.z = 
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
-	mWorld = rotatematrix * glm::scale(mWorld, glm::vec3(0.1f, 0.1f, 0.1f));
+	mWorld = rmat * glm::scale(mWorld, glm::vec3(0.1f, 0.1f, 0.1f));
 	mWorld[3][0] = mPosition.x;
 	mWorld[3][1] = mPosition.y;
 	mWorld[3][2] = mPosition.z;

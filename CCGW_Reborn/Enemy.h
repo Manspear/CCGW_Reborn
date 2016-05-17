@@ -7,15 +7,12 @@
 #include "Emitter.h"
 #include "Texture.h"
 
-#define ENEMY_RENDER_HITBOX 0
-
 //Abstract class for enemies.
 class Enemy : public GameObject
 {
 public:
 	//Render the enemy.
-	//void render( GLuint programID );
-	void render( GLuint worldLocation, GLuint animationLocation );
+	void renderHitbox( GLuint worldLocation, GameObject* objects );
 
 	//Set the path that this enemy should follow.
 	void setPath( sNode* path, int max );

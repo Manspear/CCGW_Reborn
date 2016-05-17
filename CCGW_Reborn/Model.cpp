@@ -51,8 +51,8 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 			{
 				if (targetTime < 0.01f)
 				{
-					closestKeyPos = j;
-					closestKeyNeg = j;
+					closestKeyPos = 0;
+					closestKeyNeg = 0;
 					break;
 				}
 				if ((jointMaxTime - targetTime) < 0.01f ) 
@@ -66,8 +66,6 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 					closestKeyPos = j;
 					closestKeyNeg = j;
 					float diff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
-					closestKeyPos = diff;
-					closestKeyNeg = -10000000000.f;
 					prevDiffPos = diff;
 					prevDiffNeg = -10000000000.f;
 				}
@@ -99,6 +97,8 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 			/**
 			Now save this value in a "temporary final list of frames"
 			**/
+
+	
 			tempFramesUnder.push_back(mpJointList[i].keyFramesByTake[take][closestKeyPos]);
 			tempFramesOver.push_back(mpJointList[i].keyFramesByTake[take][closestKeyNeg]);
 		}

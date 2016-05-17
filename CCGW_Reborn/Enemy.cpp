@@ -2,27 +2,17 @@
 
 Model* Enemy::pBoundingBoxModel = nullptr;
 
-//void Enemy::render( GLuint programID )
-void Enemy::render( GLuint worldLocation, GLuint animationLocation )
+void Enemy::renderHitbox( GLuint worldLocation, GameObject* objects )
 {
-	//GameObject::renderAni( programID );
-	//GameObject::renderAni( worldLocation, animationLocation );
-	
-	// change to 1 to draw the path
-#if 0
-	GLuint worldLocation = glGetUniformLocation( programID, "world" );
-	for( int i=0; i<mCurrent; i++ )
+	glm::vec3 corners[8];
+	mBoundingBox.getCorners( corners );
+
+	for( int i=0; i<8; i++ )
 	{
-		glm::mat4 world;
-		world[3][0] = pPath[i].x;
-		world[3][1] = 0.1f;
-		world[3][2] = pPath[i].y;
-
-		glUniformMatrix4fv( worldLocation, 1, GL_FALSE, &world[0][0] );
-
-		mpMesh->draw();
+		objects[i].setPosition( corners[i] );
+		objects[i].setScale( 0.1f );
+		objects[i].renderNonAni( worldLocation );
 	}
-#endif
 }
 
 void Enemy::setPath( sNode* path, int max )

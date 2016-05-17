@@ -130,7 +130,7 @@ void Tower::setHasBallista( bool hasBallista )
 	//mpModel = ( hasBallista ? mpBallistaModel : mpBoxModel );
 
 	mAnimator.setModel(mpCrossbowModel);
-	mAnimator.push( 1, true );
+	mAnimator.push( 1, false );
 }
 
 bool Tower::getAlive() const

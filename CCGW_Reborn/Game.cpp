@@ -63,6 +63,14 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 
+	for( int i=0; i<8; i++ )
+		debugObjects[i].load( boxModel );
+
+	mrm.load( moleratModel, &enemyEmitter );
+	mrm.playAnimation( 1, true );
+	mrm.setPosition( glm::vec3( 14, 0, 14 ) );
+	mrm.setScale( 0.1f );
+
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
@@ -262,6 +270,11 @@ void Game::render()
 			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 
+	for( int i=0; i<data.mMoleratmen; i++ )
+		data.pMoleratmen[i].renderHitbox( worldLocation, debugObjects );
+
+	mrm.renderHitbox( worldLocation, debugObjects );
+
 	for (int i = 0; i < mVisibleTowers; i++)
 	{
 		if (mpVisibleTowers[i]->getAlive() && !mpVisibleTowers[i]->getHasBallista())
@@ -304,6 +317,8 @@ void Game::render()
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].renderAni( worldLocation, animationLocation );
+
+	mrm.renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
