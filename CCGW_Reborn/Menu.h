@@ -22,14 +22,14 @@ struct Number {
 };
 
 enum MENU {
-	MAIN_MENU, ACTION_HUD, LOSING_SCREEN, VICTORY_SCREEN, HIGHSCORE_SCREEN, PAUSE_SCREEN, TUTORIAL_SCREEN
+	MAIN_MENU, ACTION_HUD, TACTICAL_HUD, LOSING_SCREEN, VICTORY_SCREEN, PAUSE_SCREEN, TUTORIAL_SCREEN, HIGHSCORE_SCREEN, WRITE_HIGHSCORE
 };
 
 class Menu {
 private:
 	class Button {
 	public:
-		Button(float startX, float startY, float width, float height, char type, GLuint texture, GLuint bufferID) {
+		Button(float startX, float startY, float width, float height, int type, GLuint texture, GLuint bufferID) {
 			mTexture = texture;
 			mVboID = bufferID;
 			mType = type;
@@ -49,7 +49,7 @@ private:
 		}
 		int mX, mY, mW, mH;
 		float mNdcX, mNdcY;
-		char mType;
+		int mType;
 		bool mHighlighted;
 		GLuint mTexture;
 		GLuint mVboID;
@@ -71,7 +71,7 @@ public:
 	Menu();
 	~Menu();
 private:
-	void buttonAction(char type, Input* inputs, int index, GameData* data);
+	void buttonAction(int type, Input* inputs, GameData* data);
 	GLuint loadTex(std::string filePath);
 	std::string readBuild(std::string filePath);
 	void addNumber(float width, float height, GLuint &vboID, GLuint &texID, string filePath);
@@ -104,4 +104,5 @@ private:
 	GLuint numberLocation;
 	GLuint moveLocation;
 	Assets mAssets;
+	MENU lastHUD;
 };
