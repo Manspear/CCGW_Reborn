@@ -28,14 +28,14 @@ void Moleratman::update(float dt, GameData* data)
 						{
 							if( mAnimator.getCurrentTake() != ANIM_TURN_RIGHT)
 							{
-								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f );
+								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f, 0.9f );
 							}
 						}
 						else
 						{
 							if( mAnimator.getCurrentTake() != ANIM_TURN_LEFT)
 							{
-								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f);
+								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f, 0.9f);
 							}
 						}
 					}
@@ -46,14 +46,14 @@ void Moleratman::update(float dt, GameData* data)
 						{
 							if( mAnimator.getCurrentTake() != ANIM_TURN_RIGHT )
 							{
-								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f );
+								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f, 0.9f);
 							}
 						}
 						else
 						{
 							if( mAnimator.getCurrentTake() != ANIM_TURN_LEFT )
 							{
-								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f );
+								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f, 0.9f);
 							}
 						}
 					}
