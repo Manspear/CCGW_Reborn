@@ -13,12 +13,16 @@ void GameObject::update(const float &dt) {
 	mAnimator.update(dt);
 }
 
+void GameObject::updateAnimation() {
+	mpModel->updateAnimation(1.0f, mAnimator.getCurrentAnimation()->mTake, mAnimator.getElapsed(), mWorld);
+}
+
 //void GameObject::renderAni(const GLuint & programID)
 void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
-	
     //mpModel->updateAnimation(1.f, mAnimation, animationTime, mWorld);
-	mpModel->updateAnimation( 1.0f, mAnimator.getCurrentAnimation()->mTake, mAnimator.getElapsed(), mWorld );
+	
+	updateAnimation();
 
 	//animationTime += 0.01f;
 

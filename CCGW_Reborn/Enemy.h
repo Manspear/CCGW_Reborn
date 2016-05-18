@@ -31,7 +31,6 @@ public:
 	Enemy();
 	~Enemy();
 
-	static Model* pBoundingBoxModel;
 protected:
 	
 	Emitter mEmitter;

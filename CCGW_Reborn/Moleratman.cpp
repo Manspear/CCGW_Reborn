@@ -53,12 +53,12 @@ void Moleratman::update(float dt, GameData* data)
 			cosf(rotY)/2,	0,		-sinf(rotY) / 2,	0,
 			0,				1.0f / 2.0f,		0,				0,
 			sinf(rotY) / 2,		0,		cosf(rotY) / 2,		0,
-			mPosition.x,	mPosition.y+1,	mPosition.z, 1
+			mPosition.x,	mPosition.y+1.35f,	mPosition.z, 1
 		};
-	mBoundingBox.center = mPosition + glm::vec3( 0, 0.75f, 0 );
+	mBoundingBox.center = mPosition + glm::vec3( 0, 1.0f, 0 );
 
-	glm::vec3 headOffset = mLookat*0.5f;
-	headOffset.y = 1.5f;
+	glm::vec3 headOffset = mLookat*0.75f;
+	headOffset.y = 2.0f;
 	mHeadBox.center = mPosition + headOffset;
 }
 
@@ -78,17 +78,17 @@ Moleratman& Moleratman::operator=( const Moleratman& ref )
 Moleratman::Moleratman( const Moleratman& ref )
 	: Enemy( ref )
 {
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
-	mBoundingBox.hHeight = 0.5f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+	mBoundingBox.hHeight = 1.0f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
 }
 
 Moleratman::Moleratman()
 {
 	mSound = nullptr;
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
-	mBoundingBox.hHeight = 0.5f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+	mBoundingBox.hHeight = 1.0f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
 }
 
 Moleratman::~Moleratman()
