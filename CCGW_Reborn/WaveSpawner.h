@@ -35,6 +35,12 @@ private:
 	GameData* pGameData;
 
 	int mWave;
+	int mMoleRatWaveSize;
+	int mMoleBatWaveSize;
+	float mRatHP;
+	float mBatHP;
+	float mRatSpeed;
+	float mBatSpeed;
 	float mDelay;
 	glm::vec3 mPosition;
 

@@ -40,21 +40,49 @@ void WaveSpawner::spawn()
 	mDelay = 0.0f;
 
 	// TODO: Do something useful here
+	/*
 	mSpawnMoleratmen = glm::min((mWave*2 + 3), pGameData->mMoleratmen);
 	mSpawnMolebats = glm::min((mWave + 1), pGameData->mMolebats);
+*/
+	mSpawnMoleratmen = mMoleRatWaveSize;
+	mSpawnMolebats = mMoleBatWaveSize;
 
+	mMoleRatWaveSize = mMoleRatWaveSize * 2.f;
+	mMoleBatWaveSize = mMoleBatWaveSize * 2.f;
+
+	if (mWave <= 8)
+	{
+		mRatHP = 50.f;
+		mBatHP = 1.f;
+		mRatSpeed = 4.f;
+		mBatSpeed = 2.f;
+	}
+	if (mWave > 8 && mWave <= 16)
+	{
+		mRatHP = 100.f;
+		mBatHP = 1.f;
+		mRatSpeed = 6.f;
+		mBatSpeed = 4.f;
+	}
+	if (mWave > 16)
+	{
+		mRatHP = 150.f;
+		mBatHP = 1.f;
+		mRatSpeed = 10.f;
+		mBatSpeed = 8.f;
+	}
 	// DEBUG: Remove this
-	for( int i=0; i<pGameData->mMoleratmen; i++ )
-		pGameData->pMoleratmen[i].setAlive( false );
+	//for( int i=0; i<pGameData->mMoleratmen; i++ )
+	//	pGameData->pMoleratmen[i].setAlive( false );
 
-	for (int i = 0; i<pGameData->mMolebats; i++)
-		pGameData->pMolebats[i].setAlive(false);
+	//for (int i = 0; i<pGameData->mMolebats; i++)
+	//	pGameData->pMolebats[i].setAlive(false);
 	//}
 }
 
 
 bool WaveSpawner::hasWon() {
-	return this->mWave > 10;
+	return this->mWave > 25;
 }
 
 void WaveSpawner::incrementWave()
@@ -97,10 +125,12 @@ void WaveSpawner::spawnMoleratman()
 
 	if( m )
 	{
-		m->setPosition( mPosition );
-		m->setAlive( true );
-		m->setLife( 50.0f );
-		m->setPath(mpPath, mTargets );
+			m->setPosition(mPosition);
+			m->setAlive(true);
+			m->setLife(mRatHP);
+			m->setSpeed(mRatSpeed);
+			m->setSpeed(mBatSpeed);
+			m->setPath(mpPath, mTargets);
 	}
 }
 
@@ -123,7 +153,7 @@ void WaveSpawner::spawnMolebat()
 		pos.y = MOLEBAT_HEIGHT;
 		m->setPosition( pos );
 		m->setAlive( true );
-		m->setLife( 1.0f );
+		m->setLife( mBatHP );
 	}
 }
 
@@ -153,6 +183,7 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 	mTargets( ref.mTargets )
 {
 		mpPath = new sNode[20*20];
+
 }
 
 WaveSpawner::WaveSpawner(GameData* data)
@@ -164,6 +195,8 @@ WaveSpawner::WaveSpawner(GameData* data)
 	mTargets( 0 )
 {
 	mpPath = new sNode[20 * 20];
+	mMoleRatWaveSize = 5.f;
+	mMoleBatWaveSize = 2.f;
 }
 
 WaveSpawner::~WaveSpawner()

@@ -52,6 +52,11 @@ void Enemy::setLife( float life )
 	mLife = life;
 }
 
+void Enemy::setSpeed(float newSpeed)
+{
+	mSpeed = newSpeed;
+}
+
 bool Enemy::getAlive() const
 {
 	return mAlive;
@@ -60,6 +65,11 @@ bool Enemy::getAlive() const
 float Enemy::getLife() const
 {
 	return mLife;
+}
+
+float Enemy::getSpeed() const
+{
+	return mSpeed;
 }
 
 const BoundingBox& Enemy::getBoundingBox() const

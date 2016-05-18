@@ -33,7 +33,7 @@ void Molebat::update(float dt)
 		pGameData->pPlayer->takeDamage(10);
 		mTimeSinceLastHit = 0;
 	}
-	float mSpeed = 3;
+
 	newPos += movement * mSpeed * dt;
 
 	// stay above ground
@@ -115,6 +115,7 @@ Molebat& Molebat::operator=( const Molebat& ref )
 Molebat::Molebat( const Molebat& ref )
 	: Enemy( ref ), pGameData( ref.pGameData ), mSin( ref.mSin )
 {
+	mSpeed = 3.f;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;
 	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
@@ -123,6 +124,7 @@ Molebat::Molebat( const Molebat& ref )
 Molebat::Molebat()
 	: Enemy( glm::vec3( 0.0f ) ), mSin( rand() % 1000 )
 {
+	mSpeed = 3.f;
 	mTimeSinceLastHit = 0;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;

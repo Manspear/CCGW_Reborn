@@ -10,7 +10,7 @@ void Moleratman::update(float dt, GameData* data)
 		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0.0f, pPath[mCurrent].y * pGameData->boxScale);
 
 		float dist = glm::distance(mPosition, glm::vec3(target));
-		if (dist < MOLERATMAN_SPEED * dt)
+		if (dist < mSpeed * dt)
 		{
 			mCurrent--;
 			glm::vec3 dir = glm::normalize( target - mPosition );
@@ -21,7 +21,7 @@ void Moleratman::update(float dt, GameData* data)
 		else
 		{
 			glm::vec3 dir = glm::normalize(target - mPosition);
-			mPosition += dir * MOLERATMAN_SPEED * dt;
+			mPosition += dir * mSpeed * dt;
 		}
 
 		mWorld[3][0] = mPosition.x;
@@ -78,6 +78,7 @@ Moleratman& Moleratman::operator=( const Moleratman& ref )
 Moleratman::Moleratman( const Moleratman& ref )
 	: Enemy( ref )
 {
+	mSpeed = 4.f;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;
 	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
@@ -85,6 +86,7 @@ Moleratman::Moleratman( const Moleratman& ref )
 
 Moleratman::Moleratman()
 {
+	mSpeed = 2.f;
 	mSound = nullptr;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;

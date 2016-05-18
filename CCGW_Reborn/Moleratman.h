@@ -15,9 +15,14 @@ public:
 
 	void imHit( float strength, glm::vec3 position );
 
+	//void setSpeed(float newSpeed);
+
 	Moleratman& operator=( const Moleratman& ref );
 	Moleratman( const Moleratman& ref );
 	Moleratman();
 	~Moleratman();
 	GameData* pGameData;
+	
+private:
+	//float mSpeed;
 };

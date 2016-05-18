@@ -43,7 +43,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
 	Emitter playerEmitter;
 
-		data.pEmission->allocEmitter(&playerEmitter, 100);
+	data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
@@ -137,7 +137,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 
-	data.mMolebats = 15;
+	data.mMolebats = 30;
 	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i < data.mMolebats; i++ )
@@ -148,7 +148,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMolebats[i].playAnimation(1, true, 2.0f );
 	}
 
-	data.mMoleratmen = 50;
+	data.mMoleratmen = 100;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
 		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
@@ -337,6 +337,7 @@ void Game::update(Input* inputs, float dt)
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});
+	//data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 1.6, { 0,1.3,0 });
 
 	data.pCamera->updateFrustum();
 	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );

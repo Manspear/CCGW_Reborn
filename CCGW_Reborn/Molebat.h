@@ -20,14 +20,17 @@ public:
 	void imHit( float strength, glm::vec3 position );
 
 	void setGameData( GameData* data );
-
+	//void setSpeed(float newSpeed);
 	Molebat& operator=( const Molebat& ref );
 	Molebat( const Molebat& ref );
 	Molebat();
 	~Molebat();
 
+	
+
 private:
 	GameData* pGameData;
 	int mSin;
 	float mTimeSinceLastHit;
+	//float mSpeed;
 };
