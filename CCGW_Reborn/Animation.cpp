@@ -4,7 +4,7 @@
 void Animator::push( int animation, bool loop, float speed, float scale )
 {
 	sTake take = { animation, loop, speed, scale };
-	mStack.push(take);
+	mStack.push( take );
 	mElapsed = 0.0f;
 }
 
@@ -49,11 +49,15 @@ void Animator::setModel( Model* model )
 
 sAnimation* Animator::getCurrentAnimation()
 {
+	if( mStack.size() <= 0 )
+		return nullptr;
 	return pModel->getAnimation(mStack.top().mIndex);
 }
 
 int Animator::getCurrentTake()
 {
+	if( mStack.size() <= 0 )
+		return -1;
 	return mStack.top().mIndex;
 }
 

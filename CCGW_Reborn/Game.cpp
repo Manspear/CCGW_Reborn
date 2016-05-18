@@ -63,14 +63,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 
-	for( int i=0; i<8; i++ )
-		debugObjects[i].load( boxModel );
-
-	mrm.load( moleratModel, &enemyEmitter );
-	mrm.playAnimation( 1, true );
-	mrm.setPosition( glm::vec3( 14, 0, 14 ) );
-	mrm.setScale( 0.1f );
-
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
@@ -125,7 +117,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	{
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
-		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), towerModels, &towerEmitter );
+		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, towerModels, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
 
@@ -244,6 +236,12 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 
 		 data.pCamera->updateFrustum();
 		 data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
+
+		 for( int i=0; i<mVisibleTowers; i++ )
+		 {
+			 if( mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista() )
+				 mpVisibleTowers[i]->update( &data, dt );
+		 }
 	 }
 	 if (inputs->keyPressed(SDLK_t))
 	 {
@@ -270,14 +268,9 @@ void Game::render()
 			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 
-	for( int i=0; i<data.mMoleratmen; i++ )
-		data.pMoleratmen[i].renderHitbox( worldLocation, debugObjects );
-
-	mrm.renderHitbox( worldLocation, debugObjects );
-
 	for (int i = 0; i < mVisibleTowers; i++)
 	{
-		if (mpVisibleTowers[i]->getAlive() && !mpVisibleTowers[i]->getHasBallista())
+		if (mpVisibleTowers[i]->getAlive())
 		{
 			//mpVisibleTowers[i]->render(worldLocation);
 			mpVisibleTowers[i]->renderNonAni(worldLocation);
@@ -317,8 +310,6 @@ void Game::render()
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].renderAni( worldLocation, animationLocation );
-
-	mrm.renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );

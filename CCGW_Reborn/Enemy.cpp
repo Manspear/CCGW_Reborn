@@ -1,11 +1,18 @@
 #include "Enemy.h"
 
-Model* Enemy::pBoundingBoxModel = nullptr;
-
 void Enemy::renderHitbox( GLuint worldLocation, GameObject* objects )
 {
 	glm::vec3 corners[8];
 	mBoundingBox.getCorners( corners );
+
+	for( int i=0; i<8; i++ )
+	{
+		objects[i].setPosition( corners[i] );
+		objects[i].setScale( 0.1f );
+		objects[i].renderNonAni( worldLocation );
+	}
+
+	mHeadBox.getCorners( corners );
 
 	for( int i=0; i<8; i++ )
 	{
