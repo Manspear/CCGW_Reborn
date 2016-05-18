@@ -142,9 +142,6 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	mpModel = mpMidCylinderModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
-	mpModel = mpLowWheelModel;
-	GameObject::renderAni( worldLocation, animationLocation );
-
 	mpModel = mpHighWheelModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 

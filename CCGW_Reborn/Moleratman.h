@@ -20,4 +20,14 @@ public:
 	Moleratman();
 	~Moleratman();
 	GameData* pGameData;
+
+private:
+	enum
+	{
+		ANIM_WALK = 1,
+		ANIM_STAGGER,
+		ANIM_TURN_RIGHT,
+		ANIM_TURN_LEFT,
+		ANIM_STAGGER_COPY,
+	};
 };

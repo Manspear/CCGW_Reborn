@@ -36,6 +36,9 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 
 		for (int i = 0; i < mpJointList.size(); i++)
 		{
+			if( mpJointList[i].keyFramesByTake[take].size() <= 0 )
+				continue;
+
 			float jointMaxTime = mpJointList[i].keyFramesByTake[take].back().keyTime;
 			targetTime = std::fmod(targetTime, jointMaxTime);
 			//Find the right keyframe based on time
@@ -113,8 +116,8 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 			}
 		}
 
-
-		recursiveUpdateJointMatrixList(worldMat, tempFramesUnder, tempFramesOver, targetTime, rootKey);
+		if( tempFramesOver.size() > 0 && tempFramesUnder.size() > 0 )
+			recursiveUpdateJointMatrixList(worldMat, tempFramesUnder, tempFramesOver, targetTime, rootKey);
 	}
 }
 
@@ -437,6 +440,12 @@ void Model::myLerp(float arr1[3], float arr2[3], float fillArr[3], float iVal)
 
 void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID)
 {
+	if( currJointID >= tempFramesOver.size() )
+	{
+		jointMatrixList[currJointID] = parentTransformMatrix;
+		return;
+	}
+
 	mpJointList;
 	glm::mat4 invBPose = glm::make_mat4(mpJointList[currJointID].jointData.globalBindPoseInverse);
 

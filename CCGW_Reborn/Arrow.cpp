@@ -82,6 +82,22 @@ void Arrow::update(float dt)
 							mpPiercedEnemies[mPiercings++] = &pGameData->pMoleratmen[i];
 							if( mPiercings >= ARROW_MAX_PIERCING_DEPTH )
 								mAlive = false;
+
+							//std::cout << "Hit enemy: " << mpPiercedEnemies[mPiercings-1] << std::endl;
+
+							for( int curi=0; curi<mPiercings; curi++ )
+							{
+								for( int curj=0; curj<mPiercings; curj++ )
+								{
+									if( curi == curj )
+										continue;
+
+									if( mpPiercedEnemies[curi] == mpPiercedEnemies[curj] )
+									{
+										std::cout << " SAME " << std::endl;
+									}
+								}
+							}
 						}
 						else
 							mAlive = false;

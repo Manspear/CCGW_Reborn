@@ -22,6 +22,8 @@
 #include "Sound.h"
 #include "Model.h"
 
+#define RENDER_TERRAIN 1
+
 enum State {
 	GAME_LOST, GAME_WON, GAME_PLAYING
 };

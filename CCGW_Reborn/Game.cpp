@@ -53,13 +53,15 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
 	data.pScore = 0;
-	data.pGold = 5;
+	data.pGold = 50;
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animations.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_turning5.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animations.mole");
+#if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
+#endif
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 
@@ -125,7 +127,9 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pPlayer->load( playerModel );
 	data.pPlayer->setPosition( glm::vec3( 14.0f, 0.0f, 14.0f ) );
 	data.pPlayer->playAnimation(1, true, 1.0f);
+#if RENDER_TERRAIN
 	mGround.load(terrainModel);
+#endif
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 
@@ -257,7 +261,9 @@ void Game::render()
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+#if RENDER_TERRAIN
 	mGround.renderNonAni( worldLocation );
+#endif
 	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
