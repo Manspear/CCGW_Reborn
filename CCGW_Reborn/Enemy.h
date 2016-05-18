@@ -20,8 +20,10 @@ public:
 	void imHit(float strength, glm::vec3 position);
 	void setAlive( bool alive );
 	void setLife( float life );
+	void setSpeed(float newSpeed);
 	bool getAlive() const;
 	float getLife() const;
+	float getSpeed() const;
 	const BoundingBox& getBoundingBox() const;
 	const BoundingBox& getHeadBox() const;
 
@@ -31,7 +33,6 @@ public:
 	Enemy();
 	~Enemy();
 
-	static Model* pBoundingBoxModel;
 protected:
 	
 	Emitter mEmitter;
@@ -39,7 +40,9 @@ protected:
 	BoundingBox mHeadBox;
 	float mBoundRadius;
 	sNode* pPath;
+	sNode mPrevTargetDif;
 	int mCurrent;
 	float mLife;
+	float mSpeed;
 	bool mAlive;
 };

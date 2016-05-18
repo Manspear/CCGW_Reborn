@@ -24,16 +24,12 @@ void Molebat::update(float dt)
 	else if(mTimeSinceLastHit > 1){
 
 		// play the molebats attack animation
-		for (int i = 0; i < pGameData->mMolebats; i++)
-		{
-			// set the to "attack" animation layer. 
-			pGameData->pMolebats[i].playAnimation(3, false, 2.0f);
-		}
+		mAnimator.push( 3, false, 2.0f );
 
 		pGameData->pPlayer->takeDamage(10);
 		mTimeSinceLastHit = 0;
 	}
-	float mSpeed = 3;
+
 	newPos += movement * mSpeed * dt;
 
 	// stay above ground
@@ -87,7 +83,7 @@ void Molebat::update(float dt)
 	bodyOffset.y = -0.5f + sinOffset;
 
 	glm::vec3 headOffset = mLookat*0.25f;
-	headOffset.y = sinOffset;
+	headOffset.y = -0.3f + sinOffset;
 
 	mBoundingBox.center = mPosition + bodyOffset;
 	mHeadBox.center = mPosition + headOffset;
@@ -115,6 +111,7 @@ Molebat& Molebat::operator=( const Molebat& ref )
 Molebat::Molebat( const Molebat& ref )
 	: Enemy( ref ), pGameData( ref.pGameData ), mSin( ref.mSin )
 {
+	mSpeed = 3.f;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;
 	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
@@ -123,6 +120,7 @@ Molebat::Molebat( const Molebat& ref )
 Molebat::Molebat()
 	: Enemy( glm::vec3( 0.0f ) ), mSin( rand() % 1000 )
 {
+	mSpeed = 3.f;
 	mTimeSinceLastHit = 0;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;

@@ -28,9 +28,20 @@ void Player::update(const Input* inputs, const float &dt)
 	mWorld = glm::mat4();
 	bool canJump = false;
 
+	//mWeapon->update(dt);
+	mWeapon.update(dt);
+	speedY -= 25 * dt;
+	mSpeed *= 1 - 15 * dt;
+	if (mSpeed < 0)
+		mSpeed = 0;
+	//mSpeed = 0;
+	glm::vec3 tempLookat = glm::normalize(glm::vec3(mLookat.x, 0, mLookat.z));
+	glm::vec3 dir(0.0f, 0.0f, 0.0f);
+
+	//buttonDown(0) == LMB
 	if (inputs->buttonDown(0))
 	{
-		mStrength > 4 ? mStrength = 4 : mStrength += dt;
+		mStrength > 5 ? mStrength = 5 : mStrength += dt * 3 ;
 
 		if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
 		{
@@ -38,35 +49,60 @@ void Player::update(const Input* inputs, const float &dt)
 			mAnimator.push( ANIM_SHOOT, false, 2.0f, 0.5f );
 		}
 	}
-		//mWeapon->update(dt);
-	mWeapon.update( dt );
-	speedY -= 25 * dt;
-	mSpeed *= 1- 15*dt;
-	if (mSpeed < 0)
-		mSpeed = 0;
-	//mSpeed = 0;
-	glm::vec3 tempLookat = glm::normalize(glm::vec3(mLookat.x, 0, mLookat.z));
-	glm::vec3 dir(0.0f, 0.0f, 0.0f);
+
+	if (inputs->buttonReleased(0))
+	{
+		if (mStrength > 0.25f)
+		{
+			//How is the position of the arrow calculated..?
+			
+			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
+			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset, 0);
+			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
+			//glm::vec3 la = glm::normalize((mPosition + mLookat) - tempPos);
+			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
+			
+		    float damage = (mStrength / 5) * 10.f;
+
+			mWeapon.shoot(tempPos, la, rotation, mStrength, damage);
+
+			mAnimator.push( 3, false, 5.0f );
+
+			mAnimator.clear();
+			mAnimator.push(ANIM_RUN, true, 1.0f);
+			mAnimator.push(ANIM_RELOAD, false, 1.0f);
+		}
+		mStrength = 0;
+	}
 
 	if (inputs->keyDown(SDLK_w))
 	{
+	/*	mAnimator.clear();
+		mAnimator.push();*/
 		mSpeed = mMaxSpeed;
+		//dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 		dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 	}
 	if (inputs->keyDown(SDLK_s))
 	{
+		/*	mAnimator.clear();
+		mAnimator.push();*/
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>();
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
 	if (inputs->keyDown(SDLK_a))
 	{
+		/*	mAnimator.clear();
+		mAnimator.push();*/
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>() * 0.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
 	if (inputs->keyDown(SDLK_d))
 	{
+		/*	mAnimator.clear();
+		mAnimator.push();*/
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>() * 1.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
@@ -112,8 +148,11 @@ void Player::update(const Input* inputs, const float &dt)
 	}
 
 	if (inputs->keyPressed(SDLK_SPACE) && canJump)
+	{
+		/*	mAnimator.clear();
+		mAnimator.push();*/
 		speedY += 15;
-
+	}
 
 	double degree = (inputs->mouseDelta().x) / 200 * -1;
 	double rad = (inputs->mouseDelta().y) / 400 * -1;
@@ -170,25 +209,6 @@ void Player::update(const Input* inputs, const float &dt)
 	mWorld[3][1] = mPosition.y;
 	mWorld[3][2] = mPosition.z;
 	mWorld[3][3] = 1.f;
-
-	if (inputs->buttonReleased(0) )
-	{
-		if (mStrength > 0.25f)
-		{
-			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
-			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset, 0);
-			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
-			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
-			mWeapon.shoot(tempPos, la, rotation, mStrength);
-
-			//mAnimator.push( 3, false, 5.0f );
-
-			mAnimator.clear();
-			mAnimator.push( ANIM_RUN, true, 1.0f );
-			mAnimator.push( ANIM_RELOAD, false, 1.0f );
-		}
-		mStrength = 0;
-	}
 }
 glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const GameData &gameData)
 {

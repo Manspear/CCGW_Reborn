@@ -21,10 +21,10 @@ int main(int argc, char** argv)
 
 	SDL_DisplayMode dm;
 	SDL_GetDesktopDisplayMode(0, &dm);
-	gWidth = dm.w - 2;
-	gHeight = dm.h - 60;
-	//gWidth = 1080 - 60;
-	//gHeight = 720-2;
+	//gWidth = dm.w - 2;
+	//gHeight = dm.h - 60;
+	gWidth = 1080 - 60;
+	gHeight = 720-2;
 
 	window = SDL_CreateWindow("Try hard!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, gWidth, gHeight, SDL_WINDOW_OPENGL); // can get the border & titlebar sizes to fix a more precise windowed "fullscreen"
 	SDL_GLContext glContext = SDL_GL_CreateContext(window);
