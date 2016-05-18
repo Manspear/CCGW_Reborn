@@ -114,6 +114,8 @@ void Tower::updateAnimation()
 
 void Tower::renderNonAni( GLuint worldLocation )
 {
+	mWorld[3][1] = 0.0f;
+
 	if( mHasBallista )
 	{
 		mpModel = mpBaseModel;
@@ -130,6 +132,8 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
 	//mpModel = mpBallistaModel;
 
+	mWorld[3][1] = 0.0f;
+
 	mpModel = mpCrossbowModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
@@ -140,9 +144,6 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	GameObject::renderAni( worldLocation, animationLocation );
 
 	mpModel = mpMidCylinderModel;
-	GameObject::renderAni( worldLocation, animationLocation );
-
-	mpModel = mpLowWheelModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
 	mpModel = mpHighWheelModel;

@@ -3,7 +3,7 @@
 
 void Moleratman::update(float dt, GameData* data)
 {
-	Enemy::update( dt );
+	//Enemy::update( dt );
 
 	if (mCurrent >= 0)
 	{
@@ -12,7 +12,55 @@ void Moleratman::update(float dt, GameData* data)
 		float dist = glm::distance(mPosition, glm::vec3(target));
 		if (dist < mSpeed * dt)
 		{
+			sNode prev = pPath[mCurrent];
+
 			mCurrent--;
+
+			sNode cur = pPath[mCurrent];
+
+			sNode dif = { cur.x-prev.x, cur.y-prev.y };
+			if( dif.x != mPrevTargetDif.x || dif.y != mPrevTargetDif.y )
+			{
+					if( mPrevTargetDif.y != 0 )
+					{
+						int x = dif.x*mPrevTargetDif.y;
+						if( x < 0 )
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_RIGHT)
+							{
+								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f, 0.9f );
+							}
+						}
+						else
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_LEFT)
+							{
+								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f, 0.9f);
+							}
+						}
+					}
+					else
+					{
+						int y = dif.y*mPrevTargetDif.x;
+						if( y > 0 )
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_RIGHT )
+							{
+								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f, 0.9f);
+							}
+						}
+						else
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_LEFT )
+							{
+								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f, 0.9f);
+							}
+						}
+					}
+			}
+
+			mPrevTargetDif = dif;
+
 			glm::vec3 dir = glm::normalize( target - mPosition );
 			mPosition = target;
 
@@ -34,7 +82,7 @@ void Moleratman::update(float dt, GameData* data)
 		mLookat = glm::normalize(glm::vec3(dir.x, 0.0f, dir.z));
 		rotY = -glm::angle(mLookat, glm::vec3(1.0f, 0.0f, 0.0f));
 		if (mLookat.z < 0.0f)
-			rotY *= -1.0f;		
+			rotY *= -1.0f;
 	}
 	else if (mAlive && mCurrent <= 0){
 		if (--data->mBabyCount <= 0)
@@ -60,13 +108,15 @@ void Moleratman::update(float dt, GameData* data)
 	glm::vec3 headOffset = mLookat*0.75f;
 	headOffset.y = 2.0f;
 	mHeadBox.center = mPosition + headOffset;
+
+	Enemy::update(dt);
 }
 
 void Moleratman::imHit( float strength, glm::vec3 position )
 {
 	Enemy::imHit( strength, position );
 
-	mAnimator.push( 2, false, 5.0f );
+	mAnimator.push( ANIM_STAGGER, false, 5.0f );
 }
 
 Moleratman& Moleratman::operator=( const Moleratman& ref )

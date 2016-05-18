@@ -20,6 +20,7 @@ public:
 	void setPosition( glm::vec3 position );
 	void restart();
 	glm::vec3 getPosition() const;
+	int getWave() const;
 
 	WaveSpawner& operator=( const WaveSpawner& ref );
 	WaveSpawner( const WaveSpawner& ref );

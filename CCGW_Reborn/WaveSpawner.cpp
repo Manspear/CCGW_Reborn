@@ -141,6 +141,11 @@ glm::vec3 WaveSpawner::getPosition() const
 	return mPosition;
 }
 
+int WaveSpawner::getWave() const
+{
+	return mWave;
+}
+
 void WaveSpawner::spawnMoleratman()
 {
 	Moleratman* m = nullptr;

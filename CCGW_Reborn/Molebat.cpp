@@ -24,11 +24,7 @@ void Molebat::update(float dt)
 	else if(mTimeSinceLastHit > 1){
 
 		// play the molebats attack animation
-		for (int i = 0; i < pGameData->mMolebats; i++)
-		{
-			// set the to "attack" animation layer. 
-			pGameData->pMolebats[i].playAnimation(3, false, 2.0f);
-		}
+		mAnimator.push( 3, false, 2.0f );
 
 		pGameData->pPlayer->takeDamage(10);
 		mTimeSinceLastHit = 0;

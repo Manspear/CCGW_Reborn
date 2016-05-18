@@ -99,7 +99,7 @@ Enemy& Enemy::operator=( const Enemy& ref )
 }
 
 Enemy::Enemy( const Enemy& ref )
-	: GameObject( ref ), mCurrent( ref.mCurrent ), pPath( ref.pPath ), mAlive( ref.mAlive ), mBoundingBox( ref.mBoundingBox )
+	: GameObject( ref ), mCurrent( ref.mCurrent ), pPath( ref.pPath ), mAlive( ref.mAlive ), mBoundingBox( ref.mBoundingBox ), mPrevTargetDif( ref.mPrevTargetDif )
 {
 }
 
@@ -107,12 +107,14 @@ Enemy::Enemy( glm::vec3 position )
 	: GameObject( position, 1.0f ), mCurrent( -1 ), pPath( nullptr ), mAlive( false ), mLife(1), mBoundingBox( position, 0.5f )
 {
 	this->mBoundRadius = 1.0f;
+	mPrevTargetDif = { 0, 1 };
 }
 
 Enemy::Enemy()
 	: mCurrent(-1), pPath(nullptr), mAlive(false), mLife(1), mBoundingBox( glm::vec3( 0.0f ), 0.5f )
 {
 	this->mBoundRadius = 1.0f;
+	mPrevTargetDif = { 0, 1 };
 }
 
 Enemy::~Enemy()

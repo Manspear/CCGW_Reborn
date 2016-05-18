@@ -82,6 +82,8 @@ void Arrow::update(float dt)
 							mpPiercedEnemies[mPiercings++] = &pGameData->pMoleratmen[i];
 							if( mPiercings >= ARROW_MAX_PIERCING_DEPTH )
 								mAlive = false;
+
+							//std::cout << "Hit enemy: " << mpPiercedEnemies[mPiercings-1] << std::endl;
 						}
 						else
 							mAlive = false;

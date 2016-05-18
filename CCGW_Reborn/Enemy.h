@@ -40,6 +40,7 @@ protected:
 	BoundingBox mHeadBox;
 	float mBoundRadius;
 	sNode* pPath;
+	sNode mPrevTargetDif;
 	int mCurrent;
 	float mLife;
 	float mSpeed;

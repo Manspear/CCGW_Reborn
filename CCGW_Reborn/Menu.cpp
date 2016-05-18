@@ -11,28 +11,15 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 {
 	if (inputs->getQuit())
 		return false;
-	if (inputs->keyPressed(SDLK_ESCAPE)){
-		if (activeMenu == ACTION_HUD) 
-			buttonAction('w', inputs, 0, data);
-		else if (activeMenu == PAUSE_SCREEN)
-			buttonAction('p', inputs, 0, data);
-		else 
-			activeMenu = MAIN_MENU;
-	}
-	else if (state == GAME_LOST) 
-		setPauseState(LOSING_SCREEN, inputs);
-	else if (state == GAME_WON) 
-		setPauseState(VICTORY_SCREEN, inputs);
-
-	if (activeMenu != ACTION_HUD) {
+	if (mActive) {
 		int x = inputs->mousePosition().x;
 		int y = (inputs->mousePosition().y * -1) + gHeight;
 		for (int i = 0; i < mAllMenu[activeMenu].theMenu.size(); i++) {
 			if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
-				if (mAllMenu[activeMenu].theMenu[i].mType != 'd')
+				if (mAllMenu[activeMenu].theMenu[i].mType != 0)
 					mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
 				if (inputs->buttonReleased(0)) {
-					buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, i, data);
+					buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, data);
 					break;
 				}
 			}
@@ -41,15 +28,26 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		}
 	}
 	else {
+		activeMenu = (MENU)(1 + data->pGame->tactical);
 		updateNumbers(data);
-		moveMarker(data->pPlayer->getStrength());	
+		moveMarker(data->pPlayer->getStrength());
+		if (state == GAME_LOST)
+			setPauseState(LOSING_SCREEN, inputs);
+		else if (state == GAME_WON)
+			setPauseState(VICTORY_SCREEN, inputs);		
+		if (mActiveField != nullptr) {
+			writeToField(inputs->getPressedKeys());
+		}
 	}
-	if (mActiveField != nullptr) {
-			writeToField(inputs->getPressedKeys());			
+	if (inputs->keyPressed(SDLK_ESCAPE)) {
+		if (mActive)
+			buttonAction(lastHUD, inputs, data);
+		else {
+			lastHUD = activeMenu;
+			buttonAction(5, inputs, data);
+		}
 	}
 	render();
-	if (activeMenu != MAIN_MENU)
-		updateNumbers(data);
 	return mRunning;
 }
 
@@ -94,67 +92,42 @@ void Menu::writeToFieldString(std::string theString)
 	mActiveField = nullptr;
 }
 
-void Menu::readFromHighScore()
-{
-	ifstream file;
-	istringstream ss;
-	string aString;
-	activeMenu = HIGHSCORE_SCREEN;
-	file.open("models/menu/highscore.txt");
-	int i = 0;
-	std::vector<int> name;
-	while (getline(file, aString)) {
-		ss.str(aString);
-		ss >> highscoreHolder >> mWaveScore >> mBabyScore >> mGoldScore;
-		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
-		writeToFieldString(highscoreHolder);
-		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
-		writeToFieldString(mWaveScore);
-		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
-		writeToFieldString(mBabyScore);
-		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
-		writeToFieldString(mGoldScore);
-		ss.clear();
-	}
-	file.close();
-}
-
-void Menu::buttonAction(char type, Input* inputs, int index, GameData* data)
+void Menu::buttonAction(int type, Input* inputs, GameData* data)
 {
 	pausedMenu(inputs);
+	activeMenu = (MENU)type;
 	switch (type) {
-	case'p':
-		activeMenu = ACTION_HUD;
+	case 0:
+		activeMenu = lastHUD;
+		break;
+	case 1:
 		inputs->setMouseVisible(false);
 		inputs->setMouseLock(!data->pGame->tactical);
 		mActive = false;
 		break;
-	case'q':
-		mRunning = false;
-		mActiveField = nullptr;
-		//writeToHighScore();
+	case 2:
+		inputs->setMouseVisible(false);
+		inputs->setMouseLock(!data->pGame->tactical);
+		mActive = false;
 		break;
-	case'r':
+	case 10:
+		mRunning = false;
+		activeMenu = (MENU)0;
+		break;
+	case 11:
 		data->pGame->restartGame();
 		healthBar();
-		buttonAction('p', inputs, 0, data);
+		buttonAction(1, inputs, data);
 		break;
-	case'd':
-		mAllMenu[activeMenu].theMenu[index].mHighlighted = false;
-		mActiveField = nullptr;
+	case 5:
+		mActive = true;
 		break;
-	case 'a':
-		mActiveField = &mAllMenu[activeMenu].theMenu[index];
-		mAllMenu[activeMenu].theMenu[index].mHighlighted = true;
+	case 7:
+		readFromHighScore();
 		break;
-	case 's':
-		activeMenu = HIGHSCORE_SCREEN;
-		break;
-	case 'w':
-		activeMenu = PAUSE_SCREEN;
-		break;
-	case 't':
-		activeMenu = TUTORIAL_SCREEN;
+	case 8:
+		mActiveField = &mAllMenu[activeMenu].theMenu[0];
+		mAllMenu[activeMenu].theMenu[0].mHighlighted = true;
 		break;
 	}
 }
@@ -163,22 +136,24 @@ void Menu::updateNumbers(GameData * data)
 {
 	int divider = 1;
 	for (int i = 0; i < 2; i++) {
-		mAllMenu[ACTION_HUD].theNumbers[i].sampleX = (data->mBabyCount / divider) % 10;
+		mAllMenu[activeMenu].theNumbers[i].sampleX = (data->mBabyCount / divider) % 10;
 		divider *= 10;
 	}
 	divider = 1;
 	for (int i = 2; i < 4; i++) {
-		mAllMenu[ACTION_HUD].theNumbers[i].sampleX = (data->pPlayer->getHealth() / divider) % 10;
+		mAllMenu[activeMenu].theNumbers[i].sampleX = (data->pWavespawner->getWave()/ divider) % 10;
 		divider *= 10;
 	}
 	divider = 1;
 	for (int i = 4; i < 7; i++) {
-		mAllMenu[ACTION_HUD].theNumbers[i].sampleX = (data->pGold / divider) % 10;
+		mAllMenu[activeMenu].theNumbers[i].sampleX = (data->pGold / divider) % 10;
 		divider *= 10;
 	}
-	int hp = data->pPlayer->getHealth() / 10;
-	while (hp < mAllMenu[ACTION_HUD].theNumbers.size() - 7)
-		mAllMenu[ACTION_HUD].theNumbers.pop_back();
+	if (activeMenu == ACTION_HUD) {
+		int hp = data->pPlayer->getHealth() / 10;
+		while (hp < mAllMenu[ACTION_HUD].theNumbers.size() - 7)
+			mAllMenu[ACTION_HUD].theNumbers.pop_back();
+	}
 }
 
 void Menu::setPauseState(MENU theMenu, Input* inputs)
@@ -257,7 +232,8 @@ void Menu::buildAMenu(std::string build, MENU menu, GLuint vboID, GLuint texID)
 	float x, y, w, h;
 	char a, b, c, d, e;
 	string temp, texPath;
-	char type, nrOrButt;
+	int type;
+	char nrOrButt;
 	istringstream s2;
 	mAllMenu.push_back(AMenu{});
 	activeMenu = menu;
@@ -385,6 +361,7 @@ Menu::Menu()
 	mActiveField = nullptr;
 	mActive = true;
 	mRunning = true;
+	lastHUD = MAIN_MENU;
 	cursorHolder = 0;
 	addNumber(0.04, 0.06, numberVbo, numberTex, "Models/menu/numbers.png");
 	addNumber(0.118, 0.1, healthbarVbo, healthbarTex, "Models/menu/healthbar.png");
@@ -395,13 +372,13 @@ Menu::Menu()
 	moveLocation = glGetUniformLocation(menuShader->getProgramID(), "movement");
 	buildAMenu("menuBuild.txt", MAIN_MENU, numberVbo, numberVbo);
 	buildAMenu("actionBuild.txt", ACTION_HUD, numberVbo, numberTex);
+	buildAMenu("tacticalBuild.txt", TACTICAL_HUD, numberVbo, numberTex);
 	buildAMenu("losingBuild.txt", LOSING_SCREEN, numberVbo, numberTex);
 	buildAMenu("victoryBuild.txt", VICTORY_SCREEN, numberVbo, numberTex);
-	buildAMenu("highscoreBuild.txt", HIGHSCORE_SCREEN, numberVbo, numberTex);
 	buildAMenu("pauseBuild.txt", PAUSE_SCREEN, numberVbo, numberTex);
 	buildAMenu("tutorialBuild.txt", TUTORIAL_SCREEN, numberVbo, numberTex);
+	buildAMenu("highscoreBuild.txt", HIGHSCORE_SCREEN, numberVbo, numberTex);
 	healthBar();
-	readFromHighScore();
 	activeMenu = MAIN_MENU;
 }
 
@@ -454,5 +431,30 @@ void Menu::writeToHighScore(GameData* data)
 	file.open("models/menu/highscore.txt");
 	file << data;
 	file.close();*/
+}
+
+void Menu::readFromHighScore()
+{
+	ifstream file;
+	istringstream ss;
+	string aString;
+	activeMenu = HIGHSCORE_SCREEN;
+	file.open("models/menu/highscore.txt");
+	int i = 0;
+	std::vector<int> name;
+	while (getline(file, aString)) {
+		ss.str(aString);
+		ss >> highscoreHolder >> mWaveScore >> mBabyScore >> mGoldScore;
+		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
+		writeToFieldString(highscoreHolder);
+		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
+		writeToFieldString(mWaveScore);
+		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
+		writeToFieldString(mBabyScore);
+		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
+		writeToFieldString(mGoldScore);
+		ss.clear();
+	}
+	file.close();
 }
 

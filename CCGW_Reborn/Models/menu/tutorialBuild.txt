@@ -1,1 +1,1 @@
-b -1.0 -1.0 2 2 d Models/menu/tutorialScreen.png
+b -1.0 -1.0 2 2 0 Models/menu/tutorialScreen.png
