@@ -157,8 +157,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	sound = data.pAssets->load<Sound>("Sounds/arrowfired.wav");
 	data.pPlayer->mWeapon.loadSound(sound);
 
-	pWaveSpawner = new WaveSpawner( &data );
-	pWaveSpawner->setPosition({ 14,0,-10 });	
+	data.pWavespawner = new WaveSpawner( &data );
+	data.pWavespawner->setPosition({ 14,0,-10 });	
 }
 
 Game::~Game() {
@@ -172,7 +172,7 @@ Game::~Game() {
 	delete data.pGrid;
 	delete pActionState;
 	delete[] data.pTowers;
-	delete pWaveSpawner;
+	delete data.pWavespawner;
 	delete[] data.pMoleratmen;
 	delete[] data.pMolebats;
 	delete[] data.pBabies;
@@ -210,7 +210,7 @@ void Game::restartGame()
 		data.pMoleratmen[i].setAlive(false);
 	
 	data.pPlayer->setPosition(glm::vec3(14.0f, 0.0f, 14.0f));
-	pWaveSpawner->restart();
+	data.pWavespawner->restart();
 }
 
 State Game::run(Input* inputs, const float &dt, bool menuActive)
@@ -220,7 +220,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 	State result = GAME_PLAYING;
 	if (!data.pPlayer->isAlive())
 		result = GAME_LOST;
-	if (pWaveSpawner->hasWon())
+	if (data.pWavespawner->hasWon())
 		result = GAME_WON;
 	render();
 	return result;
@@ -251,7 +251,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 	 {
 		 inputs->setMouseLock(true);
 		 tactical = false;
-		 pWaveSpawner->spawn();
+		 data.pWavespawner->spawn();
 	 }
 	render();
  }
@@ -330,7 +330,7 @@ void Game::render()
 
 void Game::update(Input* inputs, float dt) 
 {
-	pWaveSpawner->update(dt);
+	data.pWavespawner->update(dt);
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5, {0,1,0});

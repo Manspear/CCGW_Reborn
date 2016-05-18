@@ -47,7 +47,6 @@ private:
 	Marker mTacticalMarker;
 	GameData data;
 	int mTargets;
-	WaveSpawner* pWaveSpawner;
 	Tower** mpVisibleTowers;
 	int mVisibleTowers;
 
