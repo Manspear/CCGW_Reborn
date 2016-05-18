@@ -37,7 +37,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pDeferredProgramNonAni = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
-	data.pEmission = new Emission(&data, 1150);
+	data.pEmission = new Emission(&data, 10000);
 
 	Texture* particleTexture = data.pAssets->load<Texture>( "Models/pns.png" );
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
@@ -47,13 +47,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	playerEmitter.load( particleTexture );
 
 	Emitter enemyEmitter;
-	data.pEmission->allocEmitter(&enemyEmitter, 50);
+	data.pEmission->allocEmitter(&enemyEmitter, 600);
 	enemyEmitter.load(bloodTexture);
 
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
 	data.pScore = 0;
-	data.pGold = 5;
+	data.pGold = 15;
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
@@ -62,14 +62,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
-
-	for( int i=0; i<8; i++ )
-		debugObjects[i].load( boxModel );
-
-	mrm.load( moleratModel, &enemyEmitter );
-	mrm.playAnimation( 1, true );
-	mrm.setPosition( glm::vec3( 14, 0, 14 ) );
-	mrm.setScale( 0.1f );
 
 	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
 	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
@@ -118,14 +110,14 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mVisibleTowers = 0;
 
 	Emitter towerEmitter;
-	data.pEmission->allocEmitter( &towerEmitter, 1000 );
+	data.pEmission->allocEmitter( &towerEmitter, 5000 );
 	towerEmitter.load( particleTexture );
 
 	for( int i=0; i<data.mTowers; i++ )
 	{
 		int x = ( i % data.pGrid->getWidth() ) * data.boxScale;
 		int y = ( i / data.pGrid->getWidth() ) * data.boxScale;
-		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), towerModels, &towerEmitter );
+		data.pTowers[i].load( &data, glm::vec3( x, 1, y ), boxModel, towerModels, &towerEmitter );
 		data.pTowers[i].setAlive( false );
 	}
 
@@ -137,7 +129,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	mTacticalMarker.load(boxModel);
 	mTacticalMarker.setScale( data.boxScale );
 
-	data.mMolebats = 30;
+	data.mMolebats = 500;
 	Sound* sound = data.pAssets->load<Sound>("Sounds/monstersound.wav");
 	data.pMolebats = new Molebat[data.mMolebats];
 	for( int i=0; i < data.mMolebats; i++ )
@@ -148,7 +140,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMolebats[i].playAnimation(1, true, 2.0f );
 	}
 
-	data.mMoleratmen = 100;
+	data.mMoleratmen = 1000;
 	data.pMoleratmen = new Moleratman[data.mMoleratmen];
 	for (int i = 0; i < data.mMoleratmen; i++) {
 		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
@@ -195,7 +187,7 @@ void Game::restartGame()
 {
 	mCounter = 0;
 	data.pScore = 0;
-	data.pGold = 5;
+	data.pGold = 15;
 	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
@@ -244,6 +236,12 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 
 		 data.pCamera->updateFrustum();
 		 data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
+
+		 for( int i=0; i<mVisibleTowers; i++ )
+		 {
+			 if( mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista() )
+				 mpVisibleTowers[i]->update( &data, dt );
+		 }
 	 }
 	 if (inputs->keyPressed(SDLK_t))
 	 {
@@ -270,14 +268,9 @@ void Game::render()
 			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
 			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
 
-	for( int i=0; i<data.mMoleratmen; i++ )
-		data.pMoleratmen[i].renderHitbox( worldLocation, debugObjects );
-
-	mrm.renderHitbox( worldLocation, debugObjects );
-
 	for (int i = 0; i < mVisibleTowers; i++)
 	{
-		if (mpVisibleTowers[i]->getAlive() && !mpVisibleTowers[i]->getHasBallista())
+		if (mpVisibleTowers[i]->getAlive())
 		{
 			//mpVisibleTowers[i]->render(worldLocation);
 			mpVisibleTowers[i]->renderNonAni(worldLocation);
@@ -317,8 +310,6 @@ void Game::render()
 	for( int i=0; i<data.mMolebats; i++ )
 		if( data.pMolebats[i].getAlive() )
 			data.pMolebats[i].renderAni( worldLocation, animationLocation );
-
-	mrm.renderAni( worldLocation, animationLocation );
 	
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );

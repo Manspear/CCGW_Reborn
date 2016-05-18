@@ -3,8 +3,6 @@
 #include "Moleratman.h"
 #include "Molebat.h"
 
-#define WAVESPAWNER_DELAY 1.0f
-
 //Class for spawining waves of enemy.
 //It keeps track of how many enemies to spawn and the delay between each enemy.
 class WaveSpawner
@@ -37,16 +35,22 @@ private:
 	int mWave;
 	int mMoleRatWaveSize;
 	int mMoleBatWaveSize;
+	int waveLevels;
 	float mRatHP;
 	float mBatHP;
 	float mRatSpeed;
 	float mBatSpeed;
 	float mDelay;
+	float mSpawnDelay;
+	std::vector<bool> waveLevel;
+
+	bool spawnSwitch;
 	glm::vec3 mPosition;
 
 	int mCurMoleratmen, mSpawnMoleratmen;
 	int mCurMolebats, mSpawnMolebats;
 	int mMoleratmanIndex, mMolebatIndex;
+
 
 	sNode* mpPath;
 	int mTargets;

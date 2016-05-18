@@ -49,11 +49,6 @@ private:
 	Tower** mpVisibleTowers;
 	int mVisibleTowers;
 
-	GameObject debugObjects[8];
-	Moleratman mrm;
-
-	//std::vector<GameObject> babylist;
-
 	int mGold;
 	int mScore;
 

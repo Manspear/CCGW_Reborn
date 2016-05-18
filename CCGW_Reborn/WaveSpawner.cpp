@@ -4,22 +4,32 @@
 void WaveSpawner::update( float deltaTime )
 {
 	mDelay -= deltaTime;
-
 	if( mDelay <= 0.0f )
 	{
-		// TODO: Should we always spawn moleratmen before spawning molebats?
-		// Maybe every other? Maybe random?
-		if( mCurMoleratmen < mSpawnMoleratmen )
+
+		
+		if( mCurMoleratmen < mSpawnMoleratmen && spawnSwitch == false)
 		{
 			mCurMoleratmen++;
 			spawnMoleratman();
+			spawnSwitch = true;
 		}
-		else if (mCurMolebats < mSpawnMolebats)
+		else if (mCurMolebats < mSpawnMolebats && spawnSwitch == true)
 		{
 			mCurMolebats++;
 			spawnMolebat();
+			spawnSwitch = false;
 		}
-		mDelay = WAVESPAWNER_DELAY;
+		else if (spawnSwitch == false)
+		{
+			spawnSwitch = true;
+		}
+		else if (spawnSwitch == true)
+		{
+			spawnSwitch = false;
+		}
+		
+		mDelay = mSpawnDelay;
 	}
 }
 
@@ -47,27 +57,51 @@ void WaveSpawner::spawn()
 	mSpawnMoleratmen = mMoleRatWaveSize;
 	mSpawnMolebats = mMoleBatWaveSize;
 
-	mMoleRatWaveSize = mMoleRatWaveSize * 2.f;
-	mMoleBatWaveSize = mMoleBatWaveSize * 2.f;
+	if (mWave <= 3)
+	{
+		if (waveLevel[0] == true)
+		{
+			mSpawnDelay = 0.75f;
+			waveLevel[0] = false;
+		}
+		mMoleRatWaveSize += 5;
+		mMoleBatWaveSize += 3;
 
-	if (mWave <= 8)
-	{
-		mRatHP = 50.f;
-		mBatHP = 1.f;
+		mRatHP = 10.f;
+		mBatHP = 4.f;
 		mRatSpeed = 4.f;
-		mBatSpeed = 2.f;
-	}
-	if (mWave > 8 && mWave <= 16)
-	{
-		mRatHP = 100.f;
-		mBatHP = 1.f;
-		mRatSpeed = 6.f;
 		mBatSpeed = 4.f;
+	}
+	if (mWave > 3 && mWave <= 8)
+	{
+		if (waveLevel[1] == true)
+		{
+			mMoleRatWaveSize += 20;
+			mMoleBatWaveSize += 7;
+			mSpawnDelay = 0.3f;
+			waveLevel[1] = false;
+		}
+		mMoleRatWaveSize += 7;
+		mMoleBatWaveSize += 5;
+
+		mRatHP = 20.f;
+		mBatHP = 5.f;
+		mRatSpeed = 5.f;
+		mBatSpeed = 5.f;
 	}
 	if (mWave > 16)
 	{
-		mRatHP = 150.f;
-		mBatHP = 1.f;
+		if (waveLevel[2] == true)
+		{
+			mMoleRatWaveSize = 25.f;
+			mMoleBatWaveSize = 12.f;
+			mSpawnDelay = 0.2f;
+			waveLevel[2] = false;
+		}
+		mMoleRatWaveSize += 7;
+		mMoleBatWaveSize += 5;
+		mRatHP = 40.f;
+		mBatHP = 7.f;
 		mRatSpeed = 10.f;
 		mBatSpeed = 8.f;
 	}
@@ -129,7 +163,6 @@ void WaveSpawner::spawnMoleratman()
 			m->setAlive(true);
 			m->setLife(mRatHP);
 			m->setSpeed(mRatSpeed);
-			m->setSpeed(mBatSpeed);
 			m->setPath(mpPath, mTargets);
 	}
 }
@@ -154,6 +187,7 @@ void WaveSpawner::spawnMolebat()
 		m->setPosition( pos );
 		m->setAlive( true );
 		m->setLife( mBatHP );
+		m->setSpeed(mBatSpeed);
 	}
 }
 
@@ -183,7 +217,6 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 	mTargets( ref.mTargets )
 {
 		mpPath = new sNode[20*20];
-
 }
 
 WaveSpawner::WaveSpawner(GameData* data)
@@ -197,6 +230,14 @@ WaveSpawner::WaveSpawner(GameData* data)
 	mpPath = new sNode[20 * 20];
 	mMoleRatWaveSize = 5.f;
 	mMoleBatWaveSize = 2.f;
+	mSpawnDelay = 1.f;
+	spawnSwitch = false;
+
+	waveLevels = 3;
+	for (int i = 0; i < waveLevels; i++)
+	{
+		waveLevel.push_back(true);
+	}
 }
 
 WaveSpawner::~WaveSpawner()

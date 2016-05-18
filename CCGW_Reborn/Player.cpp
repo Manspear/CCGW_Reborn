@@ -41,7 +41,7 @@ void Player::update(const Input* inputs, const float &dt)
 	//buttonDown(0) == LMB
 	if (inputs->buttonDown(0))
 	{
-		mStrength > 4 ? mStrength = 4 : mStrength += dt;
+		mStrength > 5 ? mStrength = 5 : mStrength += dt * 3 ;
 
 		if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
 		{
@@ -62,7 +62,9 @@ void Player::update(const Input* inputs, const float &dt)
 			//glm::vec3 la = glm::normalize((mPosition + mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
 			
-			mWeapon.shoot(tempPos, la, rotation, mStrength);
+		    float damage = (mStrength / 5) * 10.f;
+
+			mWeapon.shoot(tempPos, la, rotation, mStrength, damage);
 
 			mAnimator.push( 3, false, 5.0f );
 

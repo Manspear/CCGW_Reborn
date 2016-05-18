@@ -87,7 +87,7 @@ void Molebat::update(float dt)
 	bodyOffset.y = -0.5f + sinOffset;
 
 	glm::vec3 headOffset = mLookat*0.25f;
-	headOffset.y = sinOffset;
+	headOffset.y = -0.3f + sinOffset;
 
 	mBoundingBox.center = mPosition + bodyOffset;
 	mHeadBox.center = mPosition + headOffset;

@@ -78,10 +78,16 @@ Moleratman& Moleratman::operator=( const Moleratman& ref )
 Moleratman::Moleratman( const Moleratman& ref )
 	: Enemy( ref )
 {
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+<<<<<<< HEAD
 	mSpeed = 4.f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
+	mBoundingBox.hHeight = 0.5f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
+=======
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
 	mBoundingBox.hHeight = 1.0f;
 	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
+>>>>>>> 4c0f686d6654ce892ecdeb1c8eca909efdb447e0
 }
 
 Moleratman::Moleratman()

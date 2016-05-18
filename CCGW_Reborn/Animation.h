@@ -30,7 +30,12 @@ public:
 	~Animator();
 
 private:
-	struct sTake { int mIndex; bool mLooping; float mSpeed, mScale; };
+	struct sTake
+	{
+		int mIndex;
+		bool mLooping;
+		float mSpeed, mScale;
+	};
 
 	Model* pModel;
 	std::stack<sTake> mStack;

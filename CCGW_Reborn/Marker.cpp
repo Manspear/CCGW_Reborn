@@ -33,7 +33,8 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 
 	uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
 	bool buildTowers = false;
-	if (inputs->buttonDown(0) && gameData.pGold > 0)
+
+	if (inputs->buttonDown(0) && gameData.pGold >= BOXCOST)
 	{
 		if( currentTile == TILE_EMPTY )
 		{
@@ -47,13 +48,13 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
 			}
 			else
-				gameData.pGold--;
+				gameData.pGold -= BOXCOST;
 		}
-		else if( currentTile == TILE_BOX )
+		else if( currentTile == TILE_BOX && gameData.pGold >= BALLISTACOST)
 		{
 			gameData.pGrid->setTile( selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX | TILE_HOLD );
 			mMarkedIndex.push_back( selectedTile );
-			gameData.pGold--;
+			gameData.pGold -= BALLISTACOST;
 		}
 	}
 	if (inputs->buttonDown(2) && currentTile == TILE_HOLD)

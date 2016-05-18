@@ -17,7 +17,7 @@ public:
 
 	bool isAlive();
 	void update(float dt);
-	void spawn(bool owner, glm::vec3 position, glm::vec3 direction, float travelSpeed, glm::vec3 downVector, float rotation);
+	void spawn(bool owner, glm::vec3 position, glm::vec3 direction, float travelSpeed, glm::vec3 downVector, float rotation, float damage);
 	Arrow();
 	~Arrow();
 
@@ -27,6 +27,7 @@ protected:
 	bool mPlayerOwned;
 
 	float mSpeed;
+	float mDamage;
 	glm::vec3 mGravitation;
 	float mTimeSinceLastEmmit;
 	float mEmmitInterval;
