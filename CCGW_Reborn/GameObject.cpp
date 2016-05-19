@@ -120,3 +120,7 @@ GameObject::~GameObject()
 {
 
 }
+
+void GameObject::playSound() {
+	this->mSound->play();
+}

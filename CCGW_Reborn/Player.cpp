@@ -46,7 +46,13 @@ void Player::update(const Input* inputs, const float &dt)
 		if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
 		{
 			mAnimator.clear();
+			if (true)//mSpeed > 0.5f) 
+			{
 			mAnimator.push( ANIM_SHOOT, false, 2.0f, 0.5f );
+			}
+			else {
+				mAnimator.push(11, false, 2.0f, 0.5f);
+			}
 		}
 	}
 
@@ -148,8 +154,8 @@ void Player::update(const Input* inputs, const float &dt)
 	} 
 	if (inputs->keyPressed(SDLK_SPACE) && canJump)
 	{
-		/*	mAnimator.clear();
-		mAnimator.push();*/
+		//mAnimator.clear();
+		//mAnimator.push(5, false);
 		speedY += 15;
 	}
 
@@ -323,6 +329,7 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	daIndex = 0;
 	//setScale( 0.1f );
 	mEmitter = *bloodEmitter;
+	mCounter = 0;
 }
 
 Player::~Player()

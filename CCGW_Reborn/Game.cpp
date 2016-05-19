@@ -42,8 +42,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	Texture* particleTexture = data.pAssets->load<Texture>( "Models/pns.png" );
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
-	Emitter playerEmitter;
 
+	Emitter playerEmitter;
 	data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
@@ -93,8 +93,11 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		0, 0, 0, 1
 	);
 
+	Sound* babysound = data.pAssets->load<Sound>("Sounds/dead_baby.wav");
+
 	for (int i = 0; i < data.mBabies; i++)
 	{
+		data.pBabies[i].loadSound(babysound);
 		data.pBabies[i].load(babyModel);
 		babyMat[3][0] = 6.5f*(i / 5);
 		babyMat[3][1] = 0.3f;
@@ -281,10 +284,12 @@ void Game::render()
 	data.pShadowProgram->unUse();
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+	worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+
 #if RENDER_TERRAIN
 	mGround.renderNonAni( worldLocation );
 #endif
+
 	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())

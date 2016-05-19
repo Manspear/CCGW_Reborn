@@ -46,6 +46,8 @@ private:
 	int daIndex;
 	int mHealth;
 
+	float mCounter;
+
 	Emitter mEmitter;
 
 	float mRot;
