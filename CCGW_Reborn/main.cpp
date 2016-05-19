@@ -14,7 +14,9 @@ int main(int argc, char** argv)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	SDL_Init(SDL_INIT_EVERYTHING);
-	Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+		gHasAudio = false;
+
 	SDL_Window* window = nullptr;
 
 	bool running = true;
@@ -38,8 +40,8 @@ int main(int argc, char** argv)
 	glClearColor(0.7f, 0.7f, 1.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
 
-	Input input(window);
 	Game game;
+	Input input(window);
 
 	SDL_GL_SetSwapInterval( 1 );
 

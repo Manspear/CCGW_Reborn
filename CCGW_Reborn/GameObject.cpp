@@ -74,14 +74,7 @@ void GameObject::playAnimation( int animation, bool looping, float speed )
 
 void GameObject::loadSound(Sound* sound)
 {
-	if (!sound)
-	{
-		const char* error = Mix_GetError();
-		std::cout << "Mixer error: " << error << std::endl;
-	}
-	else
-		this->mSound = sound;
-	int x = 0;
+	mSound = sound;
 }
 
 GameObject::GameObject(const GameObject& ref)

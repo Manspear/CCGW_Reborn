@@ -3,6 +3,7 @@
 #include <SDL\SDL_mixer.h>
 #include <vector>
 #include "Assets.h"
+#include "global_variables.h"
 
 /*Wrapper class for loading and playing short sounds.
 If channel is -1 (default) it will affect all sounds in the mixer.*/

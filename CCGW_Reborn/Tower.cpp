@@ -173,9 +173,6 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 
 	mpModel = mpHighWheelModel;
 	GameObject::renderAni( worldLocation, animationLocation );
-
-	/*mpModel = mpHeadModel;
-	GameObject::renderAni( worldLocation, animationLocation );*/
 }
 
 void Tower::renderArrows( GLuint worldLocation )
@@ -195,7 +192,7 @@ void Tower::setHasBallista( bool hasBallista )
 
 	mAnimator.setModel(mpLidModel);
 	// only do 95% of the animation, or it will snap back to the first frame
-	mAnimator.push( 0, false, 1.0f, 0.95f );
+	mAnimator.push( 0, true, 1.0f, 0.95f );
 
 	mCrossbowAnimator.setModel( mpCrossbowModel );
 	mCrossbowAnimator.push( ANIM_IDLE, true );
