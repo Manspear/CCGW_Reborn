@@ -116,7 +116,7 @@ void WaveSpawner::spawn()
 
 
 bool WaveSpawner::hasWon() {
-	return this->mWave > 25;
+	return this->mWave == 25;
 }
 
 void WaveSpawner::incrementWave()
@@ -133,7 +133,7 @@ void WaveSpawner::restart()
 {
 	mWave = 0;  mDelay = 0; mCurMoleratmen = 0; mSpawnMoleratmen = 0;
 	mCurMolebats = 0; mSpawnMolebats = 0;  mMoleratmanIndex = 0; mMolebatIndex = 0;
-	mTargets = 0;
+	mTargets = 0; 
 }
 
 glm::vec3 WaveSpawner::getPosition() const

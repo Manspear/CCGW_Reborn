@@ -18,7 +18,7 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 			if (mAllMenu[activeMenu].theMenu[i].checkMouseIntersection(x, y)) {
 				if (mAllMenu[activeMenu].theMenu[i].mType != 0)
 					mAllMenu[activeMenu].theMenu[i].mHighlighted = true;
-				if (inputs->buttonReleased(0)) {
+				if (inputs->buttonReleased(0) && mAllMenu[activeMenu].theMenu[i].mType != 0) {
 					buttonAction(mAllMenu[activeMenu].theMenu[i].mType, inputs, data);
 					break;
 				}
@@ -33,10 +33,8 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		moveMarker(data->pPlayer->getStrength());
 		if (state == GAME_LOST)
 			setPauseState(LOSING_SCREEN, inputs);
-		else if (state == GAME_WON)
-			setPauseState(VICTORY_SCREEN, inputs);		
-		if (mActiveField != nullptr) {
-			writeToField(inputs->getPressedKeys());
+		else if (state == GAME_WON) {
+			setPauseState(VICTORY_SCREEN, inputs);	
 		}
 	}
 	if (inputs->keyPressed(SDLK_ESCAPE)) {
@@ -47,49 +45,11 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 			buttonAction(5, inputs, data);
 		}
 	}
+	if (mActiveField != nullptr) {
+		writeToField(inputs->getPressedKeys());
+	}
 	render();
 	return mRunning;
-}
-
-void Menu::writeToField(std::vector<int>* keyVector)
-{
-	int x;
-	for (int i = 0; i < keyVector->size(); i++) {
-		x = keyVector->at(i);
-		if (x == 8) {
-			if (!mAllMenu[activeMenu].theNumbers.empty())
-				mAllMenu[activeMenu].theNumbers.pop_back();
-		}
-		else {
-			if (x > 57)
-				x -= 86;
-			else
-				x -= 48;
-			mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(mAllMenu[activeMenu].theNumbers.size() * 0.04f, 0), x });
-		}
-	}
-}
-
-void Menu::writeToFieldString(std::string theString)
-{
-	int x;
-	for (int i = 0; i < theString.size(); i++) {
-		x = theString[i];
-		if (x == 8) {
-			if (!mAllMenu[activeMenu].theNumbers.empty())
-				mAllMenu[activeMenu].theNumbers.pop_back();
-		}
-		else {
-			if (x > 57)
-				x -= 87;
-			else
-				x -= 48;
-			mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(cursorHolder * 0.04f, 0), x, numberVbo, numberTex });
-		}
-		cursorHolder++;
-	}
-	cursorHolder = 0;
-	mActiveField = nullptr;
 }
 
 void Menu::buttonAction(int type, Input* inputs, GameData* data)
@@ -129,6 +89,21 @@ void Menu::buttonAction(int type, Input* inputs, GameData* data)
 		mActiveField = &mAllMenu[activeMenu].theMenu[0];
 		mAllMenu[activeMenu].theMenu[0].mHighlighted = true;
 		break;
+	case 15:
+		if (checkIfHighscore(data)) {
+			data->pGame->restartGame();
+			healthBar();
+			buttonAction(7, inputs, data);
+			mActiveField = nullptr;
+			break;
+		}
+		else {
+			data->pGame->restartGame();
+			healthBar();
+			buttonAction(0, inputs, data);
+			mActiveField = nullptr;
+			break;
+		}
 	}
 }
 
@@ -349,7 +324,7 @@ void Menu::addNumber(float width, float height, GLuint &vboID, GLuint &texID, st
 void Menu::healthBar()
 {
 	for(int i = 0; i < 10; i++)
-		mAllMenu[ACTION_HUD].theNumbers.push_back(Number{ glm::vec2(-0.53 + i*0.118, -0.722), 0, healthbarVbo, healthbarTex });
+		mAllMenu[ACTION_HUD].theNumbers.push_back(Number{ glm::vec2(-0.439 + i*0.088, -0.8264), 0, healthbarVbo, healthbarTex });
 }
 
 Menu::Menu()
@@ -364,7 +339,7 @@ Menu::Menu()
 	lastHUD = MAIN_MENU;
 	cursorHolder = 0;
 	addNumber(0.04, 0.06, numberVbo, numberTex, "Models/menu/numbers.png");
-	addNumber(0.118, 0.1, healthbarVbo, healthbarTex, "Models/menu/healthbar.png");
+	addNumber(0.088, 0.0612, healthbarVbo, healthbarTex, "Models/menu/healthbar.png");
 	posLocation = glGetUniformLocation(numberShader->getProgramID(), "position");;
 	numberLocation = glGetUniformLocation(numberShader->getProgramID(), "number");;
 	buttonTex = glGetUniformLocation(menuShader->getProgramID(), "texSampler");
@@ -378,6 +353,8 @@ Menu::Menu()
 	buildAMenu("pauseBuild.txt", PAUSE_SCREEN, numberVbo, numberTex);
 	buildAMenu("tutorialBuild.txt", TUTORIAL_SCREEN, numberVbo, numberTex);
 	buildAMenu("highscoreBuild.txt", HIGHSCORE_SCREEN, numberVbo, numberTex);
+	buildAMenu("writescoreBuild.txt", WRITE_HIGHSCORE, numberVbo, numberTex);
+	readFromHighScore();
 	healthBar();
 	activeMenu = MAIN_MENU;
 }
@@ -425,26 +402,23 @@ std::string Menu::readBuild(std::string filePath)
 	return fileContent.str();
 }
 
-void Menu::writeToHighScore(GameData* data)
-{
-	/*ofstream file;
-	file.open("models/menu/highscore.txt");
-	file << data;
-	file.close();*/
-}
-
 void Menu::readFromHighScore()
 {
 	ifstream file;
 	istringstream ss;
 	string aString;
+	int x, y, z;
 	activeMenu = HIGHSCORE_SCREEN;
 	file.open("models/menu/highscore.txt");
+	mAllMenu[activeMenu].theNumbers.clear();
 	int i = 0;
-	std::vector<int> name;
-	while (getline(file, aString)) {
+	int j = 0;
+	for (int j = 0; j < 10; j++){
+		getline(file, aString);
 		ss.str(aString);
-		ss >> highscoreHolder >> mWaveScore >> mBabyScore >> mGoldScore;
+		ss >> highscoreHolder >> x >> y >> z;
+		highScores[j] = { highscoreHolder, x, y, z };
+		mWaveScore = std::to_string(x); mBabyScore = std::to_string(y); mGoldScore = to_string(z);
 		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
 		writeToFieldString(highscoreHolder);
 		mActiveField = &mAllMenu[activeMenu].theMenu[i++];
@@ -456,5 +430,94 @@ void Menu::readFromHighScore()
 		ss.clear();
 	}
 	file.close();
+}
+
+char getMeTheChar(int theInt) {
+	return theInt + 87;
+}
+
+string Menu::getScoreHolder() {
+	string name = "";
+	for (int i = 0; i < mAllMenu[WRITE_HIGHSCORE].theNumbers.size(); i++) {
+		name += getMeTheChar(mAllMenu[WRITE_HIGHSCORE].theNumbers[i].sampleX);
+	}
+	mAllMenu[WRITE_HIGHSCORE].theNumbers.clear();
+	return name;
+}
+
+bool Menu::checkIfHighscore(GameData* data) {
+	highscoreHolder = getScoreHolder();
+	bestWave = data->pWavespawner->getWave(); 
+	bestBaby = data->mBabyCount;
+	bestGold = data->pGold;
+	for (int i = 0; i < 10; i++){
+		if (bestWave > highScores[i].wave) {
+			writeHighscore(data, i);
+			return true;
+		}
+		if (bestBaby > highScores[i].babies) {
+			writeHighscore(data, i);
+			return true;
+		}
+		if (bestGold > highScores[i].gold) {
+			writeHighscore(data, i);
+			return true;
+		}
+	}
+	return false;
+}
+
+void Menu::writeHighscore(GameData* data, int index)
+{
+	ofstream file;
+	file.open("models/menu/highscore.txt");
+	int j = 0;
+	for (int i = 0; i < 10; i++) {
+		if (i != index) {
+			file << highScores[j].name << " " << highScores[j].wave << " " << highScores[j].babies << " " << highScores[j].gold;
+			j++;
+		}
+		else {
+			file << highscoreHolder << " " << bestWave << " " << bestBaby << " " << bestGold;
+		}
+		if (i != 9)
+			file << "\n";
+	}	
+	file.close();
+}
+
+void Menu::writeToField(std::vector<int>* keyVector)
+{
+	int x;
+	for (int i = 0; i < keyVector->size(); i++) {	
+			x = keyVector->at(i);
+			if (x == 8) {
+				if (!mAllMenu[activeMenu].theNumbers.empty())
+					mAllMenu[activeMenu].theNumbers.pop_back();
+			}
+			else if (mAllMenu[WRITE_HIGHSCORE].theNumbers.size() < 5) {
+				if (x > 57)
+					x -= 87;
+				else
+					x -= 48;
+				mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(mAllMenu[activeMenu].theNumbers.size() * 0.04f, 0), x, numberVbo, numberTex });
+			}
+	}
+}
+
+void Menu::writeToFieldString(std::string theString)
+{
+	int x;
+	for (int i = 0; i < theString.size(); i++) {
+		x = theString[i];
+		if (x > 57)
+			x -= 87;
+		else
+			x -= 48;
+		mAllMenu[activeMenu].theNumbers.push_back(Number{ mActiveField->getPos() + glm::vec2(cursorHolder * 0.04f, 0), x, numberVbo, numberTex });
+		cursorHolder++;
+	}
+	cursorHolder = 0;
+	mActiveField = nullptr;
 }
 
