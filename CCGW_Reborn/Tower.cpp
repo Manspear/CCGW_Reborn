@@ -157,8 +157,11 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	mpModel = mpCrossbowModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
-	/*mpModel = mpLidModel;
-	GameObject::renderAni( worldLocation, animationLocation );*/
+	mWorld = prevWorld;
+	mWorld[3][0] += 1.0f;
+	mWorld[3][2] -= 1.0f;
+	mpModel = mpLidModel;
+	GameObject::renderAni(worldLocation, animationLocation);
 
 	mWorld = prevWorld;
 	mWorld[3][1] = 0.0f;
