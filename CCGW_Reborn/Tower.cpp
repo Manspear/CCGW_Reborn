@@ -73,8 +73,7 @@ void Tower::update(GameData* gameData, const float & dt)
 			{
 				glm::vec3 dir = glm::normalize(mPosition - targetEnemy->getPosition());
 				float angle = glm::angle( dir, glm::vec3( 0, 0, 1 ) );
-				if( dir.z < 0 )
-					angle *= -1.0f;
+				if( dir.x < 0 ) angle *= -1.0f;
 
 				mCrossbowMatrix = glm::mat4(
 					cosf(angle), 0, -sinf(angle), 0,
@@ -127,7 +126,7 @@ void Tower::updateAnimation()
 	if( mpModel == mpCrossbowModel )
 		animator = &mCrossbowAnimator;
 
-	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed(), mWorld );
+	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed() );
 }
 
 void Tower::renderNonAni( GLuint worldLocation )
@@ -228,7 +227,8 @@ bool Tower::getHasBallista() const
 
 Tower::Tower()
 	: mWeaponReady( true ), mHasBallista( false ), mReloadTime( 5 ),
-	mFireRate( 3 ), mShooting( false ), mRange( 10 ), mStrength( 1 )
+	mFireRate( 3 ), mShooting( false ), mRange( 10 ), mStrength( 1 ),
+	targetEnemy( nullptr )
 {
 	/*mWeaponReady = true;
 	mLookat = { 1 ,0, 0 };

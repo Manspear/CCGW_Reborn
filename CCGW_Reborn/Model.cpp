@@ -14,7 +14,7 @@ TempFramesOver && TempFramesUnder will contain key-values that are "combinations
 A consequence of this blending would be that the below code would run for all the animation layers all the time (only a "if weight == 0"
 limiting it). The code "could" run the risk of making lag happen.
 **/
-void Model::updateAnimation(float speedFactor, int take, float currTime, glm::mat4x4 worldMat)
+void Model::updateAnimation(float speedFactor, int take, float currTime)
 {
 	if (Model::mpJointList.size() > 0)
 	{
@@ -24,7 +24,7 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 
 		**/
 
-		worldMat = glm::mat4();
+		glm::mat4 worldMat = glm::mat4();
 		//Keep this on watch...
 		float targetTime = speedFactor * currTime;
 		//std::vector<sKeyFrame> tempFrames;
@@ -34,16 +34,24 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 		tempFramesOver.clear();
 		mpJointList;
 
-		for (int i = 0; i < mpJointList.size(); i++)
+		int njoints = mpJointList.size();
+		for (int i = 0; i < njoints; i++)
 		{
-			if( mpJointList[i].keyFramesByTake[take].size() <= 0 )
+			Model::sModelJoint& joint = mpJointList[i];
+			std::vector<sKeyFrame>& keyframes = joint.keyFramesByTake[take];
+			const int frameCount = mpJointList[i].keyFramesByTake[take].size();
+
+			//if( mpJointList[i].keyFramesByTake[take].size() <= 0 )
+			if(frameCount <= 0 )
 				continue;
 
-			float jointMaxTime = mpJointList[i].keyFramesByTake[take].back().keyTime;
+			//float jointMaxTime = mpJointList[i].keyFramesByTake[take].back().keyTime;
+			float jointMaxTime = keyframes.back().keyTime;
+
 			targetTime = std::fmod(targetTime, jointMaxTime);
 			//Find the right keyframe based on time
 			int currKeyIndex;
-			const int frameCount = mpJointList[i].keyFramesByTake[take].size();
+			//const int frameCount = mpJointList[i].keyFramesByTake[take].size();
 
 			int closestKeyPos;
 			int closestKeyNeg;
@@ -68,12 +76,14 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 				{
 					closestKeyPos = j;
 					closestKeyNeg = j;
-					float diff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
+					//float diff = abs(targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime);
+					float diff = abs(targetTime - keyframes[j].keyTime);
 					prevDiffPos = diff;
 					prevDiffNeg = -10000000000.f;
 				}
 				else {
-					float currDiff = targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime;
+					//float currDiff = targetTime - mpJointList[i].keyFramesByTake[take][j].keyTime;
+					float currDiff = targetTime - keyframes[j].keyTime;
 
 					//if keyTime was larger than targetTime
 					if ((currDiff > prevDiffNeg) && (currDiff < 0.f))
@@ -88,7 +98,9 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 						prevDiffPos = currDiff;
 					}
 				}
-				if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
+
+				//if (mpJointList[i].keyFramesByTake[take][j].keyTime == targetTime)
+				if( keyframes[j].keyTime == targetTime )
 				{
 					closestKeyNeg = j;
 					closestKeyPos = j;
@@ -107,7 +119,8 @@ void Model::updateAnimation(float speedFactor, int take, float currTime, glm::ma
 		}
 		//Find the root joint.
 		int rootKey = 0;
-		for (int j = 0; j < mpJointList.size(); j++)
+		//for (int j = 0; j < mpJointList.size(); j++)
+		for( int j=0; j<njoints; j++ )
 		{
 			//If the joint has no parentjoint... That is: if it's the root.
 			if (mpJointList[j].jointData.parentJointID < 0)
@@ -438,7 +451,7 @@ void Model::myLerp(float arr1[3], float arr2[3], float fillArr[3], float iVal)
 }
 
 
-void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID)
+void Model::recursiveUpdateJointMatrixList(const glm::mat4& parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID)
 {
 	if( currJointID >= tempFramesOver.size() )
 	{
@@ -446,8 +459,13 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 		return;
 	}
 
+	sKeyFrame& frameUnder = tempFramesUnder[currJointID];
+	sKeyFrame& frameOver = tempFramesOver[currJointID];
+	Model::sModelJoint& joint = mpJointList[currJointID];
+
 	mpJointList;
-	glm::mat4 invBPose = glm::make_mat4(mpJointList[currJointID].jointData.globalBindPoseInverse);
+	//glm::mat4 invBPose = glm::make_mat4(mpJointList[currJointID].jointData.globalBindPoseInverse);
+	glm::mat4 invBPose = glm::make_mat4( joint.jointData.globalBindPoseInverse );
 
 	//Now get the key-
 	//glm::mat4 keyRMatUnder = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
@@ -464,35 +482,37 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 	float newTranVals[3];
 	float newScaleVals[3];
 
-	float diffKeys = tempFramesOver[currJointID].keyTime - tempFramesUnder[currJointID].keyTime;
+	//float diffKeys = tempFramesOver[currJointID].keyTime - tempFramesUnder[currJointID].keyTime;
+	float diffKeys = frameOver.keyTime - frameUnder.keyTime;
 	if (diffKeys == 0)
 	{
-		//interpolTrans = convertToTransMat(tempFramesUnder[currJointID].keyPos);
-		convertToTransMat(tempFramesUnder[currJointID].keyPos, &interpolTrans);
-		//interpolRot = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
-		convertToRotMat(tempFramesUnder[currJointID].keyRotate, &interpolRot);
-		//interpolScale = convertToScaleMat(tempFramesUnder[currJointID].keyScale);
-		convertToScaleMat(tempFramesUnder[currJointID].keyScale, &interpolScale);
+		//convertToTransMat(tempFramesUnder[currJointID].keyPos, &interpolTrans);
+		//convertToRotMat(tempFramesUnder[currJointID].keyRotate, &interpolRot);
+		//convertToScaleMat(tempFramesUnder[currJointID].keyScale, &interpolScale);
+
+		convertToTransMat( frameUnder.keyPos, &interpolTrans );
+		convertToRotMat( frameUnder.keyRotate, &interpolRot );
+		convertToScaleMat( frameUnder.keyScale, &interpolScale );
 	}
 	else
 	{
-		float diffUnderTime = abs(currTime - tempFramesUnder[currJointID].keyTime);
-		//float diffOverTime = tempFramesOver[currJointID].keyTime - currTime;
+		//float diffUnderTime = abs(currTime - tempFramesUnder[currJointID].keyTime);
+		float diffUnderTime = abs( currTime - frameUnder.keyTime );
 
 		float underAffect = diffUnderTime / diffKeys;
 		//float overAffect = 1.f - underAffect;
 		//float overAffect = diffOverTime / diffKeys;
 
-		myLerp(tempFramesUnder[currJointID].keyRotate, tempFramesOver[currJointID].keyRotate, newRotVals, underAffect);
-		//interpolRot = convertToRotMat(newRotVals);
+		//myLerp(tempFramesUnder[currJointID].keyRotate, tempFramesOver[currJointID].keyRotate, newRotVals, underAffect);
+		myLerp( frameUnder.keyRotate, frameOver.keyRotate, newRotVals, underAffect );
 		convertToRotMat(newRotVals, &interpolRot);
 
-		myLerp(tempFramesUnder[currJointID].keyPos, tempFramesOver[currJointID].keyPos, newTranVals, underAffect);
-		//interpolTrans = convertToTransMat(newTranVals);
+		//myLerp(tempFramesUnder[currJointID].keyPos, tempFramesOver[currJointID].keyPos, newTranVals, underAffect);
+		myLerp( frameUnder.keyPos, frameOver.keyPos, newTranVals, underAffect );
 		convertToTransMat(newTranVals, &interpolTrans);
 
-		myLerp(tempFramesUnder[currJointID].keyScale, tempFramesOver[currJointID].keyScale, newScaleVals, underAffect);
-		//interpolScale = convertToScaleMat(newScaleVals);
+		//myLerp(tempFramesUnder[currJointID].keyScale, tempFramesOver[currJointID].keyScale, newScaleVals, underAffect);
+		myLerp( frameUnder.keyScale, frameOver.keyScale, newScaleVals, underAffect );
 		convertToScaleMat(newScaleVals, &interpolScale);
 	}
 
@@ -519,7 +539,9 @@ void Model::recursiveUpdateJointMatrixList(glm::mat4 parentTransformMatrix, std:
 
 	jointMatrixList[currJointID] = finalTransform;
 
-	for (int i = 0; i < mpJointList[currJointID].jointChildren.size(); i++)
+	int nchildren = joint.jointChildren.size();
+	//for (int i = 0; i < mpJointList[currJointID].jointChildren.size(); i++)
+	for( int i=0; i<nchildren; i++ )
 	{
 		//glm::mat4 junky;
 		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);

@@ -159,6 +159,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pWavespawner = new WaveSpawner( &data );
 	data.pWavespawner->setPosition({ 14,0,-10 });	
+
+	mDeltaTimer = 0.0f;
 }
 
 Game::~Game() {
@@ -258,6 +260,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 
 void Game::render()
 {
+	int pre = SDL_GetTicks();
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
 	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
@@ -325,11 +328,14 @@ void Game::render()
 	data.pBillboardProgram->unUse();
 	data.pDeferredProgram->unUse();
 
-	drawOnScreenQuad();	
+	drawOnScreenQuad();
+
+	mRenderDelta = SDL_GetTicks() - pre;
 }
 
 void Game::update(Input* inputs, float dt) 
 {
+	int pre = SDL_GetTicks();
 	data.pWavespawner->update(dt);
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
@@ -378,6 +384,16 @@ void Game::update(Input* inputs, float dt)
 			data.pTowers[i].update( &data, dt );
 	if (!data.pPlayer->isAlive())
 		int a = 0;
+
+	int deltaTicks = SDL_GetTicks() - pre;
+
+	mDeltaTimer += dt;
+	if( mDeltaTimer >= 1.0f )
+	{
+		mDeltaTimer -= 1.0f;
+		std::cout << "Update(ms): " << deltaTicks << std::endl;
+		std::cout << "Render(ms): " << mRenderDelta << std::endl;
+	}
 }
 
 void Game::drawOnScreenQuad()

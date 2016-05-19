@@ -67,11 +67,12 @@ int main(int argc, char** argv)
 		fps++;
 		if( fpsTimer > 1.0f )
 		{
-			std::cout << "FPS: " << fps << std::endl;
+			//std::cout << "FPS: " << fps << std::endl;
 			fps = 0;
 			fpsTimer -= 1.0f;
 		}
 		
+		int pre = SDL_GetTicks();
 		if (!game.tactical)
 			gs = game.run(&input, dt, !mainMenu.mActive);
 		else

@@ -14,7 +14,7 @@ void GameObject::update(const float &dt) {
 }
 
 void GameObject::updateAnimation() {
-	mpModel->updateAnimation(1.0f, mAnimator.getCurrentAnimation()->mTake, mAnimator.getElapsed(), mWorld);
+	mpModel->updateAnimation(1.0f, mAnimator.getCurrentAnimation()->mTake, mAnimator.getElapsed() );
 }
 
 //void GameObject::renderAni(const GLuint & programID)
