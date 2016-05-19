@@ -66,6 +66,24 @@ void Tower::update(GameData* gameData, const float & dt)
 			mWeapon.update( dt );
 			mShooting = arrowShot(dt, gameData);
 		}
+
+		if( targetEnemy != nullptr )
+		{
+			if (mCrossbowAnimator.getCurrentTake() != ANIM_BUILDING)
+			{
+				glm::vec3 dir = glm::normalize(mPosition - targetEnemy->getPosition());
+				float angle = glm::angle( dir, glm::vec3( 0, 0, 1 ) );
+				if( dir.z < 0 )
+					angle *= -1.0f;
+
+				mCrossbowMatrix = glm::mat4(
+					cosf(angle), 0, -sinf(angle), 0,
+					0, 1, 0, 0,
+					sinf(angle), 0, cosf(angle), 0,
+					mPosition.x, mPosition.y, mPosition.z, 1
+				);
+			}
+		}
 	}
 }
 
@@ -132,13 +150,18 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
 	//mpModel = mpBallistaModel;
 
+	glm::mat4 prevWorld = mWorld;
+	mWorld = mCrossbowMatrix;
 	mWorld[3][1] = 0.0f;
 
 	mpModel = mpCrossbowModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
-	mpModel = mpLidModel;
-	GameObject::renderAni( worldLocation, animationLocation );
+	/*mpModel = mpLidModel;
+	GameObject::renderAni( worldLocation, animationLocation );*/
+
+	mWorld = prevWorld;
+	mWorld[3][1] = 0.0f;
 
 	mpModel = mpSmallCylinderModel;
 	GameObject::renderAni( worldLocation, animationLocation );
@@ -175,6 +198,7 @@ void Tower::setHasBallista( bool hasBallista )
 	mCrossbowAnimator.setModel( mpCrossbowModel );
 	mCrossbowAnimator.push( ANIM_IDLE, true );
 	mCrossbowAnimator.push( ANIM_BUILDING, false );
+	mCrossbowMatrix = mWorld;
 }
 
 bool Tower::getAlive() const

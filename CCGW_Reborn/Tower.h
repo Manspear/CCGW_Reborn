@@ -44,6 +44,7 @@ private:
 	Moleratman* targetEnemy;
 	bool mAlive, mHasBallista;
 	Animator mCrossbowAnimator;
+	glm::mat4 mCrossbowMatrix;
 
 	Model* mpBoxModel;
 
