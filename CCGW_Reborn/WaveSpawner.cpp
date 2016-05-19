@@ -101,7 +101,7 @@ void WaveSpawner::spawn()
 		}
 		mMoleRatWaveSize += 5;
 		mMoleBatWaveSize += 2;
-		mRatHP = 33.f;
+		mRatHP = 40.f;
 		mBatHP = 7.f;
 		mRatSpeed = 7.f;
 		mBatSpeed = 7.f;

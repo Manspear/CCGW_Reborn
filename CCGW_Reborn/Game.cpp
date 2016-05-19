@@ -191,7 +191,7 @@ void Game::restartGame()
 {
 	mCounter = 0;
 	data.pScore = 0;
-	data.pGold = 15;
+	data.pGold = 600;
 	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);

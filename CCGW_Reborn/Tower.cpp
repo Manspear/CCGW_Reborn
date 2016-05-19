@@ -228,7 +228,8 @@ bool Tower::getHasBallista() const
 
 Tower::Tower()
 	: mWeaponReady( true ), mHasBallista( false ), mReloadTime( 5 ),
-	mFireRate( 1 ), mShooting( false ), mRange( 10 ), mStrength( 1 )
+	mFireRate( 1 ), mShooting( false ), mRange( 10 ), mStrength( 1 ),
+	targetEnemy(nullptr)
 {
 	/*mWeaponReady = true;
 	mLookat = { 1 ,0, 0 };
