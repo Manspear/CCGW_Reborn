@@ -13,6 +13,7 @@ class Molebat;
 class Moleratman;
 class Tower;
 class Game;
+class Shadow;
 class WaveSpawner;
 struct GameData
 {
@@ -24,6 +25,7 @@ struct GameData
 	ForwardProgram* pForwardProgram;
 	ForwardProgram* pMenuProgram;
 	BillboardProgram* pBillboardProgram;
+	Shadow* pShadowProgram;
 	Player* pPlayer;
 	Emission* pEmission;
 	Grid* pGrid;

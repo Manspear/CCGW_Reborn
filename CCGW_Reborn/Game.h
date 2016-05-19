@@ -21,6 +21,7 @@
 #include "Moleratman.h"
 #include "Sound.h"
 #include "Model.h"
+#include "Shadow.h"
 
 #define RENDER_TERRAIN 0
 

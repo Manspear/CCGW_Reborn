@@ -15,6 +15,7 @@ ForwardProgram::ForwardProgram(const std::string& vertexPath, const std::string&
 	mSpecularLocation = glGetUniformLocation(mProgramID, "specularT");
 	mNormalLocation = glGetUniformLocation(mProgramID, "normalT");
 	mDepthLocation = glGetUniformLocation(mProgramID, "depthT");
+	mShadowLocation = glGetUniformLocation(mProgramID, "shadowT");
 
 	mCameraPositionLocation = glGetUniformLocation(mProgramID, "cameraPos");
 	mInverseViewPerspectiveLocation = glGetUniformLocation(mProgramID, "invViewPerspective");

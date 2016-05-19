@@ -8,6 +8,8 @@
 class WaveSpawner
 {
 public:
+	#define STARTRATWAVESIZE 5
+	#define STARTBATWAVESIZE 2
 	//Spawns new enemies when enough time has passed.
 	void update( float deltaTime );
 	//Starts spawning new enemies.

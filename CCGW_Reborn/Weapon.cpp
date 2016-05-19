@@ -14,11 +14,11 @@ bool Weapon::load( GameData* data, bool playerOwned, Emitter* emitter )
 }
 
 //The weapon of the towers.
-void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation) 
+void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float damage) 
 {
 	mStrength = 5;
-	towerDamage = 0.1;
-	shoot( position, lookat, rotation, mStrength,  towerDamage);
+	towerDamage = damage;
+	shoot( position, lookat, rotation, mStrength,  damage);
 }
 
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength, float damage)

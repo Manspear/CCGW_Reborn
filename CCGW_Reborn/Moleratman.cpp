@@ -85,6 +85,7 @@ void Moleratman::update(float dt, GameData* data)
 			rotY *= -1.0f;
 	}
 	else if (mAlive && mCurrent <= 0){
+		data->pBabies[0].playSound();
 		if (--data->mBabyCount <= 0)
 			data->pPlayer->takeDamage(1000);
 		mAlive = false;

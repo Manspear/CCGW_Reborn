@@ -48,6 +48,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="tempMesh.cpp" />
     <ClCompile Include="Terrain.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="ReadHeaderData.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="tempMesh.h" />
     <ClInclude Include="Terrain.h" />

@@ -37,12 +37,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pDeferredProgramNonAni = new DeferredProgram("deferred.vertex", "deferred.pixel", "deferred.geometry");
 	data.pForwardProgram = new ForwardProgram("forward.vertex", "forward.pixel", " ");
 	data.pBillboardProgram = new BillboardProgram("billboard.vertex", "billboard.pixel", "billboard.geometry");
+	data.pShadowProgram = new Shadow("shadow.vertex", "shadow.pixel");
 	data.pEmission = new Emission(&data, 10000);
 
 	Texture* particleTexture = data.pAssets->load<Texture>( "Models/pns.png" );
 	Texture* bloodTexture = data.pAssets->load<Texture>("Models/blood.png");
-	Emitter playerEmitter;
 
+	Emitter playerEmitter;
 	data.pEmission->allocEmitter(&playerEmitter, 100);
 	playerEmitter.load( particleTexture );
 
@@ -53,7 +54,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
 	data.pScore = 0;
-	data.pGold = 15;
+	data.pGold = 600;//gold all waves.  600 gold by "end game"
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
@@ -92,8 +93,11 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		0, 0, 0, 1
 	);
 
+	Sound* babysound = data.pAssets->load<Sound>("Sounds/dead_baby.wav");
+
 	for (int i = 0; i < data.mBabies; i++)
 	{
+		data.pBabies[i].loadSound(babysound);
 		data.pBabies[i].load(babyModel);
 		babyMat[3][0] = 6.5f*(i / 5);
 		babyMat[3][1] = 0.3f;
@@ -191,7 +195,7 @@ void Game::restartGame()
 {
 	mCounter = 0;
 	data.pScore = 0;
-	data.pGold = 15;
+	data.pGold = 600;
 	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
@@ -258,12 +262,34 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 
 void Game::render()
 {
+	data.pShadowProgram->use();
+	data.pShadowProgram->updateUniforms();
+
+	GLuint worldLocation = data.pShadowProgram->getWorldLocation();
+	GLuint animationLocation = data.pShadowProgram->getAnimationLocation();
+
+	data.pPlayer->render(worldLocation, animationLocation);
+
+	for (int i = 0; i < data.mMoleratmen; i++)
+	{
+		if (data.pMoleratmen[i].getAlive())
+			data.pMoleratmen[i].renderAni(worldLocation, animationLocation);
+	}
+	for (int i = 0; i < data.mMolebats; i++)
+	{
+		if (data.pMolebats[i].getAlive())
+ 			data.pMolebats[i].renderAni(worldLocation, animationLocation);
+	}
+
+	data.pShadowProgram->unUse();
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+	worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+
 #if RENDER_TERRAIN
 	mGround.renderNonAni( worldLocation );
 #endif
+
 	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
@@ -292,7 +318,7 @@ void Game::render()
 	data.pDeferredProgramNonAni->unUse();
 
 	worldLocation = data.pDeferredProgram->getWorldLocation();
-	GLuint animationLocation = data.pDeferredProgram->getAnimationLocation();
+	animationLocation = data.pDeferredProgram->getAnimationLocation();
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
@@ -309,14 +335,16 @@ void Game::render()
 	}
 
 	for( int i=0; i<data.mMoleratmen; i++ )
+	{
 		if( data.pMoleratmen[i].getAlive() )
 			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
-			data.pMoleratmen[i].renderAni( worldLocation, animationLocation );
-
-	for( int i=0; i<data.mMolebats; i++ )
-		if( data.pMolebats[i].getAlive() )
-			data.pMolebats[i].renderAni( worldLocation, animationLocation );
-	
+			data.pMoleratmen[i].renderAni(worldLocation, animationLocation);
+	}
+	for (int i = 0; i < data.mMolebats; i++)
+	{
+		if (data.pMolebats[i].getAlive())
+			data.pMolebats[i].renderAni(worldLocation, animationLocation);
+	}
 	data.pBillboardProgram->use();
 	data.pBillboardProgram->begin( data.pCamera );
 
@@ -384,6 +412,14 @@ void Game::drawOnScreenQuad()
 {
 	data.pForwardProgram->use();
 	data.pDeferredProgramNonAni->enableTextures(data.pForwardProgram->getTextureLocations());
+
+	GLuint loc = glGetUniformLocation(data.pForwardProgram->getProgramID(), "shadowT");
+	glUniform1i(loc, data.pShadowProgram->getDepthText());
+
+	data.pShadowProgram->enableTexture(data.pForwardProgram->getTextureLocations()[5]);
+
+	loc = glGetUniformLocation(data.pForwardProgram->getProgramID(), "shadowInvViewPers");
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &data.pShadowProgram->getMat()[0][0]);
 
 	//GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
 	glUniform3fv(data.pForwardProgram->getCameraPositionLocation(), 1, &data.pCamera->getPosition()[0]);
