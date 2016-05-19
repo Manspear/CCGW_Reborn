@@ -46,7 +46,7 @@ void Tower::update(GameData* gameData, const float & dt)
 						if (tempDir.z < 0)
 							angle *= -1;
 
-						mWeapon.shoot(mPosition , direction, angle);
+						mWeapon.shoot(mPosition , direction, angle, TOWERDAMAGE);
 
 						// set shooting animation
 						if(mCrossbowAnimator.getCurrentTake() == ANIM_IDLE )
@@ -94,7 +94,7 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 		targetHit = false;	
 		if (targetEnemy->getAlive())
 		{
-			targetEnemy->imHit(mStrength, targetEnemy->getPosition() + glm::vec3(0,1.5f,0));
+			targetEnemy->imHit(TOWERDAMAGE, targetEnemy->getPosition() + glm::vec3(0,1.5f,0));
 			if (!targetEnemy->getAlive())
 			{
 				data->pGold++;
@@ -227,8 +227,8 @@ bool Tower::getHasBallista() const
 
 Tower::Tower()
 	: mWeaponReady( true ), mHasBallista( false ), mReloadTime( 5 ),
-	mFireRate( 3 ), mShooting( false ), mRange( 10 ), mStrength( 1 ),
-	targetEnemy( nullptr )
+	mFireRate( 1 ), mShooting( false ), mRange( 10 ), mStrength( 1 ),
+	targetEnemy(nullptr)
 {
 	/*mWeaponReady = true;
 	mLookat = { 1 ,0, 0 };

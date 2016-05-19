@@ -21,6 +21,11 @@ struct Number {
 	GLuint texID;
 };
 
+struct Score {
+	string name;
+	int wave, babies, gold;
+};
+
 enum MENU {
 	MAIN_MENU, ACTION_HUD, TACTICAL_HUD, LOSING_SCREEN, VICTORY_SCREEN, PAUSE_SCREEN, TUTORIAL_SCREEN, HIGHSCORE_SCREEN, WRITE_HIGHSCORE
 };
@@ -83,11 +88,14 @@ private:
 	void writeToField(std::vector<int>* keyVector);
 	void writeToFieldString(std::string theString);
 	void pausedMenu(Input* inputs);
-	void writeToHighScore(GameData* data);
 	void readFromHighScore();
 	void moveMarker(float power);
+	bool checkIfHighscore(GameData* data);
+	void writeHighscore(GameData* data, int index);
+	string getScoreHolder();
 
 	string highscoreHolder, mWaveScore, mBabyScore, mGoldScore;
+	int bestWave, bestBaby, bestGold;
 	int cursorHolder;
 	std::vector<AMenu> mAllMenu;
 	Button* mActiveField;
@@ -104,5 +112,6 @@ private:
 	GLuint numberLocation;
 	GLuint moveLocation;
 	Assets mAssets;
+	Score highScores[10];
 	MENU lastHUD;
 };

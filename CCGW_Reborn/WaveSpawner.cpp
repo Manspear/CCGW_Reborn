@@ -43,7 +43,7 @@ void WaveSpawner::spawn()
 	//if( pGameData->pGrid->findPath( start, end, mpPath[i], &mTargets ) )
 	//{
 	incrementWave();
-
+	
 	mCurMoleratmen = 0;
 	mCurMolebats = 0;
 
@@ -54,14 +54,15 @@ void WaveSpawner::spawn()
 	mSpawnMoleratmen = glm::min((mWave*2 + 3), pGameData->mMoleratmen);
 	mSpawnMolebats = glm::min((mWave + 1), pGameData->mMolebats);
 */
-	mSpawnMoleratmen = mMoleRatWaveSize;
-	mSpawnMolebats = mMoleBatWaveSize;
+	
 
 	if (mWave <= 3)
 	{
 		if (waveLevel[0] == true)
 		{
-			mSpawnDelay = 0.75f;
+			mMoleRatWaveSize = 0.f;
+			mMoleBatWaveSize = 0.f;
+			mSpawnDelay = 0.4f;
 			waveLevel[0] = false;
 		}
 		mMoleRatWaveSize += 5;
@@ -76,35 +77,38 @@ void WaveSpawner::spawn()
 	{
 		if (waveLevel[1] == true)
 		{
-			mMoleRatWaveSize += 20;
-			mMoleBatWaveSize += 7;
+			mMoleRatWaveSize = 0;
+			mMoleBatWaveSize = 0;
 			mSpawnDelay = 0.3f;
 			waveLevel[1] = false;
 		}
-		mMoleRatWaveSize += 7;
-		mMoleBatWaveSize += 5;
+		mMoleRatWaveSize += 5;
+		mMoleBatWaveSize += 3;
 
-		mRatHP = 20.f;
+		mRatHP = 15.f;
 		mBatHP = 5.f;
 		mRatSpeed = 5.f;
 		mBatSpeed = 5.f;
 	}
-	if (mWave > 16)
+	if (mWave > 8)
 	{
 		if (waveLevel[2] == true)
 		{
-			mMoleRatWaveSize = 25.f;
-			mMoleBatWaveSize = 12.f;
-			mSpawnDelay = 0.2f;
+			mMoleRatWaveSize = 0.f;
+			mMoleBatWaveSize = 0.f;
+			mSpawnDelay = 0.1f;
 			waveLevel[2] = false;
 		}
-		mMoleRatWaveSize += 7;
-		mMoleBatWaveSize += 5;
+		mMoleRatWaveSize += 5;
+		mMoleBatWaveSize += 2;
 		mRatHP = 40.f;
 		mBatHP = 7.f;
-		mRatSpeed = 10.f;
-		mBatSpeed = 8.f;
+		mRatSpeed = 7.f;
+		mBatSpeed = 7.f;
 	}
+	mSpawnMoleratmen = mMoleRatWaveSize;
+	mSpawnMolebats = mMoleBatWaveSize;
+
 	// DEBUG: Remove this
 	//for( int i=0; i<pGameData->mMoleratmen; i++ )
 	//	pGameData->pMoleratmen[i].setAlive( false );
@@ -116,7 +120,7 @@ void WaveSpawner::spawn()
 
 
 bool WaveSpawner::hasWon() {
-	return this->mWave > 25;
+	return this->mWave > 12;
 }
 
 void WaveSpawner::incrementWave()
@@ -131,9 +135,16 @@ void WaveSpawner::setPosition( glm::vec3 position )
 
 void WaveSpawner::restart()
 {
-	mWave = 0;  mDelay = 0; mCurMoleratmen = 0; mSpawnMoleratmen = 0;
+	mWave = 9;  mDelay = 0; mCurMoleratmen = 0; mSpawnMoleratmen = 0;
 	mCurMolebats = 0; mSpawnMolebats = 0;  mMoleratmanIndex = 0; mMolebatIndex = 0;
 	mTargets = 0;
+	for (int i = 0; i < waveLevel.size(); i++)
+	{
+		waveLevel[i] = true;
+	}
+	mMoleRatWaveSize = STARTRATWAVESIZE;
+	mMoleBatWaveSize = STARTBATWAVESIZE;
+	spawnSwitch = false;
 }
 
 glm::vec3 WaveSpawner::getPosition() const
@@ -226,15 +237,15 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 
 WaveSpawner::WaveSpawner(GameData* data)
 	: pGameData(data),
-	mWave(0), mDelay(0.0f), mPosition(0.0f) ,
+	mWave(9), mDelay(0.0f), mPosition(0.0f) ,
 	mCurMoleratmen( 0 ), mSpawnMoleratmen( 0 ),
 	mCurMolebats( 0 ), mSpawnMolebats( 0 ),
 	mMoleratmanIndex( 0 ), mMolebatIndex( 0 ),
 	mTargets( 0 )
 {
 	mpPath = new sNode[20 * 20];
-	mMoleRatWaveSize = 5.f;
-	mMoleBatWaveSize = 2.f;
+	mMoleRatWaveSize = STARTRATWAVESIZE;
+	mMoleBatWaveSize = STARTBATWAVESIZE;
 	mSpawnDelay = 1.f;
 	spawnSwitch = false;
 
