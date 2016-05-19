@@ -16,7 +16,7 @@ public:
 private:
 	union
 	{
-		GLuint mTextureLocations[5];
+		GLuint mTextureLocations[6];
 		struct
 		{
 			GLuint mAmbientLocation;
@@ -24,6 +24,7 @@ private:
 			GLuint mSpecularLocation;
 			GLuint mNormalLocation;
 			GLuint mDepthLocation;
+			GLuint mShadowLocation;
 		};
 	};
 	GLuint mCameraPositionLocation;

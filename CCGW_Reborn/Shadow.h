@@ -5,7 +5,7 @@
 #include "glm\gtx\transform.hpp"
 //#include <glm\gtx\>
 
-class Shadow : ShaderProgram
+class Shadow : public ShaderProgram
 {
 	public:
 		Shadow(const std::string& vertexPath, const std::string& fragmentPath);
@@ -21,6 +21,8 @@ class Shadow : ShaderProgram
 		GLuint getAnimationLocation();
 		glm::mat4 getInvMat();
 		glm::mat4 getMat();
+		void enableTexture(GLuint texLoc);
+
 	private:
 		glm::mat4 vpmat;
 		glm::mat4 invvpmat;

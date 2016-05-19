@@ -283,8 +283,8 @@ void Game::render()
 	data.pShadowProgram->unUse();
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
-	GLuint worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
-	//mGround.renderNonAni( worldLocation );
+	worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+	mGround.renderNonAni( worldLocation );
 	data.pPlayer->renderArrows(worldLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
@@ -330,6 +330,7 @@ void Game::render()
 	}
 
 	for( int i=0; i<data.mMoleratmen; i++ )
+	{
 		if( data.pMoleratmen[i].getAlive() )
 			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
 			data.pMoleratmen[i].renderAni(worldLocation, animationLocation);
@@ -408,6 +409,9 @@ void Game::drawOnScreenQuad()
 
 	GLuint loc = glGetUniformLocation(data.pForwardProgram->getProgramID(), "shadowT");
 	glUniform1i(loc, data.pShadowProgram->getDepthText());
+
+	data.pShadowProgram->enableTexture(data.pForwardProgram->getTextureLocations()[5]);
+
 	loc = glGetUniformLocation(data.pForwardProgram->getProgramID(), "shadowInvViewPers");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &data.pShadowProgram->getMat()[0][0]);
 

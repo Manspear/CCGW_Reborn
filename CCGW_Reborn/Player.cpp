@@ -41,22 +41,17 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyDown(SDLK_w))
 	{
-		this->setAnimation(2);
 		mSpeed = mMaxSpeed;
 		dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 	}
 	if (inputs->keyDown(SDLK_s))
 	{
-
-		this->setAnimation(1);
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>();
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
 	if (inputs->keyDown(SDLK_a))
 	{
-
-		this->setAnimation(3);
 		mSpeed = mMaxSpeed;
 		float r = glm::pi<float>() * 0.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
