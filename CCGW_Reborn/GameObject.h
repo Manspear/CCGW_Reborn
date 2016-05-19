@@ -17,7 +17,7 @@ class GameObject
 {
 public:
 	//Gold gets "subtracted" in marker.cpp
-	#define BALLISTACOST 5
+	#define BALLISTACOST 35
 	#define BOXCOST 1
 
 	bool load( Model* model );

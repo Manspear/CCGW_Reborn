@@ -54,7 +54,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
 	data.pScore = 0;
-	data.pGold = 15;
+	data.pGold = 600;//gold all waves.  600 gold by "end game"
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
@@ -195,7 +195,7 @@ void Game::restartGame()
 {
 	mCounter = 0;
 	data.pScore = 0;
-	data.pGold = 15;
+	data.pGold = 600;
 	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
