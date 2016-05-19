@@ -7,15 +7,12 @@
 #include "Emitter.h"
 #include "Texture.h"
 
-#define ENEMY_RENDER_HITBOX 0
-
 //Abstract class for enemies.
 class Enemy : public GameObject
 {
 public:
 	//Render the enemy.
-	//void render( GLuint programID );
-	void render( GLuint worldLocation, GLuint animationLocation );
+	void renderHitbox( GLuint worldLocation, GameObject* objects );
 
 	//Set the path that this enemy should follow.
 	void setPath( sNode* path, int max );
@@ -23,8 +20,10 @@ public:
 	void imHit(float strength, glm::vec3 position);
 	void setAlive( bool alive );
 	void setLife( float life );
+	void setSpeed(float newSpeed);
 	bool getAlive() const;
 	float getLife() const;
+	float getSpeed() const;
 	const BoundingBox& getBoundingBox() const;
 	const BoundingBox& getHeadBox() const;
 
@@ -34,7 +33,6 @@ public:
 	Enemy();
 	~Enemy();
 
-	static Model* pBoundingBoxModel;
 protected:
 	
 	Emitter mEmitter;
@@ -42,7 +40,9 @@ protected:
 	BoundingBox mHeadBox;
 	float mBoundRadius;
 	sNode* pPath;
+	sNode mPrevTargetDif;
 	int mCurrent;
 	float mLife;
+	float mSpeed;
 	bool mAlive;
 };

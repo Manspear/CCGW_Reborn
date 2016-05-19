@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <SDL\SDL_image.h>
+#include "Assets.h"
 #include "Input.h"
 #include "ForwardProgram.h"
 #include "global_variables.h"
@@ -16,23 +17,26 @@ struct Vertex {
 struct Number {
 	glm::vec2 pos;
 	int sampleX;
+	GLuint vboID;
+	GLuint texID;
 };
 
 enum MENU {
-	MAIN_MENU, ACTION_HUD, LOSING_SCREEN, VICTORY_SCREEN, HIGHSCORE_SCREEN, PAUSE_SCREEN
+	MAIN_MENU, ACTION_HUD, TACTICAL_HUD, LOSING_SCREEN, VICTORY_SCREEN, PAUSE_SCREEN, TUTORIAL_SCREEN, HIGHSCORE_SCREEN, WRITE_HIGHSCORE
 };
 
 class Menu {
 private:
 	class Button {
 	public:
-		Button(float startX, float startY, float width, float height, char type, GLuint texture, GLuint bufferID) {
+		Button(float startX, float startY, float width, float height, int type, GLuint texture, GLuint bufferID) {
 			mTexture = texture;
 			mVboID = bufferID;
 			mType = type;
 			mNdcX = startX; mNdcY = startY;
 			mX = (startX + 1) * (gWidth / 2); mY = (startY + 1) * (gHeight / 2); mW = (startX + width + 1) * (gWidth / 2); mH = (startY + height + 1) * (gHeight / 2);
 			mHighlighted = false;
+			move = glm::vec2(0);
 		};
 		~Button() {
 	
@@ -45,15 +49,17 @@ private:
 		}
 		int mX, mY, mW, mH;
 		float mNdcX, mNdcY;
-		char mType;
+		int mType;
 		bool mHighlighted;
 		GLuint mTexture;
 		GLuint mVboID;
+		glm::vec2 move;
 	};
 public:
 	struct AMenu {
 		std::vector<Button> theMenu;
 		std::vector<Number> theNumbers;
+		GLuint texID;
 	};
 
 	bool mActive;
@@ -65,12 +71,13 @@ public:
 	Menu();
 	~Menu();
 private:
-	void buttonAction(char type, Input* inputs, int index, GameData* data);
+	void buttonAction(int type, Input* inputs, GameData* data);
 	GLuint loadTex(std::string filePath);
 	std::string readBuild(std::string filePath);
-	void addNumber(float width, float height);
+	void addNumber(float width, float height, GLuint &vboID, GLuint &texID, string filePath);
 	void renderNumbers();
-	void buildAMenu(std::string build, MENU menu);
+	void buildAMenu(std::string build, MENU menu, GLuint vboID, GLuint texID);
+	void healthBar();
 	Button addButton(float startX, float startY, float width, float height, char type, std::string texPath);
 	void setPauseState(MENU theMenu, Input* input);
 	void writeToField(std::vector<int>* keyVector);
@@ -78,6 +85,7 @@ private:
 	void pausedMenu(Input* inputs);
 	void writeToHighScore(GameData* data);
 	void readFromHighScore();
+	void moveMarker(float power);
 
 	string highscoreHolder, mWaveScore, mBabyScore, mGoldScore;
 	int cursorHolder;
@@ -88,8 +96,13 @@ private:
 	ForwardProgram* numberShader;
 	GLuint numberVbo;
 	GLuint numberTex;
+	GLuint healthbarVbo;
+	GLuint healthbarTex;
 	GLuint buttonTex;
 	GLuint buttonBool;
 	GLuint posLocation;
 	GLuint numberLocation;
+	GLuint moveLocation;
+	Assets mAssets;
+	MENU lastHUD;
 };

@@ -23,6 +23,8 @@
 #include "Model.h"
 #include "Shadow.h"
 
+#define RENDER_TERRAIN 1
+
 enum State {
 	GAME_LOST, GAME_WON, GAME_PLAYING
 };
@@ -46,11 +48,8 @@ private:
 	Marker mTacticalMarker;
 	GameData data;
 	int mTargets;
-	WaveSpawner* pWaveSpawner;
 	Tower** mpVisibleTowers;
 	int mVisibleTowers;
-
-	//std::vector<GameObject> babylist;
 
 	int mGold;
 	int mScore;

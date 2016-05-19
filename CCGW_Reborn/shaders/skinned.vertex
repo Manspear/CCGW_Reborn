@@ -13,7 +13,7 @@ out vec2 uvOut;
 out vec3 normalOut;
 out mat3 tbnOut;
 
-uniform mat4 animationMatrices[32];
+uniform mat4 animationMatrices[64];
 uniform mat4 world;
 
 void main()

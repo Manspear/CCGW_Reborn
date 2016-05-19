@@ -14,6 +14,7 @@ class Moleratman;
 class Tower;
 class Game;
 class Shadow;
+class WaveSpawner;
 struct GameData
 {
 	Assets* pAssets;
@@ -35,6 +36,7 @@ struct GameData
 	int mBabies;
 	int mBabyCount;
 	Moleratman* pMoleratmen;
+	WaveSpawner* pWavespawner;
 	int mMoleratmen;
 	int pScore;
 	int pGold;

@@ -63,10 +63,10 @@ void Arrow::update(float dt)
 					float damage = 0.0f;
 					// check headshot
 					if (pGameData->pMoleratmen[i].getHeadBox().intersect(lastPos, mPosition))
-						damage = mSpeed * 2.0f;
+						damage = mDamage * 2.0f;
 					// check bodyshot
 					else if (pGameData->pMoleratmen[i].getBoundingBox().intersect(lastPos, mPosition))
-						damage = mSpeed;
+						damage = mDamage;
 
 					if (damage > 0.0f)
 					{
@@ -82,6 +82,8 @@ void Arrow::update(float dt)
 							mpPiercedEnemies[mPiercings++] = &pGameData->pMoleratmen[i];
 							if( mPiercings >= ARROW_MAX_PIERCING_DEPTH )
 								mAlive = false;
+
+							//std::cout << "Hit enemy: " << mpPiercedEnemies[mPiercings-1] << std::endl;
 						}
 						else
 							mAlive = false;
@@ -106,9 +108,9 @@ void Arrow::update(float dt)
 				{
 					float damage = 0.0f;
 					if (pGameData->pMolebats[i].getHeadBox().intersect(lastPos, mPosition))
-						damage = mSpeed * 2.0f;
+						damage = mDamage * 2.0f;
 					else if (pGameData->pMolebats[i].getBoundingBox().intersect(lastPos, mPosition))
-						damage = mSpeed;
+						damage = mDamage;
 
 					if (damage > 0.0f)
 					{
@@ -169,7 +171,7 @@ Arrow::Arrow() : GameObject({0,-10,0}, 1.0f)
 		mpPiercedEnemies[i] = nullptr;
 }
 
-void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float travelSpeed, glm::vec3 downVector, float rotation)
+void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float travelSpeed, glm::vec3 downVector, float rotation, float damage)
 {
 	mPlayerOwned = owner;
 	rotY = 0;
@@ -178,6 +180,7 @@ void Arrow::spawn(bool owner, glm::vec3 position, glm::vec3 direction, float tra
 	mLookat = direction;
 	mSpeed = travelSpeed;
 	mGravitation = downVector;
+	mDamage = damage;
 
 	mVelocity = direction * travelSpeed;
 	mAlive = true;

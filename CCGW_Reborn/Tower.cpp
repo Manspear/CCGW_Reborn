@@ -2,22 +2,29 @@
 #define GLM_FORCE_RADIANS
 #include <glm\gtx\vector_angle.hpp>
 
-bool Tower::load( GameData* data, glm::vec3 position, Model* boxModel, Model* ballistaModel, Model* headModel, Emitter* emitter )
+bool Tower::load( GameData* data, glm::vec3 position, Model* boxModel, Model** models, Emitter* emitter )
 {
 	//mpWeapon = new Weapon( false, data );
 	mWeapon.load( data, false, emitter );
 	setPosition( position );
 	setScale( data->boxScale / 2 );
-	mpModel = mpBoxModel = boxModel;
+	/*mpModel = mpBoxModel = boxModel;
 	mpBallistaModel = ballistaModel;
-	mpHeadModel = headModel;
+	mpHeadModel = headModel;*/
+
+	mpBoxModel = boxModel;
+
+	for( int i=0; i<TOWER_MODELS; i++ )
+		mpModels[i] = models[i];
 
 	return true;
 }
 
 void Tower::update(GameData* gameData, const float & dt)
 {
-	GameObject::update( dt );
+	//GameObject::update( dt );
+	mAnimator.update(dt);
+	mCrossbowAnimator.update(dt);
 
 	if( mHasBallista )
 	{
@@ -40,6 +47,10 @@ void Tower::update(GameData* gameData, const float & dt)
 							angle *= -1;
 
 						mWeapon.shoot(mPosition , direction, angle);
+
+						// set shooting animation
+						if(mCrossbowAnimator.getCurrentTake() == ANIM_IDLE )
+							mCrossbowAnimator.push( ANIM_SHOOTING, false );
 						break;
 					}
 				}
@@ -54,6 +65,24 @@ void Tower::update(GameData* gameData, const float & dt)
 			//mpWeapon->update(dt);
 			mWeapon.update( dt );
 			mShooting = arrowShot(dt, gameData);
+		}
+
+		if( targetEnemy != nullptr )
+		{
+			if (mCrossbowAnimator.getCurrentTake() != ANIM_BUILDING)
+			{
+				glm::vec3 dir = glm::normalize(mPosition - targetEnemy->getPosition());
+				float angle = glm::angle( dir, glm::vec3( 0, 0, 1 ) );
+				if( dir.z < 0 )
+					angle *= -1.0f;
+
+				mCrossbowMatrix = glm::mat4(
+					cosf(angle), 0, -sinf(angle), 0,
+					0, 1, 0, 0,
+					sinf(angle), 0, cosf(angle), 0,
+					mPosition.x, mPosition.y, mPosition.z, 1
+				);
+			}
 		}
 	}
 }
@@ -92,15 +121,58 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 	mWorld[3][1] = ypos;
 }*/
 
+void Tower::updateAnimation()
+{
+	Animator* animator = &mAnimator;
+	if( mpModel == mpCrossbowModel )
+		animator = &mCrossbowAnimator;
+
+	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed(), mWorld );
+}
+
 void Tower::renderNonAni( GLuint worldLocation )
 {
-	mpModel = mpBoxModel;
-	GameObject::renderNonAni( worldLocation );
+	mWorld[3][1] = 0.0f;
+
+	if( mHasBallista )
+	{
+		mpModel = mpBaseModel;
+		GameObject::renderNonAni(worldLocation);
+	}
+	else
+	{
+		mpModel = mpBoxModel;
+		GameObject::renderNonAni( worldLocation );
+	}
 }
 
 void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
-	mpModel = mpBallistaModel;
+	//mpModel = mpBallistaModel;
+
+	glm::mat4 prevWorld = mWorld;
+	mWorld = mCrossbowMatrix;
+	mWorld[3][1] = 0.0f;
+
+	mpModel = mpCrossbowModel;
+	GameObject::renderAni( worldLocation, animationLocation );
+
+	mWorld = prevWorld;
+	mWorld[3][0] += 1.0f;
+	mWorld[3][2] -= 1.0f;
+	mpModel = mpLidModel;
+	GameObject::renderAni(worldLocation, animationLocation);
+
+	mWorld = prevWorld;
+	mWorld[3][1] = 0.0f;
+
+	mpModel = mpSmallCylinderModel;
+	GameObject::renderAni( worldLocation, animationLocation );
+
+	mpModel = mpMidCylinderModel;
+	GameObject::renderAni( worldLocation, animationLocation );
+
+	mpModel = mpHighWheelModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
 	/*mpModel = mpHeadModel;
@@ -120,10 +192,16 @@ void Tower::setAlive( bool alive )
 void Tower::setHasBallista( bool hasBallista )
 {
 	mHasBallista = hasBallista;
-	mpModel = ( hasBallista ? mpBallistaModel : mpBoxModel );
+	//mpModel = ( hasBallista ? mpBallistaModel : mpBoxModel );
 
-	mAnimator.setModel(mpBallistaModel);
-	mAnimator.push( 0, true );
+	mAnimator.setModel(mpLidModel);
+	// only do 95% of the animation, or it will snap back to the first frame
+	mAnimator.push( 0, false, 1.0f, 0.95f );
+
+	mCrossbowAnimator.setModel( mpCrossbowModel );
+	mCrossbowAnimator.push( ANIM_IDLE, true );
+	mCrossbowAnimator.push( ANIM_BUILDING, false );
+	mCrossbowMatrix = mWorld;
 }
 
 bool Tower::getAlive() const
@@ -150,7 +228,7 @@ bool Tower::getHasBallista() const
 
 Tower::Tower()
 	: mWeaponReady( true ), mHasBallista( false ), mReloadTime( 5 ),
-	mFireRate( 3 ), mShooting( false ), mRange( 10 ), mStrength( 10 )
+	mFireRate( 3 ), mShooting( false ), mRange( 10 ), mStrength( 1 )
 {
 	/*mWeaponReady = true;
 	mLookat = { 1 ,0, 0 };

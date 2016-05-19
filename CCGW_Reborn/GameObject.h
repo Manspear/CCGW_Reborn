@@ -16,15 +16,20 @@
 class GameObject
 {
 public:
+	//Gold gets "subtracted" in marker.cpp
+	#define BALLISTACOST 5
+	#define BOXCOST 1
+
 	bool load( Model* model );
 	virtual void update(const float &dt);
+	virtual void updateAnimation();
 	virtual void renderAni( GLuint worldLocation, GLuint animationLocation );
 	virtual void renderNonAni( GLuint worldLocation );
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
 	void setWorld(glm::mat4 world);
-	void setAnimation( int animation, bool looping, float speed = 1.0f );
+	void playAnimation( int animation, bool looping, float speed = 1.0f );
 	void loadSound(Sound* sound);
 
 	GameObject(const GameObject& ref);

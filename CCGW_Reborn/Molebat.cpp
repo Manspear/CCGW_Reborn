@@ -24,16 +24,12 @@ void Molebat::update(float dt)
 	else if(mTimeSinceLastHit > 1){
 
 		// play the molebats attack animation
-		for (int i = 0; i < pGameData->mMolebats; i++)
-		{
-			// set the to "attack" animation layer. 
-			pGameData->pMolebats[i].setAnimation(3, false, 2.0f);
-		}
+		mAnimator.push( 3, false, 2.0f );
 
 		pGameData->pPlayer->takeDamage(10);
 		mTimeSinceLastHit = 0;
 	}
-	float mSpeed = 3;
+
 	newPos += movement * mSpeed * dt;
 
 	// stay above ground
@@ -87,49 +83,10 @@ void Molebat::update(float dt)
 	bodyOffset.y = -0.5f + sinOffset;
 
 	glm::vec3 headOffset = mLookat*0.25f;
-	headOffset.y = sinOffset;
+	headOffset.y = -0.3f + sinOffset;
 
 	mBoundingBox.center = mPosition + bodyOffset;
 	mHeadBox.center = mPosition + headOffset;
-}
-
-//void Molebat::render( GLuint programID )
-void Molebat::render( GLuint worldLocation, GLuint animationLocation )
-{
-	//Enemy::render( programID );
-	Enemy::render( worldLocation, animationLocation );
-	
-#if ENEMY_RENDER_HITBOX
-	glPolygonMode( GL_FRONT, GL_LINE );
-
-	//GLuint worldLocation = glGetUniformLocation(programID, "world");
-	glm::mat4 world;
-	world[3][0] = mBoundingBox.center.x;
-	world[3][1] = mBoundingBox.center.y;
-	world[3][2] = mBoundingBox.center.z;
-
-	world[0][0] = mBoundingBox.hWidth*2.0f;
-	world[1][1] = mBoundingBox.hHeight*2.0f;
-	world[2][2] = mBoundingBox.hDepth*2.0f;
-
-	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
-
-	pBoundingBoxModel->drawNonAni();
-
-	world[3][0] = mHeadBox.center.x;
-	world[3][1] = mHeadBox.center.y;
-	world[3][2] = mHeadBox.center.z;
-
-	world[0][0] = mHeadBox.hWidth*2.0f;
-	world[1][1] = mHeadBox.hHeight*2.0f;
-	world[2][2] = mHeadBox.hDepth*2.0f;
-
-	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
-
-	pBoundingBoxModel->drawNonAni();
-
-	glPolygonMode( GL_FRONT, GL_FILL );
-#endif
 }
 
 void Molebat::imHit( float strength, glm::vec3 position )
@@ -154,6 +111,7 @@ Molebat& Molebat::operator=( const Molebat& ref )
 Molebat::Molebat( const Molebat& ref )
 	: Enemy( ref ), pGameData( ref.pGameData ), mSin( ref.mSin )
 {
+	mSpeed = 3.f;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;
 	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
@@ -162,6 +120,7 @@ Molebat::Molebat( const Molebat& ref )
 Molebat::Molebat()
 	: Enemy( glm::vec3( 0.0f ) ), mSin( rand() % 1000 )
 {
+	mSpeed = 3.f;
 	mTimeSinceLastHit = 0;
 	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
 	mBoundingBox.hHeight = 0.5f;

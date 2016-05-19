@@ -3,16 +3,64 @@
 
 void Moleratman::update(float dt, GameData* data)
 {
-	Enemy::update( dt );
+	//Enemy::update( dt );
 
 	if (mCurrent >= 0)
 	{
 		glm::vec3 target(pPath[mCurrent].x * pGameData->boxScale, 0.0f, pPath[mCurrent].y * pGameData->boxScale);
 
 		float dist = glm::distance(mPosition, glm::vec3(target));
-		if (dist < MOLERATMAN_SPEED * dt)
+		if (dist < mSpeed * dt)
 		{
+			sNode prev = pPath[mCurrent];
+
 			mCurrent--;
+
+			sNode cur = pPath[mCurrent];
+
+			sNode dif = { cur.x-prev.x, cur.y-prev.y };
+			if( dif.x != mPrevTargetDif.x || dif.y != mPrevTargetDif.y )
+			{
+					if( mPrevTargetDif.y != 0 )
+					{
+						int x = dif.x*mPrevTargetDif.y;
+						if( x < 0 )
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_RIGHT)
+							{
+								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f, 0.9f );
+							}
+						}
+						else
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_LEFT)
+							{
+								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f, 0.9f);
+							}
+						}
+					}
+					else
+					{
+						int y = dif.y*mPrevTargetDif.x;
+						if( y > 0 )
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_RIGHT )
+							{
+								mAnimator.push(ANIM_TURN_RIGHT, false, 2.0f, 0.9f);
+							}
+						}
+						else
+						{
+							if( mAnimator.getCurrentTake() != ANIM_TURN_LEFT )
+							{
+								mAnimator.push(ANIM_TURN_LEFT, false, 2.0f, 0.9f);
+							}
+						}
+					}
+			}
+
+			mPrevTargetDif = dif;
+
 			glm::vec3 dir = glm::normalize( target - mPosition );
 			mPosition = target;
 
@@ -21,7 +69,7 @@ void Moleratman::update(float dt, GameData* data)
 		else
 		{
 			glm::vec3 dir = glm::normalize(target - mPosition);
-			mPosition += dir * MOLERATMAN_SPEED * dt;
+			mPosition += dir * mSpeed * dt;
 		}
 
 		mWorld[3][0] = mPosition.x;
@@ -34,7 +82,7 @@ void Moleratman::update(float dt, GameData* data)
 		mLookat = glm::normalize(glm::vec3(dir.x, 0.0f, dir.z));
 		rotY = -glm::angle(mLookat, glm::vec3(1.0f, 0.0f, 0.0f));
 		if (mLookat.z < 0.0f)
-			rotY *= -1.0f;		
+			rotY *= -1.0f;
 	}
 	else if (mAlive && mCurrent <= 0){
 		if (--data->mBabyCount <= 0)
@@ -53,59 +101,22 @@ void Moleratman::update(float dt, GameData* data)
 			cosf(rotY)/2,	0,		-sinf(rotY) / 2,	0,
 			0,				1.0f / 2.0f,		0,				0,
 			sinf(rotY) / 2,		0,		cosf(rotY) / 2,		0,
-			mPosition.x,	mPosition.y+1,	mPosition.z, 1
+			mPosition.x,	mPosition.y+1.35f,	mPosition.z, 1
 		};
-	mBoundingBox.center = mPosition + glm::vec3( 0, 0.75f, 0 );
+	mBoundingBox.center = mPosition + glm::vec3( 0, 1.0f, 0 );
 
-	glm::vec3 headOffset = mLookat*0.5f;
-	headOffset.y = 1.5f;
+	glm::vec3 headOffset = mLookat*0.75f;
+	headOffset.y = 2.0f;
 	mHeadBox.center = mPosition + headOffset;
+
+	Enemy::update(dt);
 }
 
 void Moleratman::imHit( float strength, glm::vec3 position )
 {
 	Enemy::imHit( strength, position );
 
-	mAnimator.push( 2, false, 5.0f );
-}
-
-//void Moleratman::render( GLuint programID )
-void Moleratman::render( GLuint worldLocation, GLuint animationLocation )
-{
-	//Enemy::render( programID );
-	Enemy::render( worldLocation, animationLocation );
-	
-#if ENEMY_RENDER_HITBOX
-	glPolygonMode( GL_FRONT, GL_LINE );
-
-	//GLuint worldLocation = glGetUniformLocation( programID, "world" );
-	glm::mat4 world;
-	world[3][0] = mBoundingBox.center.x;
-	world[3][1] = mBoundingBox.center.y;
-	world[3][2] = mBoundingBox.center.z;
-
-	world[0][0] = mBoundingBox.hWidth*2.0f;
-	world[1][1] = mBoundingBox.hHeight*2.0f;
-	world[2][2] = mBoundingBox.hDepth*2.0f;
-
-	glUniformMatrix4fv( worldLocation, 1, GL_FALSE, &world[0][0] );
-
-	pBoundingBoxModel->drawNonAni();
-
-	world[3][0] = mHeadBox.center.x;
-	world[3][1] = mHeadBox.center.y;
-	world[3][2] = mHeadBox.center.z;
-
-	world[0][0] = mHeadBox.hWidth*2.0f;
-	world[1][1] = mHeadBox.hHeight*2.0f;
-	world[2][2] = mHeadBox.hDepth*2.0f;
-
-	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &world[0][0]);
-
-	pBoundingBoxModel->drawNonAni();
-
-	glPolygonMode(GL_FRONT, GL_FILL );
-#endif
+	mAnimator.push( ANIM_STAGGER, false, 5.0f );
 }
 
 Moleratman& Moleratman::operator=( const Moleratman& ref )
@@ -117,17 +128,19 @@ Moleratman& Moleratman::operator=( const Moleratman& ref )
 Moleratman::Moleratman( const Moleratman& ref )
 	: Enemy( ref )
 {
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
-	mBoundingBox.hHeight = 0.5f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+	mSpeed = 4.f;
+	mBoundingBox.hHeight = 1.0f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
 }
 
 Moleratman::Moleratman()
 {
+	mSpeed = 2.f;
 	mSound = nullptr;
-	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.25f;
-	mBoundingBox.hHeight = 0.5f;
-	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.125f;
+	mBoundingBox.hWidth = mBoundingBox.hDepth = 0.5f;
+	mBoundingBox.hHeight = 1.0f;
+	mHeadBox.hWidth = mHeadBox.hHeight = mHeadBox.hDepth = 0.25f;
 }
 
 Moleratman::~Moleratman()

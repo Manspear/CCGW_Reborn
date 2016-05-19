@@ -14,6 +14,7 @@ public:
 	glm::vec3 getMovingDirection(glm::vec3 v1, glm::vec3 v2);
 	glm::vec3 getLookAt() const;
 	float getRot() const;
+	float getStrength() const;
 	bool checkMove(glm::vec3 coord);
 	void setAlive(bool amIalive);
 	void takeDamage(int damage);
@@ -24,18 +25,28 @@ public:
 	void renderArrows(GLuint worldLocation);
 	
 	Player();
-	Player(GameData* data, Emitter* emitter);
+	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
+	enum
+	{
+		ANIM_RUN = 1,
+		ANIM_RELOAD,
+		ANIM_SHOOT,
+	};
+
 	float yoffset;
 	float speedY;
 	float mMaxSpeed;
 	float mSpeed;
 	float mStrength;
+	const float PI;
 	glm::vec3 mDirection;
 	GameData* pGameData;
 	int daIndex;
 	int mHealth;
+
+	Emitter mEmitter;
 
 	float mRot;
  };

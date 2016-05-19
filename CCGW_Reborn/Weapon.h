@@ -10,7 +10,7 @@ class Weapon
 public:
 	bool load( GameData* data, bool playerOwned, Emitter* emitter );
 	void shoot(glm::vec3 position, glm::vec3 lookat, float rotation);
-	void shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength);
+	void shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength, float damage);
 	void update(float dt);
 	//void draw(const GLuint &programID);
 	void render( GLuint worldLocation );
@@ -26,4 +26,5 @@ private:
 	Arrow mpArrows[WEAPON_MAX_ARROWS];
 	float mStrength;
 	float mRange;
+	float towerDamage;
 };

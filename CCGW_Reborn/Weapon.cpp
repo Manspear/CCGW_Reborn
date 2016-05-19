@@ -13,24 +13,26 @@ bool Weapon::load( GameData* data, bool playerOwned, Emitter* emitter )
 	return result;
 }
 
+//The weapon of the towers.
 void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation) 
 {
-	shoot( position, lookat, rotation, mStrength );
 	mStrength = 5;
+	towerDamage = 0.1;
+	shoot( position, lookat, rotation, mStrength,  towerDamage);
 }
 
-void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength)
+void Weapon::shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength, float damage)
 {
 	bool shot = false;
 	for (int i = 0; i<WEAPON_MAX_ARROWS && !shot; i++)
 	{
 		if (!mpArrows[i].isAlive())
 		{
-			mpArrows[i].spawn(mPlayerOwned, position, lookat, 15 * strength, { 0, -1, 0 }, rotation);
+			mpArrows[i].spawn(mPlayerOwned, position, lookat, 15 * strength, { 0, -1, 0 }, rotation, damage);
 			shot = true;
 		}
 	}
-	mStrength = strength;
+	mStrength = damage;
 }
 void Weapon::update(float dt) {
 	for( int i=0; i<WEAPON_MAX_ARROWS; i++ )

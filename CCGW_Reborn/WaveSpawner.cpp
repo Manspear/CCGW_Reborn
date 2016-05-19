@@ -4,22 +4,32 @@
 void WaveSpawner::update( float deltaTime )
 {
 	mDelay -= deltaTime;
-
 	if( mDelay <= 0.0f )
 	{
-		// TODO: Should we always spawn moleratmen before spawning molebats?
-		// Maybe every other? Maybe random?
-		if( mCurMoleratmen < mSpawnMoleratmen )
+
+		
+		if( mCurMoleratmen < mSpawnMoleratmen && spawnSwitch == false)
 		{
 			mCurMoleratmen++;
 			spawnMoleratman();
+			spawnSwitch = true;
 		}
-		else if (mCurMolebats < mSpawnMolebats)
+		else if (mCurMolebats < mSpawnMolebats && spawnSwitch == true)
 		{
 			mCurMolebats++;
 			spawnMolebat();
+			spawnSwitch = false;
 		}
-		mDelay = WAVESPAWNER_DELAY;
+		else if (spawnSwitch == false)
+		{
+			spawnSwitch = true;
+		}
+		else if (spawnSwitch == true)
+		{
+			spawnSwitch = false;
+		}
+		
+		mDelay = mSpawnDelay;
 	}
 }
 
@@ -40,21 +50,73 @@ void WaveSpawner::spawn()
 	mDelay = 0.0f;
 
 	// TODO: Do something useful here
+	/*
 	mSpawnMoleratmen = glm::min((mWave*2 + 3), pGameData->mMoleratmen);
 	mSpawnMolebats = glm::min((mWave + 1), pGameData->mMolebats);
+*/
+	mSpawnMoleratmen = mMoleRatWaveSize;
+	mSpawnMolebats = mMoleBatWaveSize;
 
+	if (mWave <= 3)
+	{
+		if (waveLevel[0] == true)
+		{
+			mSpawnDelay = 0.75f;
+			waveLevel[0] = false;
+		}
+		mMoleRatWaveSize += 5;
+		mMoleBatWaveSize += 3;
+
+		mRatHP = 10.f;
+		mBatHP = 4.f;
+		mRatSpeed = 4.f;
+		mBatSpeed = 4.f;
+	}
+	if (mWave > 3 && mWave <= 8)
+	{
+		if (waveLevel[1] == true)
+		{
+			mMoleRatWaveSize += 20;
+			mMoleBatWaveSize += 7;
+			mSpawnDelay = 0.3f;
+			waveLevel[1] = false;
+		}
+		mMoleRatWaveSize += 7;
+		mMoleBatWaveSize += 5;
+
+		mRatHP = 20.f;
+		mBatHP = 5.f;
+		mRatSpeed = 5.f;
+		mBatSpeed = 5.f;
+	}
+	if (mWave > 16)
+	{
+		if (waveLevel[2] == true)
+		{
+			mMoleRatWaveSize = 25.f;
+			mMoleBatWaveSize = 12.f;
+			mSpawnDelay = 0.2f;
+			waveLevel[2] = false;
+		}
+		mMoleRatWaveSize += 7;
+		mMoleBatWaveSize += 5;
+		mRatHP = 40.f;
+		mBatHP = 7.f;
+		mRatSpeed = 10.f;
+		mBatSpeed = 8.f;
+	}
 	// DEBUG: Remove this
-	for( int i=0; i<pGameData->mMoleratmen; i++ )
-		pGameData->pMoleratmen[i].setAlive( false );
+	//for( int i=0; i<pGameData->mMoleratmen; i++ )
+	//	pGameData->pMoleratmen[i].setAlive( false );
 
-	for (int i = 0; i<pGameData->mMolebats; i++)
-		pGameData->pMolebats[i].setAlive(false);
+	//for (int i = 0; i<pGameData->mMolebats; i++)
+	//	pGameData->pMolebats[i].setAlive(false);
 	//}
 }
 
 
 bool WaveSpawner::hasWon() {
-	return this->mWave > 10;
+	return this->mWave > 25;
 }
 
 void WaveSpawner::incrementWave()
@@ -79,6 +141,11 @@ glm::vec3 WaveSpawner::getPosition() const
 	return mPosition;
 }
 
+int WaveSpawner::getWave() const
+{
+	return mWave;
+}
+
 void WaveSpawner::spawnMoleratman()
 {
 	Moleratman* m = nullptr;
@@ -97,10 +164,11 @@ void WaveSpawner::spawnMoleratman()
 
 	if( m )
 	{
-		m->setPosition( mPosition );
-		m->setAlive( true );
-		m->setLife( 50.0f );
-		m->setPath(mpPath, mTargets );
+			m->setPosition(mPosition);
+			m->setAlive(true);
+			m->setLife(mRatHP);
+			m->setSpeed(mRatSpeed);
+			m->setPath(mpPath, mTargets);
 	}
 }
 
@@ -123,7 +191,8 @@ void WaveSpawner::spawnMolebat()
 		pos.y = MOLEBAT_HEIGHT;
 		m->setPosition( pos );
 		m->setAlive( true );
-		m->setLife( 1.0f );
+		m->setLife( mBatHP );
+		m->setSpeed(mBatSpeed);
 	}
 }
 
@@ -164,6 +233,16 @@ WaveSpawner::WaveSpawner(GameData* data)
 	mTargets( 0 )
 {
 	mpPath = new sNode[20 * 20];
+	mMoleRatWaveSize = 5.f;
+	mMoleBatWaveSize = 2.f;
+	mSpawnDelay = 1.f;
+	spawnSwitch = false;
+
+	waveLevels = 3;
+	for (int i = 0; i < waveLevels; i++)
+	{
+		waveLevel.push_back(true);
+	}
 }
 
 WaveSpawner::~WaveSpawner()
