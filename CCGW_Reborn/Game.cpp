@@ -53,13 +53,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
-	gStartGold = 31;
+	gStartGold = 66;
 	data.pGold = gStartGold;//gold all waves.  600 gold by "end game"
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_turning5.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animations.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_polished_2.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_polished.mole");
 #if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 #endif
@@ -154,7 +154,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
-		data.pMoleratmen[i].playAnimation( 1, true, 4.0f );
+		data.pMoleratmen[i].playAnimation( 1, true, 2.0f );
 		data.pMoleratmen[i].setScale(0.1f);
 	}
 

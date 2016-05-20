@@ -10,7 +10,7 @@
 class Tower : public GameObject
 {
 public:
-	#define TOWERDAMAGE 1
+	#define TOWERDAMAGE 8
 
 	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model** models, Emitter* emitter );
 	void update(GameData* gameData, const float &dt);
