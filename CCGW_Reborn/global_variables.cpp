@@ -1,2 +1,2 @@
-int gWidth, gHeight;
+int gWidth, gHeight, gStartGold;
 bool gHasAudio = true;

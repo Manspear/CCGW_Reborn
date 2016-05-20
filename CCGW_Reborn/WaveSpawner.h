@@ -16,8 +16,9 @@ public:
 	void spawn();
 	//Adds 1 to the wave counter.
 	void incrementWave();
-
+	void loadSound(Sound* sound, int i);
 	bool hasWon();
+	void playSound(int index);
 
 	void setPosition( glm::vec3 position );
 	void restart();
@@ -54,7 +55,7 @@ private:
 	int mCurMolebats, mSpawnMolebats;
 	int mMoleratmanIndex, mMolebatIndex;
 
-
+	Sound* pWaveAnnounce[27];
 	sNode* mpPath;
 	int mTargets;
 };

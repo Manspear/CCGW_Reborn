@@ -9,7 +9,7 @@ public:
 	//virtual void render(const GLuint &programID);
 	void render( GLuint worldLocation, GLuint tintLocation );
 	std::vector<glm::vec2> getMarkedTiles();
-	void resetMarkedTiles();
+	void resetMarkedTiles(GameData* data);
 	Marker();
 	virtual ~Marker();
 private:

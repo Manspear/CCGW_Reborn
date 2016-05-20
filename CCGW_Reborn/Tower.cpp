@@ -99,7 +99,6 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 			{
 				data->pGold++;
 				std::cout << "du fick peng " << data->pGold << std::endl;
-				data->pScore++;
 			}
 		}
 	}
