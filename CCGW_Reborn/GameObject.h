@@ -17,7 +17,7 @@ class GameObject
 {
 public:
 	//Gold gets "subtracted" in marker.cpp
-	#define BALLISTACOST 35
+	#define BALLISTACOST 30
 	#define BOXCOST 1
 
 	bool load( Model* model );
@@ -47,6 +47,8 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	Sound* mSound;
 	//float animationTime;
 	//int mAnimation;
+
+	std::vector<glm::mat4> mJointMatrixList;
 
 	Animator mAnimator;
 

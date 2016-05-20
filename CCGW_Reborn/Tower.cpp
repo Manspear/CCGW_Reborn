@@ -121,11 +121,13 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 
 void Tower::updateAnimation()
 {
-	Animator* animator = &mAnimator;
-	if( mpModel == mpCrossbowModel )
-		animator = &mCrossbowAnimator;
-
-	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed() );
+	for( int i=0; i<TOWER_MODELS; i++ )
+	{
+		if( mpModels[i] == mpCrossbowModel )
+			mpModels[i]->updateAnimation( mJointMatrixList, 1.0f, mCrossbowAnimator.getCurrentTake(), mCrossbowAnimator.getElapsed() );
+		else
+			mpModels[i]->updateAnimation( mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed() );
+	}
 }
 
 void Tower::renderNonAni( GLuint worldLocation, GLuint tintLocation )
@@ -191,7 +193,7 @@ void Tower::setHasBallista( bool hasBallista )
 
 	mAnimator.setModel(mpLidModel);
 	// only do 95% of the animation, or it will snap back to the first frame
-	mAnimator.push( 0, true, 1.0f, 0.95f );
+	mAnimator.push( 0, false, 1.0f, 0.95f );
 
 	mCrossbowAnimator.setModel( mpCrossbowModel );
 	mCrossbowAnimator.push( ANIM_IDLE, true );
