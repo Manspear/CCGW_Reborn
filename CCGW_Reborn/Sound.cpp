@@ -5,6 +5,9 @@
 //
 bool Sound::load( Assets* assets, string file)
 {
+	if( !gHasAudio )
+		return false;
+
 	mpChunk = Mix_LoadWAV( file.c_str() );
 	return ( mpChunk != nullptr );
 }
@@ -17,22 +20,26 @@ void Sound::unload()
 
 void Sound::play()
 {
-	Mix_PlayChannel( mChannel, mpChunk, mLooping );
+	if( gHasAudio )
+		Mix_PlayChannel( mChannel, mpChunk, mLooping );
 }
 
 void Sound::pause()
 {
-	Mix_Pause( mChannel );
+	if( gHasAudio )
+		Mix_Pause( mChannel );
 }
 
 void Sound::resume()
 {
-	Mix_Resume( mChannel );
+	if( gHasAudio )
+		Mix_Resume( mChannel );
 }
 
 void Sound::stop()
 {
-	Mix_HaltChannel( mChannel );
+	if (gHasAudio)
+		Mix_HaltChannel( mChannel );
 }
 
 int Sound::setVolume( int volume )
@@ -93,6 +100,9 @@ Sound::~Sound()
 //
 bool Music::load( Assets* assets, string file )
 {
+	if (!gHasAudio)
+		return false;
+
 	mpMusic = Mix_LoadMUS( file.c_str() );
 	return ( mpMusic != nullptr );
 }
@@ -105,17 +115,20 @@ void Music::unload()
 
 void Music::play()
 {
-	Mix_PlayMusic( mpMusic, mLooping );
+	if (gHasAudio)
+		Mix_PlayMusic( mpMusic, mLooping );
 }
 
 void Music::pause()
 {
-	Mix_PauseMusic();
+	if (gHasAudio)
+		Mix_PauseMusic();
 }
 
 void Music::stop()
 {
-	Mix_HaltMusic();
+	if (gHasAudio)
+		Mix_HaltMusic();
 }
 
 int Music::setVolume( int volume )

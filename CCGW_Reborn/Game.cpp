@@ -163,6 +163,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pWavespawner = new WaveSpawner( &data );
 	data.pWavespawner->setPosition({ 14,0,-10 });	
+
+	mDeltaTimer = 0.0f;
 }
 
 Game::~Game() {

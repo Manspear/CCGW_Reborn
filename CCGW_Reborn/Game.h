@@ -51,6 +51,9 @@ private:
 	Tower** mpVisibleTowers;
 	int mVisibleTowers;
 
+	int mRenderDelta;
+	float mDeltaTimer;
+
 	int mGold;
 	int mScore;
 

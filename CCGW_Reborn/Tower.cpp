@@ -73,8 +73,7 @@ void Tower::update(GameData* gameData, const float & dt)
 			{
 				glm::vec3 dir = glm::normalize(mPosition - targetEnemy->getPosition());
 				float angle = glm::angle( dir, glm::vec3( 0, 0, 1 ) );
-				if( dir.z < 0 )
-					angle *= -1.0f;
+				if( dir.x < 0 ) angle *= -1.0f;
 
 				mCrossbowMatrix = glm::mat4(
 					cosf(angle), 0, -sinf(angle), 0,
@@ -127,7 +126,7 @@ void Tower::updateAnimation()
 	if( mpModel == mpCrossbowModel )
 		animator = &mCrossbowAnimator;
 
-	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed(), mWorld );
+	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed() );
 }
 
 void Tower::renderNonAni( GLuint worldLocation )
@@ -174,9 +173,6 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 
 	mpModel = mpHighWheelModel;
 	GameObject::renderAni( worldLocation, animationLocation );
-
-	/*mpModel = mpHeadModel;
-	GameObject::renderAni( worldLocation, animationLocation );*/
 }
 
 void Tower::renderArrows( GLuint worldLocation )
@@ -196,7 +192,7 @@ void Tower::setHasBallista( bool hasBallista )
 
 	mAnimator.setModel(mpLidModel);
 	// only do 95% of the animation, or it will snap back to the first frame
-	mAnimator.push( 0, false, 1.0f, 0.95f );
+	mAnimator.push( 0, true, 1.0f, 0.95f );
 
 	mCrossbowAnimator.setModel( mpCrossbowModel );
 	mCrossbowAnimator.push( ANIM_IDLE, true );
