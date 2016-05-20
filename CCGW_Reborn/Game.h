@@ -67,5 +67,6 @@ private:
 	void createScreenQuad();
 	void drawOnScreenQuad();
 	void render();
+	void updateAnimations();
 	void update(Input* inputs, float dt);
 };

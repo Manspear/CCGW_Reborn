@@ -20,12 +20,6 @@ void GameObject::updateAnimation() {
 //void GameObject::renderAni(const GLuint & programID)
 void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 {
-    //mpModel->updateAnimation(1.f, mAnimation, animationTime, mWorld);
-	
-	updateAnimation();
-
-	//animationTime += 0.01f;
-
 	//GLuint world = glGetUniformLocation(programID, "animationMatrices");
 	glUniformMatrix4fv(animationLocation, mpModel->jointMatrixList.size(), GL_FALSE, glm::value_ptr(mpModel->jointMatrixList[0]));
 	//GLuint world2 = glGetUniformLocation(programID, "world");

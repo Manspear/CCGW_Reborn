@@ -27,9 +27,6 @@ void Model::updateAnimation(float speedFactor, int take, float currTime)
 		glm::mat4 worldMat = glm::mat4();
 		//Keep this on watch...
 		float targetTime = speedFactor * currTime;
-		//std::vector<sKeyFrame> tempFrames;
-		//std::vector<sKeyFrame> tempFramesUnder;
-		//std::vector<sKeyFrame> tempFramesOver;
 		tempFramesUnder.clear();
 		tempFramesOver.clear();
 		mpJointList;

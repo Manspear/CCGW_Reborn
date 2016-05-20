@@ -307,20 +307,10 @@ void Game::render()
 #endif
 
 	data.pPlayer->renderArrows(worldLocation);
-	/*for (int i = 0; i<data.mMolebats; i++)
-		if (data.pMolebats[i].getAlive())
-			data.pMolebats[i].renderNonAni( worldLocation );
-
-	for (int i = 0; i<mVisibleTowers; i++)
-		if (mpVisibleTowers[i]->getAlive())
-			//data.pTowers[i].renderNonAni(data.pDeferredProgramNonAni->getProgramID());
-			mpVisibleTowers[i]->renderNonAni( worldLocation );*/
-
 	for (int i = 0; i < mVisibleTowers; i++)
 	{
 		if (mpVisibleTowers[i]->getAlive())
 		{
-			//mpVisibleTowers[i]->render(worldLocation);
 			mpVisibleTowers[i]->renderNonAni(worldLocation);
 		}
 	}
@@ -345,7 +335,6 @@ void Game::render()
 	{
 		if (mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista())
 		{
-			//mpVisibleTowers[i]->render(worldLocation);
 			mpVisibleTowers[i]->renderAni(worldLocation,animationLocation);
 		}
 	}
@@ -353,7 +342,6 @@ void Game::render()
 	for( int i=0; i<data.mMoleratmen; i++ )
 	{
 		if( data.pMoleratmen[i].getAlive() )
-			//data.pMoleratmen[i].renderAni( data.pDeferredProgram->getProgramID() );
 			data.pMoleratmen[i].renderAni(worldLocation, animationLocation);
 	}
 	for (int i = 0; i < data.mMolebats; i++)
@@ -372,8 +360,32 @@ void Game::render()
 	drawOnScreenQuad();	
 }
 
+void Game::updateAnimations()
+{
+	data.pPlayer->updateAnimation();
+	for (int i = 0; i < mVisibleTowers; i++)
+	{
+		if (mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista())
+		{
+			mpVisibleTowers[i]->updateAnimation();
+		}
+	}
+
+	for (int i = 0; i<data.mMoleratmen; i++)
+	{
+		if (data.pMoleratmen[i].getAlive())
+			data.pMoleratmen[i].updateAnimation();
+	}
+	for (int i = 0; i < data.mMolebats; i++)
+	{
+		if (data.pMolebats[i].getAlive())
+			data.pMolebats[i].updateAnimation();
+	}
+}
+
 void Game::update(Input* inputs, float dt) 
 {
+	updateAnimations();
 	data.pWavespawner->update(dt);
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
