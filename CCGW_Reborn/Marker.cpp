@@ -31,16 +31,36 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 	else if( selectedTile.y >= gridHeight * gameData.boxScale )
 		selectedTile.y = gridHeight * gameData.boxScale;
 
-	uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
+	int curx = (int)(selectedTile.x / gameData.boxScale);
+	int cury = (int)(selectedTile.y / gameData.boxScale);
+	//uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
+	uchar currentTile = gameData.pGrid->getTile( curx, cury );
 	bool buildTowers = false;
+
+	//std::cout << curx << ":" << cury << " - " << mPrevX << ":" << mPrevY << std::endl;
+
+	if( curx != mPrevX || cury != mPrevY )
+	{
+		mCanBuild = ( currentTile == TILE_EMPTY || currentTile == TILE_BOX );
+		if( mCanBuild )
+		{
+			sNode start = { 0, 0 };
+			sNode end = { 8, 47 };
+			int mTargets = 0;
+
+			gameData.pGrid->setTile( curx, cury, TILE_HOLD );
+			mCanBuild = gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets);
+			gameData.pGrid->setTile( curx, cury, currentTile );
+		}
+	}
 
 	if (inputs->buttonDown(0) && gameData.pGold >= BOXCOST)
 	{
-		if( currentTile == TILE_EMPTY )
+		if( currentTile == TILE_EMPTY && mCanBuild )
 		{
 			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
 			mMarkedIndex.push_back(selectedTile);
-			sNode start = { 0, 0 };
+			/*sNode start = { 0, 0 };
 			sNode end = { 8, 47 };
 			int mTargets = 0;
 			if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
@@ -48,9 +68,11 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
 			}
 			else
-				gameData.pGold -= BOXCOST;
+				gameData.pGold -= BOXCOST;*/
+
+			gameData.pGold -= BOXCOST;
 		}
-		else if( currentTile == TILE_BOX && gameData.pGold >= BALLISTACOST)
+		else if( currentTile == TILE_BOX && mCanBuild && gameData.pGold >= BALLISTACOST)
 		{
 			gameData.pGrid->setTile( selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX | TILE_HOLD );
 			mMarkedIndex.push_back( selectedTile );
@@ -65,7 +87,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 				mMarkedIndex.erase(mMarkedIndex.begin() + i);
 				gameData.pGold++;
 			}
-		}	
+		}
 	}
 	if (inputs->keyDown(SDLK_1))
 	{
@@ -99,6 +121,10 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 
 		mMarkedIndex.clear();
 	}
+
+	mPrevX = curx;
+	mPrevY = cury;
+
 	mWorld[3][0] = selectedTile.x;
 	mWorld[3][1] = 1.5f;
 	mWorld[3][2] = selectedTile.y;
@@ -106,7 +132,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 }
 
 //void Marker::render(const GLuint & programID)
-void Marker::render( GLuint worldLocation )
+void Marker::render( GLuint worldLocation, GLuint tintLocation )
 {
 	for( int i=0; i<3; i++ )
 		mWorld[i][i] = 1.0f;
@@ -114,7 +140,15 @@ void Marker::render( GLuint worldLocation )
 	//GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if( mCanBuild )
+		glUniform3f( tintLocation, 0.0f, 1.0f, 0.0f );
+	else
+		glUniform3f( tintLocation, 1.0f, 0.0f, 0.0f );
+
 	mpModel->drawNonAni();
+
+	glUniform3f( tintLocation, 1.0f, 1.0f, 1.0f );
 	for (int i = 0; i < mMarkedIndex.size(); i++) {
 		mWorld[3][0] = mMarkedIndex[i].x;
 		mWorld[3][1] = 1.0f;
@@ -158,6 +192,7 @@ Marker::Marker()
 	mPicked = false;
 	selectedTile = { -1, -1 };
 	setScale(1.f/50.f);
+	mCanBuild = true;
 }
 
 Marker::~Marker()

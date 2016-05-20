@@ -14,6 +14,7 @@ DeferredProgram::DeferredProgram(const std::string& vertexPath, const std::strin
 	mViewPerspectiveLocation = glGetUniformLocation( mProgramID, "viewProjection" );
 	mCameraPositionLocation = glGetUniformLocation( mProgramID, "cameraPos" );
 	mWorldLocation = glGetUniformLocation( mProgramID, "world");
+	mTintLocation = glGetUniformLocation( mProgramID, "tint" );
 	mAnimationLocation = glGetUniformLocation( mProgramID, "animationMatrices" );
 
 	mTexSamplerLocation = glGetUniformLocation(mProgramID, "texSampler");
@@ -189,6 +190,11 @@ GLuint DeferredProgram::getFrameBuffer() const
 GLuint DeferredProgram::getWorldLocation() const
 {
 	return mWorldLocation;
+}
+
+GLuint DeferredProgram::getTintLocation() const
+{
+	return mTintLocation;
 }
 
 GLuint DeferredProgram::getAnimationLocation() const

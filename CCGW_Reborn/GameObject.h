@@ -24,7 +24,7 @@ public:
 	virtual void update(const float &dt);
 	virtual void updateAnimation();
 	virtual void renderAni( GLuint worldLocation, GLuint animationLocation );
-	virtual void renderNonAni( GLuint worldLocation );
+	virtual void renderNonAni( GLuint worldLocation, GLuint tintLocation );
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);

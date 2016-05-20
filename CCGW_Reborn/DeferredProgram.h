@@ -19,6 +19,7 @@ public:
 	GLuint getCameraPositionLocation() const;
 	GLuint getFrameBuffer() const;
 	GLuint getWorldLocation() const;
+	GLuint getTintLocation() const;
 	GLuint getAnimationLocation() const;
 
 private:
@@ -38,6 +39,7 @@ private:
 	GLuint mViewPerspectiveLocation;
 	GLuint mCameraPositionLocation;
 	GLuint mWorldLocation;
+	GLuint mTintLocation;
 	GLuint mAnimationLocation;
 	GLuint mTexSamplerLocation, mSpecularSamplerLocation, mNormalSamplerLocation;
 };

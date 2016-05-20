@@ -34,10 +34,11 @@ void GameObject::renderAni( GLuint worldLocation, GLuint animationLocation )
 }
 
 //void GameObject::renderNonAni(const GLuint & programID)
-void GameObject::renderNonAni( GLuint worldLocation )
+void GameObject::renderNonAni( GLuint worldLocation, GLuint tintLocation )
 {
 	//GLuint world2 = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
+	glUniform3f( tintLocation, 1.0f, 1.0f, 1.0f );
 	mpModel->drawNonAni();
 }
 

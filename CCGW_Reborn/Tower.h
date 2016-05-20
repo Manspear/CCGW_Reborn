@@ -16,9 +16,9 @@ public:
 	void update(GameData* gameData, const float &dt);
 	void updateAnimation();
 	//void render(const GLuint &programID);
-	void renderNonAni( GLuint worldLocation );
+	void renderNonAni( GLuint worldLocation, GLuint tintLocation );
 	void renderAni( GLuint worldLocation, GLuint animationLocation );
-	void renderArrows( GLuint worldLocation );
+	void renderArrows( GLuint worldLocation, GLuint tintLocation );
 
 	void setAlive( bool alive );
 	void setHasBallista( bool hasBallista );

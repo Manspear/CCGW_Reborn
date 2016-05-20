@@ -129,19 +129,19 @@ void Tower::updateAnimation()
 	mpModel->updateAnimation( 1.0f, animator->getCurrentTake(), animator->getElapsed() );
 }
 
-void Tower::renderNonAni( GLuint worldLocation )
+void Tower::renderNonAni( GLuint worldLocation, GLuint tintLocation )
 {
 	mWorld[3][1] = 0.0f;
 
 	if( mHasBallista )
 	{
 		mpModel = mpBaseModel;
-		GameObject::renderNonAni(worldLocation);
+		GameObject::renderNonAni(worldLocation, tintLocation);
 	}
 	else
 	{
 		mpModel = mpBoxModel;
-		GameObject::renderNonAni( worldLocation );
+		GameObject::renderNonAni( worldLocation, tintLocation );
 	}
 }
 
@@ -175,9 +175,9 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	GameObject::renderAni( worldLocation, animationLocation );
 }
 
-void Tower::renderArrows( GLuint worldLocation )
+void Tower::renderArrows( GLuint worldLocation, GLuint tintLocation )
 {
-	mWeapon.render( worldLocation );
+	mWeapon.render( worldLocation, tintLocation );
 }
 
 void Tower::setAlive( bool alive )

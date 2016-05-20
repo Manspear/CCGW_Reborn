@@ -286,13 +286,18 @@ void Game::render()
 	data.pShadowProgram->unUse();
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
+
 	worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+	GLuint tintLocation = data.pDeferredProgramNonAni->getTintLocation();
+
+	// set default tint to white
+	glUniform3f( tintLocation, 1.0f, 1.0f, 1.0f );
 
 #if RENDER_TERRAIN
-	mGround.renderNonAni( worldLocation );
+	mGround.renderNonAni( worldLocation, tintLocation );
 #endif
 
-	data.pPlayer->renderArrows(worldLocation);
+	data.pPlayer->renderArrows(worldLocation, tintLocation);
 	/*for (int i = 0; i<data.mMolebats; i++)
 		if (data.pMolebats[i].getAlive())
 			data.pMolebats[i].renderNonAni( worldLocation );
@@ -307,15 +312,15 @@ void Game::render()
 		if (mpVisibleTowers[i]->getAlive())
 		{
 			//mpVisibleTowers[i]->render(worldLocation);
-			mpVisibleTowers[i]->renderNonAni(worldLocation);
+			mpVisibleTowers[i]->renderNonAni(worldLocation, tintLocation);
 		}
 	}
 
 	for (int i = 0; i < data.mBabyCount; i++)
-		data.pBabies[i].renderNonAni(worldLocation);
+		data.pBabies[i].renderNonAni(worldLocation, tintLocation);
 
 	if (tactical)
-		mTacticalMarker.render( worldLocation );
+		mTacticalMarker.render( worldLocation, tintLocation );
 
 	data.pDeferredProgramNonAni->unUse();
 
