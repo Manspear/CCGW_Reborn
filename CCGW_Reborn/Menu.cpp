@@ -28,6 +28,8 @@ bool Menu::update(Input * inputs, GameData* data, State state)
 		}
 	}
 	else {
+		if (activeMenu == ACTION_HUD && data->pGame->tactical && data->pWavespawner->getWave() > 0)
+			data->pWavespawner->playSound(25);
 		activeMenu = (MENU)(1 + data->pGame->tactical);
 		updateNumbers(data);
 		moveMarker(data->pPlayer->getStrength());
@@ -67,9 +69,8 @@ void Menu::buttonAction(int type, Input* inputs, GameData* data)
 		break;
 	case 2:
 		inputs->setMouseVisible(false);
-		inputs->setMouseLock(!data->pGame->tactical);
+		inputs->setMouseLock(data->pGame->tactical);
 		mActive = false;
-		break;
 	case 10:
 		mRunning = false;
 		activeMenu = (MENU)0;
@@ -115,15 +116,16 @@ void Menu::updateNumbers(GameData * data)
 		divider *= 10;
 	}
 	divider = 1;
-	for (int i = 2; i < 4; i++) {
-		mAllMenu[activeMenu].theNumbers[i].sampleX = (data->pWavespawner->getWave()/ divider) % 10;
-		divider *= 10;
-	}
-	divider = 1;
 	for (int i = 4; i < 7; i++) {
 		mAllMenu[activeMenu].theNumbers[i].sampleX = (data->pGold / divider) % 10;
 		divider *= 10;
 	}
+	divider = 1;
+	for (int i = 2; i < 4; i++) {
+		mAllMenu[activeMenu].theNumbers[i].sampleX = (data->pWavespawner->getWave()/ divider) % 10;
+		divider *= 10;
+	}
+	
 	if (activeMenu == ACTION_HUD) {
 		int hp = data->pPlayer->getHealth() / 10;
 		while (hp < mAllMenu[ACTION_HUD].theNumbers.size() - 7)

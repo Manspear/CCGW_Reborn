@@ -108,14 +108,8 @@ void WaveSpawner::spawn()
 	}
 	mSpawnMoleratmen = mMoleRatWaveSize;
 	mSpawnMolebats = mMoleBatWaveSize;
-
-	// DEBUG: Remove this
-	//for( int i=0; i<pGameData->mMoleratmen; i++ )
-	//	pGameData->pMoleratmen[i].setAlive( false );
-
-	//for (int i = 0; i<pGameData->mMolebats; i++)
-	//	pGameData->pMolebats[i].setAlive(false);
-	//}
+	
+	playSound(mWave - 1);
 }
 
 
@@ -126,6 +120,12 @@ bool WaveSpawner::hasWon() {
 void WaveSpawner::incrementWave()
 {
 	mWave++;
+}
+
+void WaveSpawner::loadSound(Sound* sound, int i)
+{
+	if (sound != nullptr)
+		pWaveAnnounce[i] = sound;
 }
 
 void WaveSpawner::setPosition( glm::vec3 position )
@@ -207,6 +207,12 @@ void WaveSpawner::spawnMolebat()
 	}
 }
 
+void WaveSpawner::playSound(int index)
+{
+	if (pWaveAnnounce[index] != nullptr)
+		pWaveAnnounce[index]->play();
+}
+
 WaveSpawner& WaveSpawner::operator=( const WaveSpawner& ref )
 {
 	mWave = ref.mWave;
@@ -237,7 +243,7 @@ WaveSpawner::WaveSpawner( const WaveSpawner& ref )
 
 WaveSpawner::WaveSpawner(GameData* data)
 	: pGameData(data),
-	mWave(9), mDelay(0.0f), mPosition(0.0f) ,
+	mWave(0), mDelay(0.0f), mPosition(0.0f) ,
 	mCurMoleratmen( 0 ), mSpawnMoleratmen( 0 ),
 	mCurMolebats( 0 ), mSpawnMolebats( 0 ),
 	mMoleratmanIndex( 0 ), mMolebatIndex( 0 ),

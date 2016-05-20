@@ -53,8 +53,8 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
-	data.pScore = 0;
-	data.pGold = 600;//gold all waves.  600 gold by "end game"
+	gStartGold = 31;
+	data.pGold = gStartGold;//gold all waves.  600 gold by "end game"
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
@@ -164,6 +164,18 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	data.pWavespawner = new WaveSpawner( &data );
 	data.pWavespawner->setPosition({ 14,0,-10 });	
 
+	string path;
+	for (int i = 1; i < 26; i++) {
+		path = "Sounds/wave_" + std::to_string(i);
+		path.append(".wav");
+		sound = data.pAssets->load<Sound>(path);
+		data.pWavespawner->loadSound(sound, i - 1);
+	}
+	sound = data.pAssets->load<Sound>("Sounds/wave_completed.wav");
+	data.pWavespawner->loadSound(sound, 25);
+	sound = data.pAssets->load<Sound>("Sounds/not_enough_gold.wav");
+	sound->setVolume(20);
+	data.pWavespawner->loadSound(sound, 26);
 	mDeltaTimer = 0.0f;
 }
 
@@ -172,6 +184,7 @@ Game::~Game() {
 	delete data.pDeferredProgramNonAni;
 	delete data.pForwardProgram;
 	delete data.pBillboardProgram;
+	delete data.pShadowProgram;
 	delete data.pPlayer;
 	delete data.pCamera;
 	delete data.pEmission;
@@ -195,9 +208,9 @@ GameData * Game::getGameData()
 
 void Game::restartGame()
 {
+	mTacticalMarker.resetMarkedTiles(&data);
 	mCounter = 0;
-	data.pScore = 0;
-	data.pGold = 600;
+	data.pGold = gStartGold;
 	data.pPlayer->setAlive(true);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
@@ -256,6 +269,7 @@ State Game::run(Input* inputs, const float &dt, bool menuActive)
 	 if (inputs->keyPressed(SDLK_t))
 	 {
 		 inputs->setMouseLock(true);
+		 mTacticalMarker.resetMarkedTiles(&data);
 		 tactical = false;
 		 data.pWavespawner->spawn();
 	 }

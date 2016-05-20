@@ -74,7 +74,6 @@ void Arrow::update(float dt)
 
 						if (!pGameData->pMoleratmen[i].getAlive()) {
 							pGameData->pGold++;
-							pGameData->pScore++;
 						}
 
 						if (mPiercing)
@@ -118,7 +117,6 @@ void Arrow::update(float dt)
 						//mEmitter.spawn(mPosition, glm::vec3(0.0f, -1.0f, 0.0f), 1.0f);
 						if (!pGameData->pMolebats[i].getAlive()) {
 							pGameData->pGold++;
-							pGameData->pScore++;
 						}
 						if (mPiercing)
 						{

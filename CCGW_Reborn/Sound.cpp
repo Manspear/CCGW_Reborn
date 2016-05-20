@@ -44,7 +44,8 @@ void Sound::stop()
 
 int Sound::setVolume( int volume )
 {
-	return Mix_VolumeChunk( mpChunk, volume );
+	if (gHasAudio)
+		return Mix_VolumeChunk( mpChunk, volume );
 }
 
 void Sound::setChannel( int channel )

@@ -38,7 +38,6 @@ struct GameData
 	Moleratman* pMoleratmen;
 	WaveSpawner* pWavespawner;
 	int mMoleratmen;
-	int pScore;
 	int pGold;
 	Tower* pTowers;
 	int mTowers;

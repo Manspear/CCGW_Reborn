@@ -1,6 +1,7 @@
 #include "Marker.h"
 #include "Player.h"
 #include "Tower.h"
+#include "WaveSpawner.h"
 
 void Marker::update(const Player* player) {
 	float aRot = player->getRot() +glm::pi<float>() * 0.5f;
@@ -34,29 +35,33 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 	uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
 	bool buildTowers = false;
 
-	if (inputs->buttonDown(0) && gameData.pGold >= BOXCOST)
+	if (inputs->buttonDown(0))
 	{
-		if( currentTile == TILE_EMPTY )
-		{
-			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
-			mMarkedIndex.push_back(selectedTile);
-			sNode start = { 0, 0 };
-			sNode end = { 8, 47 };
-			int mTargets = 0;
-			if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
-				mMarkedIndex.erase(mMarkedIndex.end() - 1);
-				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+		if (gameData.pGold >= BOXCOST) {
+			if (currentTile == TILE_EMPTY)
+			{
+				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_HOLD);
+				mMarkedIndex.push_back(selectedTile);
+				sNode start = { 0, 0 };
+				sNode end = { 8, 47 };
+				int mTargets = 0;
+				if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
+					mMarkedIndex.erase(mMarkedIndex.end() - 1);
+					gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+				}
+				else
+					gameData.pGold -= BOXCOST;
 			}
-			else
-				gameData.pGold -= BOXCOST;
+			else if (currentTile == TILE_BOX && gameData.pGold >= BALLISTACOST)
+			{
+				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX | TILE_HOLD);
+				mMarkedIndex.push_back(selectedTile);
+				gameData.pGold -= BALLISTACOST;
+			}
 		}
-		else if( currentTile == TILE_BOX && gameData.pGold >= BALLISTACOST)
-		{
-			gameData.pGrid->setTile( selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX | TILE_HOLD );
-			mMarkedIndex.push_back( selectedTile );
-			gameData.pGold -= BALLISTACOST;
-		}
-	}
+		else
+			gameData.pWavespawner->playSound(26);
+	}	
 	if (inputs->buttonDown(2) && currentTile == TILE_HOLD)
 	{
 		gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
@@ -130,8 +135,16 @@ std::vector<glm::vec2> Marker::getMarkedTiles()
 	return mMarkedIndex;
 }
 
-void Marker::resetMarkedTiles()
+void Marker::resetMarkedTiles(GameData* data)
 {
+	int x;
+	int y;
+	for (int i = 0; i < mMarkedIndex.size(); i++) {
+		x = mMarkedIndex[i].x / data->boxScale;
+		y = mMarkedIndex[i].y / data->boxScale;
+		data->pGrid->setTile(x, y, TILE_EMPTY);
+		data->pGold++;
+	}
 	mMarkedIndex.clear();
 }
 
