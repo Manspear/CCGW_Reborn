@@ -66,6 +66,11 @@ float Animator::getElapsed() const
 	return mElapsed;
 }
 
+int Animator::getStackSize()
+{
+	return mStack.size();
+}
+
 Animator::Animator()
 {
 }
