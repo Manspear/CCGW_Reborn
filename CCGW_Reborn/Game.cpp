@@ -74,13 +74,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 
 	Model* towerModels[TOWER_MODELS] = {
-		data.pAssets->load<Model>("Models/Box_base.mole"),
-		data.pAssets->load<Model>( "Models/Box_lid.mole" ),
-		data.pAssets->load<Model>("Models/Ballista_Crossbow.mole"),
-		data.pAssets->load<Model>( "Models/Ballista_small_cylinder.mole" ),
-		data.pAssets->load<Model>( "Models/Ballista_mid_cylinder.mole" ),
-		data.pAssets->load<Model>( "Models/Ballista_low_wheel.mole" ),
-		data.pAssets->load<Model>( "Models/Ballista_high_wheel.mole" )
+		data.pAssets->load<Model>("Models/ballista_box.mole"),
+		data.pAssets->load<Model>( "Models/ballista_lid.mole" ),
+		data.pAssets->load<Model>("Models/ballista_crossbow.mole"),
+		data.pAssets->load<Model>( "Models/ballista_small_cylinder.mole" ),
+		data.pAssets->load<Model>( "Models/ballista_mid_cylinder.mole" ),
+		data.pAssets->load<Model>( "Models/ballista_low_wheel.mole" ),
+		data.pAssets->load<Model>( "Models/ballista_high_wheel.mole" )
 	};
 
 	data.mBabies = 25;
@@ -368,13 +368,13 @@ void Game::render()
 void Game::updateAnimations()
 {
 	data.pPlayer->updateAnimation();
-	for (int i = 0; i < mVisibleTowers; i++)
+	/*for (int i = 0; i < mVisibleTowers; i++)
 	{
 		if (mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista())
 		{
 			mpVisibleTowers[i]->updateAnimation();
 		}
-	}
+	}*/
 
 	for (int i = 0; i<data.mMoleratmen; i++)
 	{

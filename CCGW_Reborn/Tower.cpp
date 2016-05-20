@@ -49,7 +49,8 @@ void Tower::update(GameData* gameData, const float & dt)
 						mWeapon.shoot(mPosition , direction, angle, TOWERDAMAGE);
 
 						// set shooting animation
-						if(mCrossbowAnimator.getCurrentTake() == ANIM_IDLE )
+						//if(mCrossbowAnimator.getCurrentTake() == ANIM_IDLE )
+						if( mCrossbowAnimator.getStackSize() == 1 )
 							mCrossbowAnimator.push( ANIM_SHOOTING, false );
 						break;
 					}
@@ -154,6 +155,8 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	mWorld = mCrossbowMatrix;
 	mWorld[3][1] = 0.0f;
 
+	mpCrossbowModel->updateAnimation( mJointMatrixList, 1.0f, mCrossbowAnimator.getCurrentTake(), mCrossbowAnimator.getElapsed() );
+
 	mpModel = mpCrossbowModel;
 	GameObject::renderAni( worldLocation, animationLocation );
 
@@ -161,19 +164,25 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	mWorld[3][0] += 1.0f;
 	mWorld[3][2] -= 1.0f;
 	mpModel = mpLidModel;
+	mpModel->updateAnimation(mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed());
 	GameObject::renderAni(worldLocation, animationLocation);
 
 	mWorld = prevWorld;
 	mWorld[3][1] = 0.0f;
 
 	mpModel = mpSmallCylinderModel;
+	mpModel->updateAnimation(mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed());
 	GameObject::renderAni( worldLocation, animationLocation );
 
 	mpModel = mpMidCylinderModel;
+	mpModel->updateAnimation(mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed());
 	GameObject::renderAni( worldLocation, animationLocation );
 
 	mpModel = mpHighWheelModel;
+	mpModel->updateAnimation(mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed());
 	GameObject::renderAni( worldLocation, animationLocation );
+
+	mWorld = prevWorld;
 }
 
 void Tower::renderArrows( GLuint worldLocation, GLuint tintLocation )
@@ -193,10 +202,10 @@ void Tower::setHasBallista( bool hasBallista )
 
 	mAnimator.setModel(mpLidModel);
 	// only do 95% of the animation, or it will snap back to the first frame
-	mAnimator.push( 0, false, 1.0f, 0.95f );
+	mAnimator.push( 0, false, 1.0f, 0.75f );
 
 	mCrossbowAnimator.setModel( mpCrossbowModel );
-	mCrossbowAnimator.push( ANIM_IDLE, true );
+	mCrossbowAnimator.push( ANIM_SHOOTING, false, 0.0f );
 	mCrossbowAnimator.push( ANIM_BUILDING, false );
 	mCrossbowMatrix = mWorld;
 }

@@ -23,7 +23,7 @@
 #include "Model.h"
 #include "Shadow.h"
 
-#define RENDER_TERRAIN 0
+#define RENDER_TERRAIN 1
 
 enum State {
 	GAME_LOST, GAME_WON, GAME_PLAYING
