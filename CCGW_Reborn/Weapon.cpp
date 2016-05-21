@@ -4,7 +4,7 @@ bool Weapon::load( GameData* data, bool playerOwned, Emitter* emitter )
 {
 	bool result = true;
 
-	Model* arrowModel = data->pAssets->load<Model>( "Models/arrow.mole" );
+	Model* arrowModel = data->pAssets->load<Model>( "Models/arrowpx.mole" );
 
 	mPlayerOwned = playerOwned;
 	for( int i=0; i<WEAPON_MAX_ARROWS && result; i++ )

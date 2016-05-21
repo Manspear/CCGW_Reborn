@@ -28,13 +28,16 @@ void Arrow::update(float dt)
 	mLookat = glm::normalize( mPosition - lastPos );
 	glm::vec3 tempVec = glm::normalize( glm::vec3( mLookat.x, 0, mLookat.z ) );
 	rotY = glm::angle( mLookat, tempVec );
-	
+	if (mLookat.y < 0)
+	{
+		rotY *= -1;
+	}
 	float p = glm::pi<float>() * 0.5f;
-
+	float scale = 3.0f;
 	this->mWorld =	glm::mat4(
-								cosf(rotY)* cosf(rotX+p),		sinf(rotY),			cosf(rotY) * sinf(rotX+p),			0,
-								-sinf(rotY) * cosf(rotX+p),		cosf(rotY),			-sinf(rotY) * sinf(rotX+p),			0,
-								-sinf(rotX+p),					0,					cosf(rotX+p),						0,
+								cosf(rotY)* cosf(rotX)*scale,		sinf(rotY)*scale,			cosf(rotY) * sinf(rotX)*scale,			0,
+								-sinf(rotY) * cosf(rotX)*scale,		cosf(rotY)*scale,			-sinf(rotY) * sinf(rotX)*scale,			0,
+								-sinf(rotX)*scale,					0,					cosf(rotX)*scale,						0,
 								mPosition.x,					mPosition.y,		mPosition.z,						1
 	);
 
