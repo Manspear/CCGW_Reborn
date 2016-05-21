@@ -22,7 +22,7 @@ public:
 	int getHealth() const;
 	float getYOffset();
 	Weapon mWeapon;
-	void renderArrows(GLuint worldLocation);
+	void renderArrows(GLuint worldLocation, GLuint tintLocation);
 	
 	Player();
 	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);

@@ -13,10 +13,11 @@ in mat3 tbnOut2;
 uniform sampler2D texSampler;
 uniform sampler2D specularSampler;
 uniform sampler2D normalSampler;
+uniform vec3 tint;
 
 void main (){
 	vec2 uv = vec2( uvOut2.s, 1 - uvOut2.t );
-	color = texture(texSampler, uv);
+	color = texture(texSampler, uv) * tint;
 	specularTex = texture(specularSampler, uv).r;
 
 	normalTex = texture( normalSampler, uv ).rgb;

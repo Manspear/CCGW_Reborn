@@ -17,14 +17,14 @@ class GameObject
 {
 public:
 	//Gold gets "subtracted" in marker.cpp
-	#define BALLISTACOST 35
+	#define BALLISTACOST 30
 	#define BOXCOST 1
 
 	bool load( Model* model );
 	virtual void update(const float &dt);
 	virtual void updateAnimation();
 	virtual void renderAni( GLuint worldLocation, GLuint animationLocation );
-	virtual void renderNonAni( GLuint worldLocation );
+	virtual void renderNonAni( GLuint worldLocation, GLuint tintLocation );
 	glm::vec3 getPosition() const;
 	void setPosition( glm::vec3 position );
 	void setScale(float scale);
@@ -47,6 +47,8 @@ protected: // <-- changed to protected from private. because i wanted to reach t
 	Sound* mSound;
 	//float animationTime;
 	//int mAnimation;
+
+	std::vector<glm::mat4> mJointMatrixList;
 
 	Animator mAnimator;
 

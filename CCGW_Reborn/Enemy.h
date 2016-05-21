@@ -12,7 +12,7 @@ class Enemy : public GameObject
 {
 public:
 	//Render the enemy.
-	void renderHitbox( GLuint worldLocation, GameObject* objects );
+	void renderHitbox( GLuint worldLocation, GLuint tintLocation, GameObject* objects );
 
 	//Set the path that this enemy should follow.
 	void setPath( sNode* path, int max );

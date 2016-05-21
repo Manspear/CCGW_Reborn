@@ -23,9 +23,9 @@ public:
 		std::vector<sMeshChild> meshChildren;
 	};
 
-	std::vector<glm::mat4> jointMatrixList;
+	//std::vector<glm::mat4> jointMatrixList;
 
-	void updateAnimation(float speedFactor, int take, float currTime);
+	void updateAnimation( std::vector<glm::mat4>& jointMatrixList, float speedFactor, int take, float currTime);
 	bool load(Assets* assets, std::string file);
 	void unload();
 	void drawAni();
@@ -57,7 +57,7 @@ private:
 	void sortJointsByID();
 	void makeJointHierarchy();
 	void recursiveMakeJointHierarchy(int parentID);
-	void recursiveUpdateJointMatrixList(const glm::mat4& parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID);
+	void recursiveUpdateJointMatrixList( std::vector<glm::mat4>& jointMatrixList, const glm::mat4& parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID);
 	//glm::mat4 convertToTransMat(float inputArr[3]);
 	void convertToTransMat(float inputArr[3], glm::mat4* result);
 	//glm::mat4 convertToRotMat(float inputArr[3]);

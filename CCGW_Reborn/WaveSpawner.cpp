@@ -6,8 +6,6 @@ void WaveSpawner::update( float deltaTime )
 	mDelay -= deltaTime;
 	if( mDelay <= 0.0f )
 	{
-
-		
 		if( mCurMoleratmen < mSpawnMoleratmen && spawnSwitch == false)
 		{
 			mCurMoleratmen++;
@@ -68,7 +66,7 @@ void WaveSpawner::spawn()
 		mMoleRatWaveSize += 5;
 		mMoleBatWaveSize += 3;
 
-		mRatHP = 10.f;
+		mRatHP = 5.f;
 		mBatHP = 4.f;
 		mRatSpeed = 4.f;
 		mBatSpeed = 4.f;
@@ -77,15 +75,15 @@ void WaveSpawner::spawn()
 	{
 		if (waveLevel[1] == true)
 		{
-			mMoleRatWaveSize = 0;
-			mMoleBatWaveSize = 0;
+			mMoleRatWaveSize = 5;
+			mMoleBatWaveSize = 2;
 			mSpawnDelay = 0.3f;
 			waveLevel[1] = false;
 		}
 		mMoleRatWaveSize += 5;
 		mMoleBatWaveSize += 3;
 
-		mRatHP = 15.f;
+		mRatHP = 10.f;
 		mBatHP = 5.f;
 		mRatSpeed = 5.f;
 		mBatSpeed = 5.f;
@@ -94,14 +92,14 @@ void WaveSpawner::spawn()
 	{
 		if (waveLevel[2] == true)
 		{
-			mMoleRatWaveSize = 0.f;
-			mMoleBatWaveSize = 0.f;
+			mMoleRatWaveSize = 10.f;
+			mMoleBatWaveSize = 4.f;
 			mSpawnDelay = 0.1f;
 			waveLevel[2] = false;
 		}
 		mMoleRatWaveSize += 5;
-		mMoleBatWaveSize += 2;
-		mRatHP = 40.f;
+		mMoleBatWaveSize += 3;
+		mRatHP = 15.f;
 		mBatHP = 7.f;
 		mRatSpeed = 7.f;
 		mBatSpeed = 7.f;
@@ -114,7 +112,7 @@ void WaveSpawner::spawn()
 
 
 bool WaveSpawner::hasWon() {
-	return this->mWave > 12;
+	return this->mWave > 18;
 }
 
 void WaveSpawner::incrementWave()

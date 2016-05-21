@@ -25,6 +25,7 @@ public:
 	sAnimation* getCurrentAnimation();
 	int getCurrentTake();
 	float getElapsed() const;
+	int getStackSize();
 
 	Animator();
 	~Animator();

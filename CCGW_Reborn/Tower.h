@@ -10,15 +10,15 @@
 class Tower : public GameObject
 {
 public:
-	#define TOWERDAMAGE 1
+	#define TOWERDAMAGE 8
 
 	bool load( GameData* data, glm::vec3 position, Model* boxModel, Model** models, Emitter* emitter );
 	void update(GameData* gameData, const float &dt);
 	void updateAnimation();
 	//void render(const GLuint &programID);
-	void renderNonAni( GLuint worldLocation );
+	void renderNonAni( GLuint worldLocation, GLuint tintLocation );
 	void renderAni( GLuint worldLocation, GLuint animationLocation );
-	void renderArrows( GLuint worldLocation );
+	void renderArrows( GLuint worldLocation, GLuint tintLocation );
 
 	void setAlive( bool alive );
 	void setHasBallista( bool hasBallista );

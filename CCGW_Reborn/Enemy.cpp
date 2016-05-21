@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-void Enemy::renderHitbox( GLuint worldLocation, GameObject* objects )
+void Enemy::renderHitbox( GLuint worldLocation, GLuint tintLocation, GameObject* objects )
 {
 	glm::vec3 corners[8];
 	mBoundingBox.getCorners( corners );
@@ -9,7 +9,7 @@ void Enemy::renderHitbox( GLuint worldLocation, GameObject* objects )
 	{
 		objects[i].setPosition( corners[i] );
 		objects[i].setScale( 0.1f );
-		objects[i].renderNonAni( worldLocation );
+		objects[i].renderNonAni( worldLocation, tintLocation );
 	}
 
 	mHeadBox.getCorners( corners );
@@ -18,7 +18,7 @@ void Enemy::renderHitbox( GLuint worldLocation, GameObject* objects )
 	{
 		objects[i].setPosition( corners[i] );
 		objects[i].setScale( 0.1f );
-		objects[i].renderNonAni( worldLocation );
+		objects[i].renderNonAni( worldLocation, tintLocation );
 	}
 }
 
