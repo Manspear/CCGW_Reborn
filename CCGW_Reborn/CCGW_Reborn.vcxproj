@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ActionState.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Assets.cpp" />
@@ -50,16 +49,13 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Sound.cpp" />
-    <ClCompile Include="tempMesh.cpp" />
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="TestSprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tower.cpp" />
     <ClCompile Include="WaveSpawner.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActionState.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Assets.h" />
@@ -92,9 +88,7 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="tempMesh.h" />
     <ClInclude Include="Terrain.h" />
-    <ClInclude Include="TestSprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tower.h" />
     <ClInclude Include="WaveSpawner.h" />
@@ -177,6 +171,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)deps/include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)deps/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -226,6 +222,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;MoleReader.lib;SDL2.lib;SDL2_image.lib;SDL2main.lib;SDL2_mixer.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)deps/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

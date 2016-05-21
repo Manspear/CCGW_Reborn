@@ -22,9 +22,8 @@ void Game::createScreenQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)*/
+Game::Game() 
 {
-	pActionState = nullptr;
 	mDelayCleared = 2.0f;
 	mCounter = 0;
 	tactical = false;
@@ -65,13 +64,6 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 #endif
 	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
-
-	/*Model* boxModel = data.pAssets->load<Model>("Models/box.mole");
-	Model* enemyModel = data.pAssets->load<Model>("Models/molerat.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat.mole");
-	//Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
-	Model* markerModel = data.pAssets->load<Model>("Models/marker.mole");
-	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 
 	Model* towerModels[TOWER_MODELS] = {
 		data.pAssets->load<Model>("Models/ballista_box.mole"),
@@ -189,7 +181,6 @@ Game::~Game() {
 	delete data.pCamera;
 	delete data.pEmission;
 	delete data.pGrid;
-	delete pActionState;
 	delete[] data.pTowers;
 	delete data.pWavespawner;
 	delete[] data.pMoleratmen;
@@ -218,7 +209,6 @@ void Game::restartGame()
 		data.pTowers[i].setAlive(false);
 	delete data.pGrid;
 	data.pGrid = new Grid(16, 50);
-	
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
 	
@@ -312,6 +302,8 @@ void Game::render()
 #endif
 
 	data.pPlayer->renderArrows(worldLocation, tintLocation);
+	for (int i = 0; i < data.mTowers; i++)
+		data.pTowers->renderArrows(worldLocation, tintLocation);
 	for (int i = 0; i < mVisibleTowers; i++)
 	{
 		if (mpVisibleTowers[i]->getAlive())
@@ -333,7 +325,6 @@ void Game::render()
 	
 	data.pDeferredProgram->use(data.pDeferredProgramNonAni->getFrameBuffer());
 	data.pCamera->updateUniforms(data.pDeferredProgram->getViewPerspectiveLocation(), data.pDeferredProgram->getCameraPositionLocation());
-	//data.pPlayer->renderAni(data.pDeferredProgram->getProgramID());
 	data.pPlayer->render( worldLocation, animationLocation);
 
 	for (int i = 0; i < mVisibleTowers; i++)
@@ -428,7 +419,6 @@ void Game::update(Input* inputs, float dt)
 			inputs->setMouseLock(false);
 			tactical = true;
 			mCounter = 0;
-
 		}
 	}
 	else
