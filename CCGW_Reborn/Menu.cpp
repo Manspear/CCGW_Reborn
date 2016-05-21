@@ -69,8 +69,9 @@ void Menu::buttonAction(int type, Input* inputs, GameData* data)
 		break;
 	case 2:
 		inputs->setMouseVisible(false);
-		inputs->setMouseLock(data->pGame->tactical);
+		inputs->setMouseLock(!data->pGame->tactical);
 		mActive = false;
+		break;
 	case 10:
 		mRunning = false;
 		activeMenu = (MENU)0;
