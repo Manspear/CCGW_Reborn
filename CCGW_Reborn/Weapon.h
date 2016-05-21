@@ -13,7 +13,7 @@ public:
 	void shoot(glm::vec3 position, glm::vec3 lookat, float rotation, float strength, float damage);
 	void update(float dt);
 	//void draw(const GLuint &programID);
-	void render( GLuint worldLocation );
+	void render( GLuint worldLocation, GLuint tintLocation );
 	float getStrength() const;
 	float getRange() const;
 	void loadSound(Sound* sound);

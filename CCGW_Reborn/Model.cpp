@@ -14,7 +14,7 @@ TempFramesOver && TempFramesUnder will contain key-values that are "combinations
 A consequence of this blending would be that the below code would run for all the animation layers all the time (only a "if weight == 0"
 limiting it). The code "could" run the risk of making lag happen.
 **/
-void Model::updateAnimation(float speedFactor, int take, float currTime)
+void Model::updateAnimation( std::vector<glm::mat4>& jointMatrixList, float speedFactor, int take, float currTime)
 {
 	if (Model::mpJointList.size() > 0)
 	{
@@ -127,7 +127,7 @@ void Model::updateAnimation(float speedFactor, int take, float currTime)
 		}
 
 		if( tempFramesOver.size() > 0 && tempFramesUnder.size() > 0 )
-			recursiveUpdateJointMatrixList(worldMat, tempFramesUnder, tempFramesOver, targetTime, rootKey);
+			recursiveUpdateJointMatrixList(jointMatrixList, worldMat, tempFramesUnder, tempFramesOver, targetTime, rootKey);
 	}
 }
 
@@ -180,7 +180,7 @@ bool Model::load(Assets* assets, std::string file)
 	mpJointList;
 	if (mpJointList.size() > 0)
 		makeJointHierarchy();
-	jointMatrixList.resize(mpJointList.size());
+	//jointMatrixList.resize(mpJointList.size());
 
 	mMeshes = assetData.getMeshList().size();
 	mMaps = assetData.getMaterialList().size();
@@ -448,7 +448,7 @@ void Model::myLerp(float arr1[3], float arr2[3], float fillArr[3], float iVal)
 }
 
 
-void Model::recursiveUpdateJointMatrixList(const glm::mat4& parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID)
+void Model::recursiveUpdateJointMatrixList( std::vector<glm::mat4>& jointMatrixList, const glm::mat4& parentTransformMatrix, std::vector<sKeyFrame>& tempFramesUnder, std::vector<sKeyFrame>& tempFramesOver, float currTime, int currJointID)
 {
 	if( currJointID >= tempFramesOver.size() )
 	{
@@ -545,7 +545,7 @@ void Model::recursiveUpdateJointMatrixList(const glm::mat4& parentTransformMatri
 		//VVVVVVVVVVVVVVVVVVVVVVVVV THIS ONE WORKS WELL REMEMBER
 		//recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
 
-		recursiveUpdateJointMatrixList(keyTransform, tempFramesUnder, tempFramesOver, currTime, mpJointList[currJointID].jointChildren[i]);
+		recursiveUpdateJointMatrixList( jointMatrixList, keyTransform, tempFramesUnder, tempFramesOver, currTime, mpJointList[currJointID].jointChildren[i]);
 
 		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);

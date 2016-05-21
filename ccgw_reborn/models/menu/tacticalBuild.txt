@@ -1,5 +1,6 @@
 b -0.8 -0.8 0.4 0.2 0 Models/menu/T-Button.png
 b -0.4 -1.0 1.0 0.55 0 Models/menu/tacticalHUD.png
+b 0.25 -0.75 0.4 0.16 0 Models/menu/T-Button.png
 n -0.16 -0.95
 n -0.2 -0.95
 n 0.16 -0.95

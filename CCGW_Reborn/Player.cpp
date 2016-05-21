@@ -243,8 +243,8 @@ void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
 	GameObject::renderAni(worldLocation, animationLocation);
 }
-void Player::renderArrows(GLuint worldLocation) {
-	this->mWeapon.render(worldLocation);
+void Player::renderArrows(GLuint worldLocation, GLuint tintLocation) {
+	this->mWeapon.render(worldLocation, tintLocation);
 }
 
 void Player::setAlive(bool amIalive)

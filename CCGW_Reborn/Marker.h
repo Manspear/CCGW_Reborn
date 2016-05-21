@@ -7,7 +7,7 @@ public:
 	void update(const Player* gameData);
 	bool update(const Input * inputs, GameData &gameData);
 	//virtual void render(const GLuint &programID);
-	void render( GLuint worldLocation );
+	void render( GLuint worldLocation, GLuint tintLocation );
 	std::vector<glm::vec2> getMarkedTiles();
 	void resetMarkedTiles(GameData* data);
 	Marker();
@@ -15,6 +15,7 @@ public:
 private:
 	std::vector<glm::vec2> mMarkedIndex;
 	glm::vec2 selectedTile;
-	bool mPicked;
+	int mPrevX, mPrevY;
+	bool mPicked, mCanBuild;
 	glm::vec2 mousePicking(const glm::vec2 mousePos, const GameData &gameData);
 };

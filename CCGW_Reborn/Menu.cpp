@@ -105,6 +105,7 @@ void Menu::buttonAction(int type, Input* inputs, GameData* data)
 			mActiveField = nullptr;
 			break;
 		}
+
 	case 16:
 		activeMenu = MAIN_MENU;
 		break;

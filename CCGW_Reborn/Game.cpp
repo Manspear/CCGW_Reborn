@@ -53,13 +53,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 
 	data.pPlayer = new Player(&data, &playerEmitter, &enemyEmitter);
 	data.boxScale = 2;
-	gStartGold = 31;
+	gStartGold = 66;
 	data.pGold = gStartGold;//gold all waves.  600 gold by "end game"
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_turning5.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animations.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_polished_2.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_polished.mole");
 #if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 #endif
@@ -74,13 +74,13 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 	Model* boundingBoxModel = data.pAssets->load<Model>( "Models/box.mole" );*/
 
 	Model* towerModels[TOWER_MODELS] = {
-		data.pAssets->load<Model>("Models/Box_base.mole"),
-		data.pAssets->load<Model>( "Models/Box_lid.mole" ),
-		data.pAssets->load<Model>("Models/Ballista_Crossbow.mole"),
-		data.pAssets->load<Model>( "Models/Ballista_small_cylinder.mole" ),
-		data.pAssets->load<Model>( "Models/Ballista_mid_cylinder.mole" ),
-		data.pAssets->load<Model>( "Models/Ballista_low_wheel.mole" ),
-		data.pAssets->load<Model>( "Models/Ballista_high_wheel.mole" )
+		data.pAssets->load<Model>("Models/ballista_box.mole"),
+		data.pAssets->load<Model>( "Models/ballista_lid.mole" ),
+		data.pAssets->load<Model>("Models/ballista_crossbow.mole"),
+		data.pAssets->load<Model>( "Models/ballista_small_cylinder.mole" ),
+		data.pAssets->load<Model>( "Models/ballista_mid_cylinder.mole" ),
+		data.pAssets->load<Model>( "Models/ballista_low_wheel.mole" ),
+		data.pAssets->load<Model>( "Models/ballista_high_wheel.mole" )
 	};
 
 	data.mBabies = 25;
@@ -154,7 +154,7 @@ Game::Game() /*mCamera(45.0f, (float)gWidth/gHeight, 0.5, 50), mPlayer(&mAssets)
 		data.pMoleratmen[i].load(moleratModel, &enemyEmitter);
 		data.pMoleratmen[i].pGameData = &data;
 		data.pMoleratmen[i].loadSound(sound);
-		data.pMoleratmen[i].playAnimation( 1, true, 4.0f );
+		data.pMoleratmen[i].playAnimation( 1, true, 2.0f );
 		data.pMoleratmen[i].setScale(0.1f);
 	}
 
@@ -300,26 +300,31 @@ void Game::render()
 	data.pShadowProgram->unUse();
 	data.pDeferredProgramNonAni->use();
 	data.pCamera->updateUniforms( data.pDeferredProgramNonAni->getViewPerspectiveLocation(), data.pDeferredProgramNonAni->getCameraPositionLocation() );
+
 	worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
+	GLuint tintLocation = data.pDeferredProgramNonAni->getTintLocation();
+
+	// set default tint to white
+	glUniform3f( tintLocation, 1.0f, 1.0f, 1.0f );
 
 #if RENDER_TERRAIN
-	mGround.renderNonAni( worldLocation );
+	mGround.renderNonAni( worldLocation, tintLocation );
 #endif
 
-	data.pPlayer->renderArrows(worldLocation);
+	data.pPlayer->renderArrows(worldLocation, tintLocation);
 	for (int i = 0; i < mVisibleTowers; i++)
 	{
 		if (mpVisibleTowers[i]->getAlive())
 		{
-			mpVisibleTowers[i]->renderNonAni(worldLocation);
+			mpVisibleTowers[i]->renderNonAni(worldLocation, tintLocation);
 		}
 	}
 
 	for (int i = 0; i < data.mBabyCount; i++)
-		data.pBabies[i].renderNonAni(worldLocation);
+		data.pBabies[i].renderNonAni(worldLocation, tintLocation);
 
 	if (tactical)
-		mTacticalMarker.render( worldLocation );
+		mTacticalMarker.render( worldLocation, tintLocation );
 
 	data.pDeferredProgramNonAni->unUse();
 
@@ -363,13 +368,13 @@ void Game::render()
 void Game::updateAnimations()
 {
 	data.pPlayer->updateAnimation();
-	for (int i = 0; i < mVisibleTowers; i++)
+	/*for (int i = 0; i < mVisibleTowers; i++)
 	{
 		if (mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista())
 		{
 			mpVisibleTowers[i]->updateAnimation();
 		}
-	}
+	}*/
 
 	for (int i = 0; i<data.mMoleratmen; i++)
 	{

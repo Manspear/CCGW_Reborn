@@ -117,7 +117,7 @@ void Moleratman::imHit( float strength, glm::vec3 position )
 {
 	Enemy::imHit( strength, position );
 
-	mAnimator.push( ANIM_STAGGER, false, 5.0f );
+	mAnimator.push( ANIM_STAGGER, false, 1.0f );
 }
 
 Moleratman& Moleratman::operator=( const Moleratman& ref )
