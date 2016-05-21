@@ -57,7 +57,7 @@ Game::Game()
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_polished_2.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation_with_stagger.mole");
 	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_polished.mole");
 #if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
@@ -203,20 +203,21 @@ void Game::restartGame()
 	mCounter = 0;
 	data.pGold = gStartGold;
 	data.pPlayer->setAlive(true);
-	for (int i = 0; i<16; i++)
-		data.pGrid->setTile(i, 0, TILE_BLOCKED);
 	for (int i = 0; i<data.mTowers; i++)
 		data.pTowers[i].setAlive(false);
 	delete data.pGrid;
 	data.pGrid = new Grid(16, 50);
 	for (int i = 0; i<16; i++)
 		data.pGrid->setTile(i, 0, TILE_BLOCKED);
+	for (int i = 16; i < data.mTowers; i++)
+		data.pGrid->setTile(i, 0, TILE_EMPTY);
 	
 	for (int i = 0; i < data.mMolebats; i++)
 		data.pMolebats[i].setAlive(false);
 	
 	for (int i = 0; i < data.mMoleratmen; i++) 
 		data.pMoleratmen[i].setAlive(false);
+	
 	
 	data.pPlayer->setPosition(glm::vec3(14.0f, 0.0f, 14.0f));
 	data.pWavespawner->restart();

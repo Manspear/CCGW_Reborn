@@ -85,6 +85,8 @@ int main(int argc, char** argv)
 		SDL_GL_SwapWindow(window);
 	}
 	Mix_CloseAudio();
+	SDL_GL_DeleteContext(glContext);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
 	return 0;
 }

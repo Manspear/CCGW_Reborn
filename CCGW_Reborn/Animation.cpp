@@ -26,7 +26,8 @@ void Animator::update( float dt )
 		sTake& take = mStack.top();
 		sAnimation* animation = pModel->getAnimation(take.mIndex);
 		mElapsed += dt*take.mSpeed;
-
+		if (animation == nullptr)
+			return;
 		if( mElapsed >= animation->mDuration*take.mScale )
 		{
 			if( take.mLooping )
