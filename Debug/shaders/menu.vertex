@@ -1,0 +1,13 @@
+#version 420 core
+
+in vec2 pos ;
+in vec2 texPos ;
+
+out vec2 texOut;
+
+uniform vec2 movement;
+
+void main(){
+	gl_Position = vec4(pos + movement, -0.5,1);
+	texOut = texPos;
+}

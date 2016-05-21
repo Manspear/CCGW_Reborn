@@ -1,0 +1,26 @@
+#version 420 core
+
+in vec3 pos ;
+in vec3 normal ;
+in vec2 texPos ;
+in vec3 tangent ;
+in vec3 bitangent ;
+
+out vec4 posOut;
+out vec2 uvOut;
+out vec3 normalOut;
+out mat3 tbnOut;
+
+uniform mat4 world;
+
+void main(){
+	posOut = world * vec4(pos, 1.0);
+	uvOut = texPos;
+	normalOut = normal;
+
+	vec3 T = normalize( vec3( world * vec4( tangent, 0.0 ) ) );
+	vec3 B = normalize( vec3( world * vec4( bitangent, 0.0 ) ) );
+	vec3 N = normalize( vec3( world * vec4( normal, 0.0 ) ) );
+
+	tbnOut = mat3( T, B, N );
+}

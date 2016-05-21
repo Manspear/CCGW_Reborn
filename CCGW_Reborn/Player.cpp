@@ -63,8 +63,8 @@ void Player::update(const Input* inputs, const float &dt)
 			//How is the position of the arrow calculated..?
 			
 			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
-			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset, 0);
-			glm::vec3 la = glm::normalize((mPosition + 5.f*mLookat) - tempPos);
+			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset*2, 0);
+			glm::vec3 la = glm::normalize((mPosition + 10.0f*mLookat) - tempPos);
 			//glm::vec3 la = glm::normalize((mPosition + mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
 			

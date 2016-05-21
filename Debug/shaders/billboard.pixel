@@ -1,0 +1,20 @@
+#version 420 core
+
+layout(location = 0) out vec4 ambienT;
+layout(location = 1) out vec4 normalTex;
+layout(location = 2) out vec3 specularTex;
+layout(location = 3) out vec3 diffuseTex;
+
+in vec2 UV0;
+
+uniform sampler2D texSampler;
+
+void main (){
+	//ambienT = vec4( 1.0, 0.0, 0.0, 1.0 );
+	ambienT = texture( texSampler, UV0 );
+	specularTex = vec3(0,0,0);
+	diffuseTex = vec3(0,0,0);
+	normalTex = vec4(0,-1,0,0);
+	if(ambienT.a < 0.5)
+		discard;
+}

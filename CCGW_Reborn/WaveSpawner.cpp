@@ -133,7 +133,7 @@ void WaveSpawner::setPosition( glm::vec3 position )
 
 void WaveSpawner::restart()
 {
-	mWave = 9;  mDelay = 0; mCurMoleratmen = 0; mSpawnMoleratmen = 0;
+	mWave = 0;  mDelay = 0; mCurMoleratmen = 0; mSpawnMoleratmen = 0;
 	mCurMolebats = 0; mSpawnMolebats = 0;  mMoleratmanIndex = 0; mMolebatIndex = 0;
 	mTargets = 0;
 	for (int i = 0; i < waveLevel.size(); i++)
