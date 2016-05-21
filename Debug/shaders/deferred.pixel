@@ -1,0 +1,25 @@
+#version 420 core
+
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec3 normalTex;
+layout(location = 2) out float specularTex;
+layout(location = 3) out vec3 diffuseTex;
+
+
+in vec3 normalOut2;
+in vec2 uvOut2;
+in mat3 tbnOut2;
+
+uniform sampler2D texSampler;
+uniform sampler2D specularSampler;
+uniform sampler2D normalSampler;
+
+void main (){
+	vec2 uv = vec2( uvOut2.s, 1 - uvOut2.t );
+	color = texture(texSampler, uv);
+	specularTex = texture(specularSampler, uv).r;
+
+	normalTex = texture( normalSampler, uv ).rgb;
+	normalTex = normalize( normalTex * 2.0 - 1.0 );
+	normalTex = normalize( tbnOut2 * normalTex );
+}

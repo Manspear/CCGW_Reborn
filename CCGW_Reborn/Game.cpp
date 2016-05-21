@@ -389,7 +389,7 @@ void Game::update(Input* inputs, float dt)
 	data.pWavespawner->update(dt);
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
-	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 2.0f, {0,1,0});
+	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5.0f, {0,1,0});
 	//data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 1.6, { 0,1.3,0 });
 
 	data.pCamera->updateFrustum();
