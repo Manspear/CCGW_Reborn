@@ -55,10 +55,10 @@ Game::Game()
 	gStartGold = 66;
 	data.pGold = gStartGold;//gold all waves.  600 gold by "end game"
 
-	Model* playerModel = data.pAssets->load<Model>("Models/klara_animation.mole");
+	Model* playerModel = data.pAssets->load<Model>("Models/klara_lordag.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation_with_stagger.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_polished.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_lordag5.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_lordag2.mole");
 #if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 #endif
