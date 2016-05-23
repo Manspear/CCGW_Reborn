@@ -28,13 +28,32 @@ public:
 	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
+	#define ATKRDYTIMER 2
+
 	enum
 	{
 		ANIM_RUN = 1,
 		ANIM_RELOAD,
 		ANIM_SHOOT,
 	};
+	float jumpTimer;
+	bool isJumping;
+	bool isRunning;
+	bool isRunningHold;
+	bool isStrafingRight;
+	bool isStrafingLeft;
+	bool isBacking;
+	bool isBackingHold;
+	bool isIdle;
+	bool isHoldIdle;
 
+	bool isIdleAttacking;
+	bool isRunningAttacking;
+	bool isRStrafeAttacking;
+	bool isLStrafeAttacking;
+	bool isBackAttacking;
+
+	float attackReadyTimer;
 	float yoffset;
 	float speedY;
 	float mMaxSpeed;

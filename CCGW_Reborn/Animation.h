@@ -16,7 +16,7 @@ class Model;
 class Animator
 {
 public:
-	void push( int animation, bool loop, float speed = 1.0f, float scale = 1.0f );
+	void push( int animation, bool loop, float speed = 1.0f, float scale = 1.0f, float offset = 0.0f );
 	void pop();
 	void clear();
 	void update( float dt );
@@ -35,7 +35,7 @@ private:
 	{
 		int mIndex;
 		bool mLooping;
-		float mSpeed, mScale;
+		float mSpeed, mScale, mOffset;
 	};
 
 	Model* pModel;
