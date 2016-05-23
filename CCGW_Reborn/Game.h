@@ -1,8 +1,6 @@
 #pragma once
-#include "ActionState.h"
 #include "DeferredProgram.h"
 #include "ForwardProgram.h"
-#include "tempMesh.h"
 #include "Mesh.h"
 #include "Player.h"
 #include "Input.h"
@@ -42,7 +40,6 @@ public:
 	Game();
 	~Game();
 private:
-	GameState* pActionState;
 	GLuint testScreen;
 	Terrain mGround;
 	Marker mTacticalMarker;

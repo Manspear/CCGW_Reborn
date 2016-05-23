@@ -63,7 +63,6 @@ void Tower::update(GameData* gameData, const float & dt)
 				mWeaponReady = true;
 		}
 		if (mShooting) {
-			//mpWeapon->update(dt);
 			mWeapon.update( dt );
 			mShooting = arrowShot(dt, gameData);
 		}
@@ -105,20 +104,6 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 	}
 	return targetHit;
 }
-
-//void Tower::render(const GLuint & programID)
-/*void Tower::render( GLuint worldLocation )
-{
-	// TODO: Please fix, don't ship
-	float ypos = mWorld[3][1];
-	mWorld[3][1] = 0.0f;
-
-	GameObject::renderNonAni(worldLocation);
-	if (mShooting)
-		mWeapon.render( worldLocation );
-
-	mWorld[3][1] = ypos;
-}*/
 
 void Tower::updateAnimation()
 {
@@ -220,36 +205,13 @@ bool Tower::getHasBallista() const
 	return mHasBallista;
 }
 
-/*Tower::Tower(GameData* gameData, glm::vec3 position, const Tower &towerRef, float scale): GameObject(position, scale){
-	this->mpModel = towerRef.mpModel;
-	this->mpWeapon = new Weapon(false, gameData);
-	this->mWeaponReady = true;
-	mLookat = { 1 ,0, 0 };
-	mReloadTime = 5;
-	mFireRate = 3;
-	mShooting = false;
-	mRange = 10;
-	mStrength = 2;
-}*/
-
 Tower::Tower()
 	: mWeaponReady( true ), mHasBallista( false ), mReloadTime( 5 ),
 	mFireRate( 1 ), mShooting( false ), mRange( 10 ), mStrength( 1 ),
 	targetEnemy(nullptr)
 {
-	/*mWeaponReady = true;
-	mLookat = { 1 ,0, 0 };
-	mReloadTime = 5;
-	mFireRate = 3;
-	mShooting = false;
-	mRange = 10;
-	mStrength = 2;*/
-}
 
-/*Tower::Tower()
-{
-	mpWeapon = nullptr;
-}*/
+}
 
 Tower::~Tower()
 {
