@@ -169,6 +169,12 @@ Game::Game()
 	sound->setVolume(20);
 	data.pWavespawner->loadSound(sound, 26);
 	mDeltaTimer = 0.0f;
+
+	mBoxModel = data.pAssets->load<Model>( "Models/wallBox.mole" );
+	mBoxModel->setDiffuse( 0, data.pAssets->load<Texture>( "Textures/sky.jpg" ) );
+
+	mSkybox.load( mBoxModel );
+	mSkybox.setScale( 10.0f );
 }
 
 Game::~Game() {
@@ -294,6 +300,21 @@ void Game::render()
 
 	worldLocation = data.pDeferredProgramNonAni->getWorldLocation();
 	GLuint tintLocation = data.pDeferredProgramNonAni->getTintLocation();
+
+	/*glDisable( GL_DEPTH_TEST );
+	glDisable( GL_CULL_FACE );
+	glDepthMask( GL_FALSE );
+	mSkybox.renderNonAni(worldLocation, tintLocation);
+	glDepthMask( GL_TRUE );
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_CULL_FACE );*/
+
+	glDepthMask( GL_FALSE );
+	glDisable( GL_DEPTH_TEST );
+	mSkybox.setPosition( data.pCamera->getPosition() );
+	mSkybox.renderNonAni( worldLocation, tintLocation );
+	glEnable( GL_DEPTH_TEST );
+	glDepthMask( GL_TRUE );
 
 	// set default tint to white
 	glUniform3f( tintLocation, 1.0f, 1.0f, 1.0f );
