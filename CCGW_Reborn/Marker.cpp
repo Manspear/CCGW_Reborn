@@ -34,11 +34,9 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 
 	int curx = (int)(selectedTile.x / gameData.boxScale);
 	int cury = (int)(selectedTile.y / gameData.boxScale);
-	//uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
+	
 	uchar currentTile = gameData.pGrid->getTile( curx, cury );
 	bool buildTowers = false;
-
-	//std::cout << curx << ":" << cury << " - " << mPrevX << ":" << mPrevY << std::endl;
 
 	if( curx != mPrevX || cury != mPrevY )
 	{
@@ -50,7 +48,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			int mTargets = 0;
 
 			gameData.pGrid->setTile( curx, cury, TILE_HOLD );
-			mCanBuild = gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets, false);
+			mCanBuild = gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets);
 			gameData.pGrid->setTile( curx, cury, currentTile );
 		}
 	}
@@ -205,7 +203,7 @@ glm::vec2 Marker::mousePicking(const glm::vec2 mousePos, const GameData &gameDat
 	glm::vec2 pickPos;
 	pickPos.x = (int)(gameData.pCamera->getPosition().x / gameData.boxScale + rayWorldSpace.x);
 	pickPos.y = (int)(gameData.pCamera->getPosition().z / gameData.boxScale + rayWorldSpace.z);
-	//std::cout << pickPos.x << "    " << pickPos.y << "\n";
+	
 	return pickPos;
 }
 

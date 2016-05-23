@@ -98,7 +98,6 @@ bool Tower::arrowShot(const float &dt, GameData* data) {
 			if (!targetEnemy->getAlive())
 			{
 				data->pGold++;
-				std::cout << "du fick peng " << data->pGold << std::endl;
 			}
 		}
 	}
