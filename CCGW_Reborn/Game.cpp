@@ -57,8 +57,8 @@ Game::Game()
 
 	Model* playerModel = data.pAssets->load<Model>("Models/klara_lordag.mole");
 	Model* boxModel = data.pAssets->load<Model>("Models/wallbox.mole");
-	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_animation_with_stagger.mole");
-	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_animation_with_2_stagger.mole");
+	Model* moleratModel = data.pAssets->load<Model>("Models/molerat_lordag5.mole");
+	Model* molebatModel = data.pAssets->load<Model>("Models/molebat_lordag2.mole");
 #if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 #endif
@@ -86,7 +86,7 @@ Game::Game()
 	);
 
 	Sound* babysound = data.pAssets->load<Sound>("Sounds/dead_baby.wav");
-
+	babysound->setVolume(20);
 	for (int i = 0; i < data.mBabies; i++)
 	{
 		data.pBabies[i].loadSound(babysound);
