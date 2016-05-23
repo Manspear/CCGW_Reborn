@@ -129,6 +129,9 @@
     <ClCompile Include="Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionState.h">
@@ -248,6 +251,9 @@
     <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shadow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\deferred.geometry">
@@ -287,6 +293,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\skinned.vertex">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shadow.pixel">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\shadow.vertex">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

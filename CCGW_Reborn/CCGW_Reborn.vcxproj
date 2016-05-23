@@ -111,6 +111,8 @@
     <None Include="shaders\forward.vertex" />
     <None Include="shaders\menu.pixel" />
     <None Include="shaders\menu.vertex" />
+    <None Include="shaders\shadow.pixel" />
+    <None Include="shaders\shadow.vertex" />
     <None Include="shaders\skinned.geometry" />
     <None Include="shaders\skinned.pixel" />
     <None Include="shaders\skinned.vertex" />
