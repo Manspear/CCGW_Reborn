@@ -393,8 +393,6 @@ void Game::update(Input* inputs, float dt)
 	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );
 	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
 
-	//std::cout << "Visible towers: " << mMaxTowers << std::endl;
-
 	bool waveDone = true;
 	for (int i = 0; i < data.mMoleratmen; i++)
 	{

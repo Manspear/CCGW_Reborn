@@ -36,7 +36,7 @@ class Tower;
 class Grid {
 public:
 	//Make sure path is large enough to hold all the targets. A good estimate would be atleast half the size of the map.
-	bool findPath( sNode start, sNode end, sNode* path, int* targets, bool optimal );
+	bool findPath( sNode start, sNode end, sNode* path, int* targets );
 
 	//Determines if a tile has a/several specific flag/flags.
 	bool tileIs( int x, int y, uchar flags ) const;

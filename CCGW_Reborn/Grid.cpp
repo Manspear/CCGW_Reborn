@@ -2,8 +2,10 @@
 #include "Tower.h"
 #include <iostream>
 
-bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets, bool optimal )
+bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 {
+	int pre = SDL_GetTicks();
+
 	bool result = false;
 
 	mOpenList.clear();
@@ -32,9 +34,12 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets, bool opt
 
 	sNode* endNode = nullptr;
 
+	int nodesVisited = 0;
+
 	// Keep looping until the open list is empty and there are no more candidates for movement
 	while(mOpenList.size() > 0 && !result )
 	{
+		nodesVisited++;
 		// Find the node in the open list that has the shortest approximated distance to the target
 		std::vector<sNode*>::iterator currentIT = mOpenList.end();
 		int currentScore = 999999;
@@ -53,82 +58,78 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets, bool opt
 			throw -1;
 
 		// If the best candidate is the goal, we have found a path
-		if( !optimal && endNode != nullptr )
+		if( (*currentIT)->x == end.x && (*currentIT)->y == end.y )
 		{
+			endNode = *currentIT;
 			result = true;
 		}
-		else
+
+		// Move candidate from open list to closed list, showing that we have visited it
+		mClosedList.push_back(*currentIT);
+		mOpenList.erase( currentIT );
+		currentIT = mClosedList.end()-1;
+
+		// Make sure we don't go out of bounds
+		int minx = (*currentIT)->x-1;
+		int miny = (*currentIT)->y-1;
+		int maxx = minx+2;
+		int maxy = miny+2;
+		int curx = (*currentIT)->x;
+		int cury = (*currentIT)->y;
+
+		if( minx < 0 )
+			minx = 0;
+		if( miny < 0 )
+			miny = 0;
+		if( maxx > mWidth-1 )
+			maxx = mWidth-1;
+		if( maxy > mHeight-1 )
+			maxy = mHeight-1;
+
+		// Loop over the 3x3 square centered on the current node
+		for( int x=minx; x <=maxx; x++ )
 		{
-			if( (*currentIT)->x == end.x && (*currentIT)->y == end.y )
-				endNode = *currentIT;
-
-			// Move candidate from open list to closed list, showing that we have visited it
-			mClosedList.push_back(*currentIT);
-			mOpenList.erase( currentIT );
-			currentIT = mClosedList.end()-1;
-
-			// Make sure we don't go out of bounds
-			int minx = (*currentIT)->x-1;
-			int miny = (*currentIT)->y-1;
-			int maxx = minx+2;
-			int maxy = miny+2;
-			int curx = (*currentIT)->x;
-			int cury = (*currentIT)->y;
-
-			if( minx < 0 )
-				minx = 0;
-			if( miny < 0 )
-				miny = 0;
-			if( maxx > mWidth-1 )
-				maxx = mWidth-1;
-			if( maxy > mHeight-1 )
-				maxy = mHeight-1;
-
-			// Loop over the 3x3 square centered on the current node
-			for( int x=minx; x <=maxx; x++ )
+			for( int y=miny; y<=maxy; y++ )
 			{
-				for( int y=miny; y<=maxy; y++ )
+				// If this is the current node, we don't need to process it
+				if( x == curx && y == cury )
+					continue;
+
+				// Make sure that we're not accessing diagonal nodes
+				// and make sure the tile is empty
+				if( ( x == curx || y == cury ) && ( mpGrid[NODEAT(x,y)] == TILE_EMPTY || mpGrid[NODEAT(x,y)] == TILE_BLOCKED ) )
 				{
-					// If this is the current node, we don't need to process it
-					if( x == curx && y == cury )
-						continue;
-
-					// Make sure that we're not accessing diagonal nodes
-					// and make sure the tile is empty
-					if( ( x == curx || y == cury ) && ( mpGrid[NODEAT(x,y)] == TILE_EMPTY || mpGrid[NODEAT(x,y)] == TILE_BLOCKED ) )
+					// Make sure the node has not already been visited
+					sNode* dir = &mPath[NODEAT(x,y)];
+					bool found = false;
+					for( std::vector<sNode*>::iterator it = mClosedList.begin(); it != mClosedList.end() && !found; it++ )
 					{
-						// Make sure the node has not already been visited
-						sNode* dir = &mPath[NODEAT(x,y)];
-						bool found = false;
-						for( std::vector<sNode*>::iterator it = mClosedList.begin(); it != mClosedList.end() && !found; it++ )
+						if( (*it)->x == dir->x &&(*it)->y == dir->y )
+							found = true;
+					}
+
+					// Make sure the node is not already a candidate for visit
+					for (std::vector<sNode*>::iterator it = mOpenList.begin(); it != mOpenList.end() && !found; it++)
+					{
+						if ((*it)->x == dir->x && (*it)->y == dir->y)
+							found = true;
+					}
+
+					if( !found )
+					{
+						// The cost for traversing this node is the cost of all the previous nodes + 1
+						int tscore = mGScore[NODEAT(curx,cury)] + 1;
+
+						// Only consider node if it's score is lower than the current node
+						if( tscore < mGScore[NODEAT(x,y)] )
 						{
-							if( (*it)->x == dir->x &&(*it)->y == dir->y )
-								found = true;
-						}
+							// Add node to open list
+							dir->parent = *currentIT;
+							mOpenList.push_back( dir );
 
-						// Make sure the node is not already a candidate for visit
-						for (std::vector<sNode*>::iterator it = mOpenList.begin(); it != mOpenList.end() && !found; it++)
-						{
-							if ((*it)->x == dir->x && (*it)->y == dir->y)
-								found = true;
-						}
-
-						if( !found )
-						{
-							// The cost for traversing this node is the cost of all the previous nodes + 1
-							int tscore = mGScore[NODEAT(curx,cury)] + 1;
-
-							// Only consider node if it's score is lower than the current node
-							if( tscore < mGScore[NODEAT(x,y)] )
-							{
-								// Add node to open list
-								dir->parent = *currentIT;
-								mOpenList.push_back( dir );
-
-								// Set score of node
-								mGScore[NODEAT(x,y)] = tscore;
-								mFScore[NODEAT(x,y)] = tscore + heuristic( dir, &end );
-							}
+							// Set score of node
+							mGScore[NODEAT(x,y)] = tscore;
+							mFScore[NODEAT(x,y)] = tscore + heuristic( dir, &end );
 						}
 					}
 				}
@@ -136,15 +137,15 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets, bool opt
 		}
 	}
 
-	if( endNode != nullptr )
+	if( result )
 	{
 		// Go through each nodes parent to compile a path
 		sNode* parent = endNode;
 		int cur = 0;
 		while( parent != nullptr )
 		{
-		path[cur++] = *parent;
-		parent = parent->parent;
+			path[cur++] = *parent;
+			parent = parent->parent;
 		}
 
 		*targets = cur;
