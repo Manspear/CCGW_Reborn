@@ -1,4 +1,4 @@
-b 0.025 0.0325 0.025 0.025 0 Models/menu/marker.png
+b 0.045 0.0325 0.025 0.025 0 Models/menu/marker.png
 
 b -0.45 -1.0 0.9 0.25 0 Models/menu/actionHUD.png
 
