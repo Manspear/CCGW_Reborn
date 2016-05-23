@@ -31,6 +31,8 @@ public:
 	void drawAni();
 	void drawNonAni();
 
+	void setDiffuse( int index, Texture* texture );
+
 	sAnimation* getAnimation( int index );
 	int getAnimationCount() const;
 	Texture* getDiffuseMap(int index) const;

@@ -34,11 +34,9 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 
 	int curx = (int)(selectedTile.x / gameData.boxScale);
 	int cury = (int)(selectedTile.y / gameData.boxScale);
-	//uchar currentTile = gameData.pGrid->getTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale);
+	
 	uchar currentTile = gameData.pGrid->getTile( curx, cury );
 	bool buildTowers = false;
-
-	//std::cout << curx << ":" << cury << " - " << mPrevX << ":" << mPrevY << std::endl;
 
 	if( curx != mPrevX || cury != mPrevY )
 	{
@@ -85,13 +83,21 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 		else
 			gameData.pWavespawner->playSound(26);
 	}
-	if (inputs->buttonDown(2) && currentTile == TILE_HOLD)
+	if (inputs->buttonDown(2) && ( currentTile & TILE_HOLD ) )
 	{
-		gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+		if (currentTile & TILE_BOX)
+		{
+			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX);
+			gameData.pGold += BALLISTACOST;
+		}
+		else
+		{
+			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+			gameData.pGold += BOXCOST;
+		}
 		for (int i = 0; i < mMarkedIndex.size(); i++) {
 			if (mMarkedIndex[i] == selectedTile) {
 				mMarkedIndex.erase(mMarkedIndex.begin() + i);
-				gameData.pGold++;
 			}
 		}
 	}
@@ -197,7 +203,7 @@ glm::vec2 Marker::mousePicking(const glm::vec2 mousePos, const GameData &gameDat
 	glm::vec2 pickPos;
 	pickPos.x = (int)(gameData.pCamera->getPosition().x / gameData.boxScale + rayWorldSpace.x);
 	pickPos.y = (int)(gameData.pCamera->getPosition().z / gameData.boxScale + rayWorldSpace.z);
-	//std::cout << pickPos.x << "    " << pickPos.y << "\n";
+	
 	return pickPos;
 }
 
