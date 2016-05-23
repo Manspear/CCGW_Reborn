@@ -28,7 +28,7 @@ public:
 	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
-	#define ATKRDYTIMER 2
+	#define ATKRDYTIMER 10
 
 	enum
 	{
