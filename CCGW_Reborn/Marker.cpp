@@ -50,7 +50,7 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			int mTargets = 0;
 
 			gameData.pGrid->setTile( curx, cury, TILE_HOLD );
-			mCanBuild = gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets);
+			mCanBuild = gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets, false);
 			gameData.pGrid->setTile( curx, cury, currentTile );
 		}
 	}
