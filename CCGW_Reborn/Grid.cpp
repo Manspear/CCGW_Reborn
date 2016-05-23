@@ -2,7 +2,7 @@
 #include "Tower.h"
 #include <iostream>
 
-bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
+bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets, bool optimal )
 {
 	bool result = false;
 
@@ -30,6 +30,8 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 	//openList.push_back(first);
 	mOpenList.push_back(first);
 
+	sNode* endNode = nullptr;
+
 	// Keep looping until the open list is empty and there are no more candidates for movement
 	while(mOpenList.size() > 0 && !result )
 	{
@@ -51,22 +53,15 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 			throw -1;
 
 		// If the best candidate is the goal, we have found a path
-		if( (*currentIT)->x == end.x && (*currentIT)->y == end.y )
+		if( !optimal && endNode != nullptr )
 		{
-			// Go through each nodes parent to compile a path
-			sNode* parent = *currentIT;
-			int cur = 0;
-			while( parent != nullptr )
-			{
-				path[cur++] = *parent;
-				parent = parent->parent;
-			}
-
-			*targets = cur;
 			result = true;
 		}
 		else
 		{
+			if( (*currentIT)->x == end.x && (*currentIT)->y == end.y )
+				endNode = *currentIT;
+
 			// Move candidate from open list to closed list, showing that we have visited it
 			mClosedList.push_back(*currentIT);
 			mOpenList.erase( currentIT );
@@ -139,6 +134,20 @@ bool Grid::findPath( sNode start, sNode end, sNode* path, int* targets )
 				}
 			}
 		}
+	}
+
+	if( endNode != nullptr )
+	{
+		// Go through each nodes parent to compile a path
+		sNode* parent = endNode;
+		int cur = 0;
+		while( parent != nullptr )
+		{
+		path[cur++] = *parent;
+		parent = parent->parent;
+		}
+
+		*targets = cur;
 	}
 
 	return result;

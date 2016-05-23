@@ -36,7 +36,7 @@ void WaveSpawner::spawn()
 	// start by getting the path for the moleratmen
 	sNode start = { 7, 0 };
 	sNode end = { 7 , 47 };
-	pGameData->pGrid->findPath(start, end, mpPath, &mTargets);
+	pGameData->pGrid->findPath(start, end, mpPath, &mTargets, true);
 	
 	//if( pGameData->pGrid->findPath( start, end, mpPath[i], &mTargets ) )
 	//{
