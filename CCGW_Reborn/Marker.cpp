@@ -85,13 +85,21 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 		else
 			gameData.pWavespawner->playSound(26);
 	}
-	if (inputs->buttonDown(2) && currentTile == TILE_HOLD)
+	if (inputs->buttonDown(2) && ( currentTile & TILE_HOLD ) )
 	{
-		gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+		if (currentTile & TILE_BOX)
+		{
+			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_BOX);
+			gameData.pGold += BALLISTACOST;
+		}
+		else
+		{
+			gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
+			gameData.pGold += BOXCOST;
+		}
 		for (int i = 0; i < mMarkedIndex.size(); i++) {
 			if (mMarkedIndex[i] == selectedTile) {
 				mMarkedIndex.erase(mMarkedIndex.begin() + i);
-				gameData.pGold++;
 			}
 		}
 	}
