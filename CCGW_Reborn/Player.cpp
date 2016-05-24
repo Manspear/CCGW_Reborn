@@ -40,7 +40,7 @@ void Player::update(const Input* inputs, const float &dt)
 
 	attackReadyTimer += dt;
 	//buttonDown(0) == LMB
-	if (mSpeed < 0.005)
+	if (mSpeed < 0.5)
 	{
 		if (!inputs->buttonDown(0))
 		{
@@ -48,16 +48,16 @@ void Player::update(const Input* inputs, const float &dt)
 			{
 				isIdle = true;
 				mAnimator.clear();
-				mAnimator.push(15, true, 1, 1);
+				mAnimator.push(15, true, mAnimationSpeed, 1);
 			}
-			if (!isHoldIdle && attackReadyTimer > ATKRDYTIMER)
+			if (!isHoldIdle && attackReadyTimer < ATKRDYTIMER)
 			{
 				isHoldIdle = true;
 				mAnimator.clear();
-				mAnimator.push(21, true, 1, 1);
+				mAnimator.push(21, true, mAnimationSpeed, 1);
 			}
 		}
-		if (inputs->buttonDown(0))
+		else
 		{
 			
 			isIdle = false;
@@ -66,16 +66,16 @@ void Player::update(const Input* inputs, const float &dt)
 			{
 				isIdleAttacking = true;
 				mAnimator.clear();
-				mAnimator.push(19, true, 3, 1.0f);
-				mAnimator.push(18, false, 3, 0.5f);
-				mAnimator.push(17, false, 3, 1.0f);
+				mAnimator.push(19, true, mAnimationSpeed, 1.0f);
+				mAnimator.push(18, false, mAnimationSpeed, 0.5f);
+				mAnimator.push(17, false, mAnimationSpeed, 1.0f);
 			}
 		}
 		if (inputs->buttonReleased(0))
 		{
 			isIdleAttacking = false;
-			mAnimator.push(21, true, 3, 1.0f);
-			mAnimator.push(19, false, 3, 1, 0.5f);
+			mAnimator.push(21, true, mAnimationSpeed, 1.0f);
+			mAnimator.push(19, false, mAnimationSpeed, 1, 0.5f);
 		}
 	}
 	else 
@@ -130,11 +130,12 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyDown(SDLK_a))
 	{
+		wasADown = true;
 		if (inputs->buttonReleased(0))
 		{
 			mAnimator.clear();
-			mAnimator.push(26, true, 3, 1.0f);
-			mAnimator.push(23, false, 3, 1, 0.5f);
+			mAnimator.push(26, true, mAnimationSpeed, 1.0f);
+			mAnimator.push(23, false, mAnimationSpeed, 1, 0.5f);
 
 		}
 		if (inputs->buttonDown(0))
@@ -143,9 +144,9 @@ void Player::update(const Input* inputs, const float &dt)
 			{
 				isLStrafeAttacking = true;
 				//mAnimator.clear();
-				mAnimator.push(24, true, 3, 1.0f);
-				mAnimator.push(23, false, 3, 0.5f);
-				mAnimator.push(22, false, 3, 1.0f);
+				mAnimator.push(24, true, mAnimationSpeed, 1.0f);
+				mAnimator.push(23, false, mAnimationSpeed, 0.5f);
+				mAnimator.push(22, false, mAnimationSpeed, 1.0f);
 			}
 
 		}
@@ -156,7 +157,7 @@ void Player::update(const Input* inputs, const float &dt)
 			{
 
 				mAnimator.clear();
-				mAnimator.push(26, true, 3, 1.0);
+				mAnimator.push(26, true, mAnimationSpeed, 1.0);
 				isStrafingLeft = true;
 			}
 		}
@@ -167,8 +168,9 @@ void Player::update(const Input* inputs, const float &dt)
 	}
 	else {
 		isStrafingLeft = false;
-		if(inputs->keyReleased(SDLK_a))
+		if (wasSDown)
 		{
+			wasSDown = false;
 			mSpeed = 0;
 			isRunning = false;
 			isRunningHold = false;
@@ -177,12 +179,12 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyDown(SDLK_d))
 	{
+		wasDDown = true;
 		if (inputs->buttonReleased(0))
 		{
-			mAnimator.clear();
-			mAnimator.push(32, true, 3, 1.0f);
-			mAnimator.push(29, false, 3, 1, 0.5f);
-
+				mAnimator.clear();
+				mAnimator.push(32, true, mAnimationSpeed, 1.0f);
+				mAnimator.push(29, false, mAnimationSpeed, 1, 0.5f);
 		}
 		if (inputs->buttonDown(0))
 		{
@@ -190,20 +192,18 @@ void Player::update(const Input* inputs, const float &dt)
 			{
 				isRStrafeAttacking = true;
 				//mAnimator.clear();
-				mAnimator.push(30, true, 3, 1.0f);
-				mAnimator.push(29, false, 3, 0.5f);
-				mAnimator.push(28, false, 3, 1.0f);
+				mAnimator.push(30, true, mAnimationSpeed, 1.0f);
+				mAnimator.push(29, false, mAnimationSpeed, 0.5f);
+				mAnimator.push(28, false, mAnimationSpeed, 1.0f);
 			}
-
 		}
 		else
 		{
 			isRStrafeAttacking = false;
 			if (!isStrafingRight)
 			{
-
 				mAnimator.clear();
-				mAnimator.push(32, true, 3, 1.0);
+				mAnimator.push(32, true, mAnimationSpeed, 1.0);
 				isStrafingRight = true;
 			}
 		}
@@ -215,8 +215,9 @@ void Player::update(const Input* inputs, const float &dt)
 	else
 	{
 		isStrafingRight = false;
-		if (inputs->keyReleased(SDLK_d))
+		if (wasDDown) 
 		{
+			wasDDown = false;
 			mSpeed = 0;
 			isRunning = false;
 			isRunningHold = false;
@@ -225,22 +226,23 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyDown(SDLK_w))
 	{
+		wasWDown = true;
 		if (inputs->buttonReleased(0))
 		{
 			mAnimator.clear();
-			mAnimator.push(6, true, 1.5, 1.0f);
-			mAnimator.push(3, false, 1.5, 1, 0.5f);
+			mAnimator.push(6, true, mAnimationSpeed, 1.0f);
+			mAnimator.push(3, false, mAnimationSpeed, 1, 0.5f);
 
 		}
-		if (inputs->buttonDown(0))
+		else if (inputs->buttonDown(0))
 		{
 			if (!isRunningAttacking)
 			{
 				isRunningAttacking = true;
 				mAnimator.clear();
-				mAnimator.push(4, true, 1.5, 1.0f);
-				mAnimator.push(3, false, 1.5, 0.5f);
-				mAnimator.push(2, false, 1.5, 1.0f);
+				mAnimator.push(4, true, mAnimationSpeed, 1.0f);
+				mAnimator.push(3, false, mAnimationSpeed, 0.5f);
+				mAnimator.push(2, false, mAnimationSpeed, 1.0f);
 			}
 		}
 		else {
@@ -252,12 +254,12 @@ void Player::update(const Input* inputs, const float &dt)
 			if (attackReadyTimer > ATKRDYTIMER && !isRunning)
 			{
 				//mAnimator.clear();
-				mAnimator.push(1, true, 1.5, 1);
+				mAnimator.push(1, true, mAnimationSpeed, 1);
 				isRunning = true;
 			}
 			else if (attackReadyTimer < ATKRDYTIMER && !isRunningHold)
 			{
-				mAnimator.push(6, true, 1.5, 1);
+				mAnimator.push(6, true, mAnimationSpeed, 1);
 				isRunningHold = true;
 			}
 		}
@@ -268,21 +270,25 @@ void Player::update(const Input* inputs, const float &dt)
 	}
 	else
 	{
-		if (inputs->keyReleased(SDLK_w))
+		if (wasWDown)
 		{
+			wasWDown = false;
 			mSpeed = 0;
 		}
 		isRunning = false;
 		isRunningHold = false;
 	}
+
 	if (inputs->keyDown(SDLK_s))
 	{
+		wasSDown = true;
+
 		if (inputs->buttonReleased(0))
 		{
 			//isBackAttacking = false;
 			mAnimator.clear();
-			mAnimator.push(13, true, 3, 1.0f);
-			mAnimator.push(10, false, 3, 1, 0.5f);
+			mAnimator.push(13, true, mAnimationSpeed, 1.0f);
+			mAnimator.push(10, false, mAnimationSpeed, 1, 0.5f);
 
 		}
 		if(inputs->buttonDown(0))
@@ -291,9 +297,9 @@ void Player::update(const Input* inputs, const float &dt)
 			{
 				isBackAttacking = true;
 				mAnimator.clear();
-				mAnimator.push(11, true, 1, 1, 0.f);
-				mAnimator.push(10, false, 1, 0.5);
-				mAnimator.push(9, false, 1, 1);
+				mAnimator.push(11, true, mAnimationSpeed, 1, 0.f);
+				mAnimator.push(10, false, mAnimationSpeed, 0.5);
+				//mAnimator.push(9, false, mAnimationSpeed, 1, 0);
 			}
 		}
 		else
@@ -302,13 +308,13 @@ void Player::update(const Input* inputs, const float &dt)
 			if (!isBacking && attackReadyTimer > ATKRDYTIMER)
 			{
 				mAnimator.clear();
-				mAnimator.push(8, true, 3, 1.f);
+				mAnimator.push(8, true, mAnimationSpeed, 1.f);
 				isBacking = true;
 			}
 			if (!isBackingHold && attackReadyTimer < ATKRDYTIMER)
 			{
 				mAnimator.clear();
-				mAnimator.push(13, true, 3, 1.f);
+				mAnimator.push(13, true, mAnimationSpeed, 1.f);
 				isBackingHold = true;
 			}
 		}
@@ -319,8 +325,9 @@ void Player::update(const Input* inputs, const float &dt)
 	}
 	else
 	{
-		if (inputs->keyReleased(SDLK_s))
+		if (wasSDown)
 		{
+			wasSDown = false;
 			mSpeed = 0;
 		}
 		isBacking = false;
@@ -371,7 +378,7 @@ void Player::update(const Input* inputs, const float &dt)
 	if (inputs->keyPressed(SDLK_SPACE) && canJump)
 	{
 		//mAnimator.clear();
-		mAnimator.push(34, false, 1, 1);
+		mAnimator.push(34, false, mAnimationSpeed, 1);
 		isJumping = true;	
 	}
 	if (isJumping) 
@@ -528,39 +535,39 @@ void Player::takeDamage(int damage)
 
 	if (isRunningAttacking)
 	{
-		mAnimator.push(5, false, 1.5, 1);
+		mAnimator.push(5, false, mAnimationSpeed, 1);
 	}
 	if (isBackAttacking)
 	{
-		mAnimator.push(12, false, 3, 1);
+		mAnimator.push(12, false, mAnimationSpeed, 1);
 	}
 	if (isLStrafeAttacking)
 	{
-		mAnimator.push(25, false, 3, 1);
+		mAnimator.push(25, false, mAnimationSpeed, 1);
 	}
 	if (isRStrafeAttacking)
 	{
-		mAnimator.push(31, false, 3, 1);
+		mAnimator.push(31, false, mAnimationSpeed, 1);
 	}
 	if (isRunning)
 	{
-		mAnimator.push(7, false, 1.5, 1);
+		mAnimator.push(7, false, mAnimationSpeed, 1);
 	}
 	if (isRunningHold)
 	{
-		mAnimator.push(7, false, 1.5, 1);
+		mAnimator.push(7, false, mAnimationSpeed, 1);
 	}
 	if (isStrafingRight)
 	{
-		mAnimator.push(33, false, 3, 1);
+		mAnimator.push(33, false, mAnimationSpeed, 1);
 	}
 	if (isStrafingLeft)
 	{
-		mAnimator.push(27, false, 3, 1);
+		mAnimator.push(27, false, mAnimationSpeed, 1);
 	}
 	if (isBacking)
 	{
-		mAnimator.push(14, false, 3, 1);
+		mAnimator.push(14, false, mAnimationSpeed, 1);
 	}
 }
 
@@ -584,7 +591,8 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	mPosition = glm::vec3( 1, 1, 1 );
 	yoffset = -0.5f;
 	mWorld = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, yoffset, 1, 1 };
-	mMaxSpeed = 10;
+	mMaxSpeed = MOVESPEED;
+	mAnimationSpeed = ANIMSPEED;
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
@@ -608,6 +616,12 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	isRStrafeAttacking = false;
 	isRunningAttacking = false;
 	isIdleAttacking = false;
+
+	wasWDown = false;
+	wasADown = false;
+	wasSDown = false;
+	wasDDown = false;
+	wasRCDown = false;
 }
 
 Player::~Player()

@@ -29,6 +29,8 @@ public:
 	~Player();
 private: 
 	#define ATKRDYTIMER 10
+	#define ANIMSPEED 1.5
+	#define MOVESPEED 7
 
 	enum
 	{
@@ -36,7 +38,7 @@ private:
 		ANIM_RELOAD,
 		ANIM_SHOOT,
 	};
-	float jumpTimer;
+	
 	bool isJumping;
 	bool isRunning;
 	bool isRunningHold;
@@ -46,6 +48,11 @@ private:
 	bool isBackingHold;
 	bool isIdle;
 	bool isHoldIdle;
+	bool wasWDown;
+	bool wasADown;
+	bool wasSDown;
+	bool wasDDown;
+	bool wasRCDown;
 
 	bool isIdleAttacking;
 	bool isRunningAttacking;
@@ -53,6 +60,8 @@ private:
 	bool isLStrafeAttacking;
 	bool isBackAttacking;
 
+	float jumpTimer;
+	float mAnimationSpeed;
 	float attackReadyTimer;
 	float yoffset;
 	float speedY;
