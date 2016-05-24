@@ -29,13 +29,41 @@ public:
 	Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter);
 	~Player();
 private: 
+	#define ATKRDYTIMER 10
+	#define ANIMSPEED 1.5
+	#define MOVESPEED 7
+
 	enum
 	{
 		ANIM_RUN = 1,
 		ANIM_RELOAD,
 		ANIM_SHOOT,
 	};
+	
+	bool isJumping;
+	bool isRunning;
+	bool isRunningHold;
+	bool isStrafingRight;
+	bool isStrafingLeft;
+	bool isBacking;
+	bool isBackingHold;
+	bool isIdle;
+	bool isHoldIdle;
+	bool wasWDown;
+	bool wasADown;
+	bool wasSDown;
+	bool wasDDown;
+	bool wasRCDown;
 
+	bool isIdleAttacking;
+	bool isRunningAttacking;
+	bool isRStrafeAttacking;
+	bool isLStrafeAttacking;
+	bool isBackAttacking;
+
+	float jumpTimer;
+	float mAnimationSpeed;
+	float attackReadyTimer;
 	float yoffset;
 	float speedY;
 	float mMaxSpeed;

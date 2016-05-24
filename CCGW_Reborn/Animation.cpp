@@ -1,11 +1,11 @@
 #include "Animation.h"
 #include "Model.h"
 
-void Animator::push( int animation, bool loop, float speed, float scale )
+void Animator::push( int animation, bool loop, float speed, float scale, float offset )
 {
-	sTake take = { animation, loop, speed, scale };
-	mStack.push( take );
-	mElapsed = 0.0f;
+	mElapsed = offset * pModel->getAnimation( animation )->mDuration;
+	sTake take = { animation, loop, speed, scale, mElapsed};
+	mStack.push(take);
 }
 
 void Animator::pop()
@@ -25,7 +25,7 @@ void Animator::update( float dt )
 	{
 		sTake& take = mStack.top();
 		sAnimation* animation = pModel->getAnimation(take.mIndex);
-		mElapsed += dt*take.mSpeed;
+		mElapsed += dt*take.mSpeed + take.mOffset;
 		if (animation == nullptr)
 			return;
 		if( mElapsed >= animation->mDuration*take.mScale )

@@ -317,6 +317,11 @@ void Model::drawNonAni()
 	}
 }
 
+void Model::setDiffuse( int index, Texture* texture )
+{
+	mpDiffuseMaps[index] = texture;
+}
+
 sAnimation* Model::getAnimation( int index )
 {
 	if( index < mAnimations.size() )

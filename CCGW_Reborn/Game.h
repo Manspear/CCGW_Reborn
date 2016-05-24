@@ -48,6 +48,9 @@ private:
 	Tower** mpVisibleTowers;
 	int mVisibleTowers;
 
+	Model* mBoxModel;
+	GameObject mSkybox;
+
 	int mRenderDelta;
 	float mDeltaTimer;
 
