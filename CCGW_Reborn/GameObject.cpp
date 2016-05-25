@@ -73,6 +73,12 @@ void GameObject::loadSound(Sound* sound)
 	mSound = sound;
 }
 
+void GameObject::randomizeAnimation()
+{
+	float pcent = (float)(rand() % 100) / 100.0f;
+	mAnimator.setElapsed(pcent);
+}
+
 GameObject::GameObject(const GameObject& ref)
 	: mWorld(ref.mWorld), rotX(0),rotY(0), mpModel( ref.mpModel )//, mAnimation( ref.mAnimation)
 {

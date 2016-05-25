@@ -39,67 +39,22 @@ void Player::update(const Input* inputs, const float &dt)
 	glm::vec3 dir(0.0f, 0.0f, 0.0f);
 
 	attackReadyTimer += dt;
+	animationTimer += dt;
 	//buttonDown(0) == LMB
-	if (mSpeed < 0.5)
-	{
-		if (!inputs->buttonDown(0))
-		{
-			if (!isIdle && attackReadyTimer > ATKRDYTIMER)
-			{
-				isIdle = true;
-				mAnimator.clear();
-				mAnimator.push(15, true, mAnimationSpeed, 1);
-			}
-			if (!isHoldIdle && attackReadyTimer < ATKRDYTIMER)
-			{
-				isHoldIdle = true;
-				mAnimator.clear();
-				mAnimator.push(21, true, mAnimationSpeed, 1);
-			}
-		}
-		else
-		{
-			
-			isIdle = false;
-			isHoldIdle = false;
-			if (!isIdleAttacking)
-			{
-				isIdleAttacking = true;
-				mAnimator.clear();
-				mAnimator.push(19, true, mAnimationSpeed, 1.0f);
-				mAnimator.push(18, false, mAnimationSpeed, 0.5f);
-				mAnimator.push(17, false, mAnimationSpeed, 1.0f);
-			}
-		}
-		if (inputs->buttonReleased(0))
-		{
-			isIdleAttacking = false;
-			mAnimator.push(21, true, mAnimationSpeed, 1.0f);
-			mAnimator.push(19, false, mAnimationSpeed, 1, 0.5f);
-		}
-	}
-	else 
-	{
-		isIdle = false;
-		isHoldIdle = false;
-		isIdleAttacking = false;
-	}
+	/**
+	How to loop ONE animation?
+	Need to be able to loop in a state. When an action is done, exit that state temporarily.
+	Return to it as a sort of "default animation" when the action is done. Use pop() to remove the topmost element.
+
+	if(nobuttondown)
+		startState1AnimTimer
+		while state1AnimTimer < animMax:
+			play state1[x]
+	**/
 
 	if (inputs->buttonDown(0))
 	{
 		mStrength > 5 ? mStrength = 5 : mStrength += dt * 3 ;
-
-		if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
-		{
-			//mAnimator.clear();
-			//if (true)//mSpeed > 0.5f) 
-			//{
-			//mAnimator.push( ANIM_SHOOT, false, 2.0f, 0.5f );
-			//}
-			//else {
-			//	mAnimator.push(11, false, 2.0f, 0.5f);
-			//}
-		}
 	}
 
 	if (inputs->buttonReleased(0))
@@ -130,210 +85,716 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyDown(SDLK_a))
 	{
-		wasADown = true;
-		if (inputs->buttonReleased(0))
-		{
-			mAnimator.clear();
-			mAnimator.push(26, true, mAnimationSpeed, 1.0f);
-			mAnimator.push(23, false, mAnimationSpeed, 1, 0.5f);
-
-		}
-		if (inputs->buttonDown(0))
-		{
-			if (!isLStrafeAttacking)
-			{
-				isLStrafeAttacking = true;
-				//mAnimator.clear();
-				mAnimator.push(24, true, mAnimationSpeed, 1.0f);
-				mAnimator.push(23, false, mAnimationSpeed, 0.5f);
-				mAnimator.push(22, false, mAnimationSpeed, 1.0f);
-			}
-
-		}
-		else
-		{
-			isLStrafeAttacking = false;
-			if (!isStrafingLeft)
-			{
-
-				mAnimator.clear();
-				mAnimator.push(26, true, mAnimationSpeed, 1.0);
-				isStrafingLeft = true;
-			}
-		}
-		/*	mAnimator.clear();*/
 		mSpeed = mMaxSpeed / 2;
 		float r = glm::pi<float>() * 0.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
-	else {
-		isStrafingLeft = false;
-		if (wasSDown)
-		{
-			wasSDown = false;
-			mSpeed = 0;
-			isRunning = false;
-			isRunningHold = false;
-		}
-	}
-
 	if (inputs->keyDown(SDLK_d))
 	{
-		wasDDown = true;
-		if (inputs->buttonReleased(0))
-		{
-				mAnimator.clear();
-				mAnimator.push(32, true, mAnimationSpeed, 1.0f);
-				mAnimator.push(29, false, mAnimationSpeed, 1, 0.5f);
-		}
-		if (inputs->buttonDown(0))
-		{
-			if (!isRStrafeAttacking)
-			{
-				isRStrafeAttacking = true;
-				//mAnimator.clear();
-				mAnimator.push(30, true, mAnimationSpeed, 1.0f);
-				mAnimator.push(29, false, mAnimationSpeed, 0.5f);
-				mAnimator.push(28, false, mAnimationSpeed, 1.0f);
-			}
-		}
-		else
-		{
-			isRStrafeAttacking = false;
-			if (!isStrafingRight)
-			{
-				mAnimator.clear();
-				mAnimator.push(32, true, mAnimationSpeed, 1.0);
-				isStrafingRight = true;
-			}
-		}
-		/*	mAnimator.clear();*/
 		mSpeed = mMaxSpeed / 2;
 		float r = glm::pi<float>() * 1.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
-	else
-	{
-		isStrafingRight = false;
-		if (wasDDown) 
-		{
-			wasDDown = false;
-			mSpeed = 0;
-			isRunning = false;
-			isRunningHold = false;
-		}
-	}
-
 	if (inputs->keyDown(SDLK_w))
 	{
-		wasWDown = true;
-		if (inputs->buttonReleased(0))
-		{
-			mAnimator.clear();
-			mAnimator.push(6, true, mAnimationSpeed, 1.0f);
-			mAnimator.push(3, false, mAnimationSpeed, 1, 0.5f);
-
-		}
-		else if (inputs->buttonDown(0))
-		{
-			if (!isRunningAttacking)
-			{
-				isRunningAttacking = true;
-				mAnimator.clear();
-				mAnimator.push(4, true, mAnimationSpeed, 1.0f);
-				mAnimator.push(3, false, mAnimationSpeed, 0.5f);
-				mAnimator.push(2, false, mAnimationSpeed, 1.0f);
-			}
-		}
-		else {
-			isRunningAttacking = false;
-		}
-
-		if (!inputs->buttonDown(0))
-		{
-			if (attackReadyTimer > ATKRDYTIMER && !isRunning)
-			{
-				//mAnimator.clear();
-				mAnimator.push(1, true, mAnimationSpeed, 1);
-				isRunning = true;
-			}
-			else if (attackReadyTimer < ATKRDYTIMER && !isRunningHold)
-			{
-				mAnimator.push(6, true, mAnimationSpeed, 1);
-				isRunningHold = true;
-			}
-		}
-
 		mSpeed = mMaxSpeed;
 		//dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 		dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 	}
-	else
+	if(inputs->keyDown(SDLK_s))
 	{
-		if (wasWDown)
-		{
-			wasWDown = false;
-			mSpeed = 0;
-		}
-		isRunning = false;
-		isRunningHold = false;
-	}
-
-	if (inputs->keyDown(SDLK_s))
-	{
-		wasSDown = true;
-
-		if (inputs->buttonReleased(0))
-		{
-			//isBackAttacking = false;
-			mAnimator.clear();
-			mAnimator.push(13, true, mAnimationSpeed, 1.0f);
-			mAnimator.push(10, false, mAnimationSpeed, 1, 0.5f);
-
-		}
-		if(inputs->buttonDown(0))
-		{ 
-			if (!isBackAttacking)
-			{
-				isBackAttacking = true;
-				mAnimator.clear();
-				mAnimator.push(11, true, mAnimationSpeed, 1, 0.f);
-				mAnimator.push(10, false, mAnimationSpeed, 0.5);
-				//mAnimator.push(9, false, mAnimationSpeed, 1, 0);
-			}
-		}
-		else
-		{
-			isBackAttacking = false;
-			if (!isBacking && attackReadyTimer > ATKRDYTIMER)
-			{
-				mAnimator.clear();
-				mAnimator.push(8, true, mAnimationSpeed, 1.f);
-				isBacking = true;
-			}
-			if (!isBackingHold && attackReadyTimer < ATKRDYTIMER)
-			{
-				mAnimator.clear();
-				mAnimator.push(13, true, mAnimationSpeed, 1.f);
-				isBackingHold = true;
-			}
-		}
-		
 		mSpeed = mMaxSpeed / 2;
 		float r = glm::pi<float>();
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
 	}
+
+	std::cout << state << endl;
+
+	if (state == 1 && (inputs->buttonDown(0) || inputs->buttonPressed(0)))
+	{
+		if (!enteredStates)
+		{
+			enteredStates = true;
+			animationTimer = 0;
+		}
+		if (inputs->keyReleased(SDLK_w))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_s))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_a))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_d))
+			stateRunning = false;
+		//Start the run-to-attack animation
+		if (mSpeed < 0.05 && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(17, false, mAnimationSpeed, 1.0f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_w) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(2, false, mAnimationSpeed, 1.0f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_s) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(9, false, mAnimationSpeed, 1.0f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_a) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(22, false, mAnimationSpeed, 1.0f, animationTimer);
+		}
+		else if ( inputs->keyDown(SDLK_d) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(28, false, mAnimationSpeed, 1.0f, animationTimer);
+		}
+		//When the animation is done
+		sAnimation* currAnim = mAnimator.getCurrentAnimation();
+		if (animationTimer >= currAnim->mDuration - 0.5)
+		{
+			state = 2;
+			animationTimer = 0;
+			stateRunning = false;
+		}
+	}
+	else if (state == 2)
+	{
+		if (inputs->keyReleased(SDLK_w))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_s))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_a))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_d))
+			stateRunning = false;
+
+		//Start the start of the attack animation
+		if (mSpeed < 0.05 && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(18, false, mAnimationSpeed, 0.5f, animationTimer);
+		}
+		else if ( inputs->keyDown(SDLK_w) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(3, false, mAnimationSpeed, 0.5f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_s) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(10, false, mAnimationSpeed, 0.5f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_a) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(23, false, mAnimationSpeed, 0.5f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_d) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(29, false, mAnimationSpeed, 0.5f, animationTimer);
+		}
+		sAnimation* currAnim = mAnimator.getCurrentAnimation();
+		if (animationTimer >= currAnim->mDuration * 0.5 - 0.25)
+		{
+			state = 3;
+			animationTimer = 0;
+			stateRunning = false;
+		}
+	}
+	else if (state == 3)
+	{
+		//use the attack_17 animation
+		if (inputs->keyReleased(SDLK_w))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_s))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_a))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_d))
+			stateRunning = false;
+
+		if (mSpeed < 0.05 && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(19, true, mAnimationSpeed, 1.0f, animationTimer);
+			//mAnimator.push(18, false, mAnimationSpeed, 0.5f);
+		}
+		else if (inputs->keyDown(SDLK_w) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(4, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_s) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(11, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_a) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(24, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		else if ( inputs->keyDown(SDLK_d) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(30, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		if (inputs->buttonReleased(0) || inputs->buttonUp(0))
+		{
+			state = 4;
+			animationTimer = 0;
+			stateRunning = false;
+		}
+	}
+	else if (state == 4)
+	{
+		if (inputs->keyReleased(SDLK_w))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_s))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_a))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_d))
+			stateRunning = false;
+
+		if (mSpeed < 0.05f && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(18, false, mAnimationSpeed, 1, 0.5 + animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_w) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(3, false, mAnimationSpeed, 1.f, 0.5f + animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_s) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(10, false, mAnimationSpeed, 1.f, 0.5f + animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_a) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(23, false, mAnimationSpeed, 1.f, 0.5f + animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_d) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(29, false, mAnimationSpeed, 1.f, 0.5f + animationTimer);
+		}
+		sAnimation* currAnim = mAnimator.getCurrentAnimation();
+		if (animationTimer >= (currAnim->mDuration * 0.5 - 0.25))
+		{
+			state = 5;
+			animationTimer = 0;
+			stateRunning = false;
+		}
+	}
+	else if (state == 5) 
+	{
+		if (inputs->keyReleased(SDLK_w))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_s))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_a))
+			stateRunning = false;
+		if (inputs->keyReleased(SDLK_d))
+			stateRunning = false;
+
+		if (mSpeed < 0.05f && !stateRunning)
+		{
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(21, true, mAnimationSpeed, 1, animationTimer);
+		}
+		else if ( inputs->keyDown(SDLK_w) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(6, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_s) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(13, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_a) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(26, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		else if (inputs->keyDown(SDLK_d) && !stateRunning)
+		{
+			//animationTimer = 0;
+			stateRunning = true;
+			mAnimator.clear();
+			mAnimator.push(32, true, mAnimationSpeed, 1.f, animationTimer);
+		}
+		if (inputs->buttonDown(0) || inputs->buttonPressed(0))
+		{
+			state = 2;
+			animationTimer = 0;
+			stateRunning = false;
+		}
+		else {
+			mAnimator.clear();
+			enteredStates = false;
+			state = 1;
+			animationTimer = 0;
+			stateRunning = false;
+		}
+		/*sAnimation* currAnim = mAnimator.getCurrentAnimation();
+		if (animationTimer >= currAnim->mDuration)
+		{
+			mAnimator.clear();
+			state = 1;
+		}*/
+	}
 	else
 	{
-		if (wasSDown)
+		state = 1;
+		//do usual run animations etc
+		if (mSpeed < 0.01f)
 		{
-			wasSDown = false;
-			mSpeed = 0;
+			cout << "IDLE" << endl;
+			if (!isIdle)
+			{
+				isIdle = true;
+				mAnimator.clear();
+				mAnimator.push(15, true, 1, 1);
+			}
 		}
-		isBacking = false;
-		isBackingHold = false;
-		isBackAttacking = false;
+		else
+			isIdle = false;
+
+		if (inputs->keyDown(SDLK_a))
+		{
+			cout << "LEFT" << endl;
+			if (!isStrafingLeft)
+			{
+				isRunning = false;
+				isBacking = false;
+				isStrafingLeft = true;
+				mAnimator.clear();
+				mAnimator.push(26, true, 1, 1);
+			}
+		}
+		else
+			isStrafingLeft = false;
+		if (inputs->keyDown(SDLK_d))
+		{
+			cout << "RIGHT" << endl;
+			if (!isStrafingRight)
+			{
+				isRunning = false;
+				isBacking = false;
+				isStrafingRight = true;
+				mAnimator.clear();
+				mAnimator.push(32, true, 1, 1);
+			}
+		}
+		else
+			isStrafingRight = false;
+
+		if (inputs->keyDown(SDLK_s))
+		{
+
+			cout << "BACKING" << endl;
+			if (!isBacking)
+			{
+				isBacking = true;
+				mAnimator.clear();
+				mAnimator.push(8, true, 1, 1);
+			}
+		}
+		else
+			isBacking = false;
+
+		if (inputs->keyDown(SDLK_w))
+		{
+			cout << "RUNNING" << endl;
+			if (!isRunning)
+			{
+				isRunning = true;
+				mAnimator.clear();
+				mAnimator.push(1, true, 1, 1);
+			}
+		}
+		else
+		{
+			isRunning = false;
+			if (inputs->keyReleased(SDLK_w))
+			{
+				isStrafingLeft = false;
+				isStrafingRight = false;
+			}
+	
+		}
+			
 	}
+	if (mAnimator.isEmpty())
+		mAnimator.push(15, false, 1, 1);
+
+
+
+
+
+
+
+
+
+
+
+	//if (mSpeed < 0.05)
+	//{
+	//	if (!inputs->buttonDown(0) && idleAttackTimer > 2.f) //&& !isIdleAttacking)
+	//	{
+	//		if (!isIdle && attackReadyTimer > ATKRDYTIMER)
+	//		{
+	//			isIdle = true;
+	//			mAnimator.clear();
+	//			mAnimator.push(15, true, mAnimationSpeed, 1);
+	//		}
+	//		if (!isHoldIdle && attackReadyTimer < ATKRDYTIMER)
+	//		{
+	//			isHoldIdle = true;
+	//			mAnimator.clear();
+	//			mAnimator.push(21, true, mAnimationSpeed, 1);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		isIdle = false;
+	//		isHoldIdle = false;
+	//		if (!isIdleAttacking)
+	//		{
+	//			isIdleAttacking = true;
+	//			mAnimator.clear();
+	//			mAnimator.push(19, true, mAnimationSpeed, 1.0f);
+	//			mAnimator.push(18, false, mAnimationSpeed, 0.5f);
+	//			mAnimator.push(17, false, mAnimationSpeed, 1.0f);
+	//		}
+	//	}
+	//	if (inputs->buttonReleased(0))
+	//	{
+	//		isIdleAttacking = false;
+	//		mAnimator.push(21, true, mAnimationSpeed, 1.0f);
+	//		mAnimator.push(18, false, mAnimationSpeed, 1, 0.5f);
+	//	}
+	//}
+	//else 
+	//{
+	//	isIdle = false;
+	//	isHoldIdle = false;
+	//	isIdleAttacking = false;
+	//}
+	//if (startIdleAttackTimer)
+	//{
+	//	idleAttackTimer += dt;
+	//	if (idleAttackTimer > 2.f)
+	//	{
+	//		startIdleAttackTimer = false;
+	//	}
+	//}
+
+	//if (inputs->buttonDown(0))
+	//{
+	//	mStrength > 5 ? mStrength = 5 : mStrength += dt * 3 ;
+
+	//	if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
+	//	{
+	//		//mAnimator.clear();
+	//		//if (true)//mSpeed > 0.5f) 
+	//		//{
+	//		//mAnimator.push( ANIM_SHOOT, false, 2.0f, 0.5f );
+	//		//}
+	//		//else {
+	//		//	mAnimator.push(11, false, 2.0f, 0.5f);
+	//		//}
+	//	}
+	//}
+
+	//if (inputs->buttonReleased(0))
+	//{
+	//	attackReadyTimer = 0;
+	//	if (mStrength > 0.5f)
+	//	{
+	//		attackReadyTimer = 0;
+	//		glm::vec3 temp = { mLookat.x, 0, mLookat.z };
+	//		glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset*2, 0);
+	//		glm::vec3 la = glm::normalize((mPosition + 10.0f*mLookat) - tempPos);
+	//		//glm::vec3 la = glm::normalize((mPosition + mLookat) - tempPos);
+	//		float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
+	//		
+	//	    float damage = (mStrength / 5) * 10.f;
+
+	//		mWeapon.shoot(tempPos, la, rotation, mStrength, damage);
+
+	//		/*mAnimator.push( 3, false, 5.0f );
+
+	//		mAnimator.clear();
+	//		mAnimator.push(ANIM_RUN, true, 1.0f);
+	//		mAnimator.push(ANIM_RELOAD, false, 1.0f);*/
+	//	}
+	//	mStrength = 0;
+	//}
+
+
+	//if (inputs->keyDown(SDLK_a))
+	//{
+	//	wasADown = true;
+	//	if (inputs->buttonReleased(0))
+	//	{
+	//		mAnimator.clear();
+	//		mAnimator.push(26, true, mAnimationSpeed, 1.0f);
+	//		mAnimator.push(23, false, mAnimationSpeed, 1, 0.5f);
+
+	//	}
+	//	if (inputs->buttonDown(0))
+	//	{
+	//		if (!isLStrafeAttacking)
+	//		{
+	//			isLStrafeAttacking = true;
+	//			//mAnimator.clear();
+	//			mAnimator.push(24, true, mAnimationSpeed, 1.0f);
+	//			mAnimator.push(23, false, mAnimationSpeed, 0.5f);
+	//			mAnimator.push(22, false, mAnimationSpeed, 1.0f);
+	//		}
+
+	//	}
+	//	else
+	//	{
+	//		isLStrafeAttacking = false;
+	//		if (!isStrafingLeft)
+	//		{
+
+	//			mAnimator.clear();
+	//			mAnimator.push(26, true, mAnimationSpeed, 1.0);
+	//			isStrafingLeft = true;
+	//		}
+	//	}
+	//	/*	mAnimator.clear();*/
+	//	mSpeed = mMaxSpeed / 2;
+	//	float r = glm::pi<float>() * 0.5f;
+	//	dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
+	//}
+	//else {
+	//	isStrafingLeft = false;
+	//	if (wasSDown)
+	//	{
+	//		wasSDown = false;
+	//		mSpeed = 0;
+	//		isRunning = false;
+	//		isRunningHold = false;
+	//	}
+	//}
+
+	//if (inputs->keyDown(SDLK_d))
+	//{
+	//	wasDDown = true;
+	//	if (inputs->buttonReleased(0))
+	//	{
+	//			mAnimator.clear();
+	//			mAnimator.push(32, true, mAnimationSpeed, 1.0f);
+	//			mAnimator.push(29, false, mAnimationSpeed, 1, 0.5f);
+	//	}
+	//	if (inputs->buttonDown(0))
+	//	{
+	//		if (!isRStrafeAttacking)
+	//		{
+	//			isRStrafeAttacking = true;
+	//			//mAnimator.clear();
+	//			mAnimator.push(30, true, mAnimationSpeed, 1.0f);
+	//			mAnimator.push(29, false, mAnimationSpeed, 0.5f);
+	//			mAnimator.push(28, false, mAnimationSpeed, 1.0f);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		isRStrafeAttacking = false;
+	//		if (!isStrafingRight)
+	//		{
+	//			mAnimator.clear();
+	//			mAnimator.push(32, true, mAnimationSpeed, 1.0);
+	//			isStrafingRight = true;
+	//		}
+	//	}
+	//	/*	mAnimator.clear();*/
+	//	mSpeed = mMaxSpeed / 2;
+	//	float r = glm::pi<float>() * 1.5f;
+	//	dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
+	//}
+	//else
+	//{
+	//	isStrafingRight = false;
+	//	if (wasDDown) 
+	//	{
+	//		wasDDown = false;
+	//		mSpeed = 0;
+	//		isRunning = false;
+	//		isRunningHold = false;
+	//	}
+	//}
+
+	//if (inputs->keyDown(SDLK_w))
+	//{
+	//	wasWDown = true;
+	//	if (inputs->buttonReleased(0))
+	//	{
+	//		mAnimator.clear();
+	//		mAnimator.push(6, true, mAnimationSpeed, 1.0f);
+	//		mAnimator.push(3, false, mAnimationSpeed, 1, 0.5f);
+
+	//	}
+	//	else if (inputs->buttonDown(0))
+	//	{
+	//		if (!isRunningAttacking)
+	//		{
+	//			isRunningAttacking = true;
+	//			mAnimator.clear();
+	//			mAnimator.push(4, true, mAnimationSpeed, 1.0f);
+	//			mAnimator.push(3, false, mAnimationSpeed, 0.5f);
+	//			mAnimator.push(2, false, mAnimationSpeed, 1.0f);
+	//		}
+	//	}
+	//	else {
+	//		isRunningAttacking = false;
+	//	}
+
+	//	if (!inputs->buttonDown(0))
+	//	{
+	//		if (attackReadyTimer > ATKRDYTIMER && !isRunning)
+	//		{
+	//			//mAnimator.clear();
+	//			mAnimator.push(1, true, mAnimationSpeed, 1);
+	//			isRunning = true;
+	//		}
+	//		else if (attackReadyTimer < ATKRDYTIMER && !isRunningHold)
+	//		{
+	//			mAnimator.push(6, true, mAnimationSpeed, 1);
+	//			isRunningHold = true;
+	//		}
+	//	}
+
+	//	mSpeed = mMaxSpeed;
+	//	//dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
+	//	dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
+	//}
+	//else
+	//{
+	//	if (wasWDown)
+	//	{
+	//		wasWDown = false;
+	//		mSpeed = 0;
+	//	}
+	//	isRunning = false;
+	//	isRunningHold = false;
+	//}
+
+	//if (inputs->keyDown(SDLK_s))
+	//{
+	//	wasSDown = true;
+
+	//	if (inputs->buttonReleased(0))
+	//	{
+	//		//isBackAttacking = false;
+	//		mAnimator.clear();
+	//		mAnimator.push(13, true, mAnimationSpeed, 1.0f);
+	//		mAnimator.push(10, false, mAnimationSpeed, 1, 0.5f);
+
+	//	}
+	//	if(inputs->buttonDown(0))
+	//	{ 
+	//		if (!isBackAttacking)
+	//		{
+	//			isBackAttacking = true;
+	//			mAnimator.clear();
+	//			mAnimator.push(11, true, mAnimationSpeed, 1, 0.f);
+	//			mAnimator.push(10, false, mAnimationSpeed, 0.5);
+	//			//mAnimator.push(9, false, mAnimationSpeed, 1, 0);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		isBackAttacking = false;
+	//		if (!isBacking && attackReadyTimer > ATKRDYTIMER)
+	//		{
+	//			mAnimator.clear();
+	//			mAnimator.push(8, true, mAnimationSpeed, 1.f);
+	//			isBacking = true;
+	//		}
+	//		if (!isBackingHold && attackReadyTimer < ATKRDYTIMER)
+	//		{
+	//			mAnimator.clear();
+	//			mAnimator.push(13, true, mAnimationSpeed, 1.f);
+	//			isBackingHold = true;
+	//		}
+	//	}
+	//	
+	//	mSpeed = mMaxSpeed / 2;
+	//	float r = glm::pi<float>();
+	//	dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
+	//}
+	//else
+	//{
+	//	if (wasSDown)
+	//	{
+	//		wasSDown = false;
+	//		mSpeed = 0;
+	//	}
+	//	isBacking = false;
+	//	isBackingHold = false;
+	//	isBackAttacking = false;
+	//}
 
 	if(glm::length(dir) > 0.1f)
 	{
@@ -598,10 +1059,15 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	mStrength = 0.0f;
 	mHealth = 100;
 	daIndex = 0;
+	state = 1;
 	//setScale( 0.1f );
 	mEmitter = *bloodEmitter;
 	mCounter = 0;
 	attackReadyTimer = 10.f;
+	idleAttackTimer = 2.f;
+	animationTimer = 0.f;
+	stateRunning = false;
+	enteredStates = false;
 
 	jumpTimer = 0;
 	isIdle = false;

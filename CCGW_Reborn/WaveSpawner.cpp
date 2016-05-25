@@ -178,6 +178,7 @@ void WaveSpawner::spawnMoleratman()
 			m->setLife(mRatHP);
 			m->setSpeed(mRatSpeed);
 			m->setPath(mpPath, mTargets);
+			m->randomizeAnimation();
 	}
 }
 
@@ -202,6 +203,7 @@ void WaveSpawner::spawnMolebat()
 		m->setAlive( true );
 		m->setLife( mBatHP );
 		m->setSpeed(mBatSpeed);
+		m->randomizeAnimation();
 	}
 }
 

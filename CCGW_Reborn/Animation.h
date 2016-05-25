@@ -20,7 +20,8 @@ public:
 	void pop();
 	void clear();
 	void update( float dt );
-
+	void setElapsed(float percentage);
+	bool isEmpty();
 	void setModel( Model* model );
 	sAnimation* getCurrentAnimation();
 	int getCurrentTake();
@@ -35,7 +36,7 @@ private:
 	{
 		int mIndex;
 		bool mLooping;
-		float mSpeed, mScale, mOffset;
+		float mSpeed, mScale;
 	};
 
 	Model* pModel;

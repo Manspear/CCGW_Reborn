@@ -4,7 +4,7 @@
 void Animator::push( int animation, bool loop, float speed, float scale, float offset )
 {
 	mElapsed = offset * pModel->getAnimation( animation )->mDuration;
-	sTake take = { animation, loop, speed, scale, mElapsed};
+	sTake take = { animation, loop, speed, scale };//, mElapsed};
 	mStack.push(take);
 }
 
@@ -25,7 +25,7 @@ void Animator::update( float dt )
 	{
 		sTake& take = mStack.top();
 		sAnimation* animation = pModel->getAnimation(take.mIndex);
-		mElapsed += dt*take.mSpeed + take.mOffset;
+		mElapsed += dt*take.mSpeed; //+ take.mOffset;
 		if (animation == nullptr)
 			return;
 		if( mElapsed >= animation->mDuration*take.mScale )
@@ -41,6 +41,17 @@ void Animator::update( float dt )
 				mElapsed = animation->mDuration*take.mScale;
 		}
 	}
+}
+
+void Animator::setElapsed(float percentage)
+{
+	sAnimation* animation = pModel->getAnimation(mStack.top().mIndex);
+	mElapsed = animation->mDuration * percentage;
+}
+
+bool Animator::isEmpty()
+{
+	return mStack.empty();;
 }
 
 void Animator::setModel( Model* model )
