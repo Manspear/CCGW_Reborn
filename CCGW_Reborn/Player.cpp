@@ -1041,6 +1041,11 @@ int Player::getHealth() const
 	return mHealth;
 }
 
+void Player::setHealth(int health)
+{
+	mHealth = health;
+}
+
 Player::Player() : PI(glm::pi<float>())
 {}
 

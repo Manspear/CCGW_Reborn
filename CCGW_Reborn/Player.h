@@ -20,6 +20,7 @@ public:
 	void takeDamage(int damage);
 	bool isAlive();
 	int getHealth() const;
+	void setHealth(int health);
 	float getYOffset();
 	Weapon mWeapon;
 	void renderArrows(GLuint worldLocation, GLuint tintLocation);

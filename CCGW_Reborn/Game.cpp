@@ -86,7 +86,7 @@ Game::Game()
 	);
 
 	Sound* babysound = data.pAssets->load<Sound>("Sounds/dead_baby.wav");
-
+	babysound->setVolume(20);
 	for (int i = 0; i < data.mBabies; i++)
 	{
 		data.pBabies[i].loadSound(babysound);
@@ -209,6 +209,7 @@ void Game::restartGame()
 	mCounter = 0;
 	data.pGold = gStartGold;
 	data.pPlayer->setAlive(true);
+	data.pPlayer->setHealth(10);
 	for (int i = 0; i<data.mTowers; i++)
 		data.pTowers[i].setAlive(false);
 	delete data.pGrid;
@@ -381,14 +382,6 @@ void Game::render()
 void Game::updateAnimations()
 {
 	data.pPlayer->updateAnimation();
-	/*for (int i = 0; i < mVisibleTowers; i++)
-	{
-		if (mpVisibleTowers[i]->getAlive() && mpVisibleTowers[i]->getHasBallista())
-		{
-			mpVisibleTowers[i]->updateAnimation();
-		}
-	}*/
-
 	for (int i = 0; i<data.mMoleratmen; i++)
 	{
 		if (data.pMoleratmen[i].getAlive())
@@ -408,10 +401,8 @@ void Game::update(Input* inputs, float dt)
 	data.pPlayer->update(inputs, dt);
 	data.pEmission->update(dt);
 	data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 5.0f, {0,1,0});
-	//data.pCamera->follow(data.pPlayer->getPosition(), data.pPlayer->getLookAt(), 1.6, { 0,1.3,0 });
 
 	data.pCamera->updateFrustum();
-	//data.pGrid->cull( data.pCamera->getFrustumPlanes(), data.pTowers, mVisibleTowers, &mMaxTowers );
 	data.pGrid->cull( data.pCamera->getFrustum(), data.pTowers, mpVisibleTowers, &mVisibleTowers );
 
 	bool waveDone = true;
@@ -464,9 +455,7 @@ void Game::drawOnScreenQuad()
 	loc = glGetUniformLocation(data.pForwardProgram->getProgramID(), "shadowInvViewPers");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &data.pShadowProgram->getMat()[0][0]);
 
-	//GLuint cameraPos = glGetUniformLocation(data.pForwardProgram->getProgramID(), "cameraPos");
 	glUniform3fv(data.pForwardProgram->getCameraPositionLocation(), 1, &data.pCamera->getPosition()[0]);
-	//GLuint inverseViewPerspective = glGetUniformLocation(data.pForwardProgram->getProgramID(), "invViewPerspective");
 	glUniformMatrix4fv(data.pForwardProgram->getInverseViewPerspectiveLocation(), 1, GL_FALSE, &glm::inverse(data.pCamera->getViewPerspective())[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, testScreen);
