@@ -385,12 +385,19 @@ void Player::update(const Input* inputs, const float &dt)
 			animationTimer = 0;
 			stateRunning = false;
 		}
-		else {
+		if(animationTimer > ATKRDYTIMER)
+		{
 			mAnimator.clear();
 			enteredStates = false;
 			state = 1;
 			animationTimer = 0;
 			stateRunning = false;
+
+			isRunning = false;
+			isIdle = false;
+			isStrafingLeft = false;
+			isStrafingRight = false;
+			isBacking = false;
 		}
 		/*sAnimation* currAnim = mAnimator.getCurrentAnimation();
 		if (animationTimer >= currAnim->mDuration)
