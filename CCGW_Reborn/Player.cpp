@@ -28,18 +28,16 @@ void Player::update(const Input* inputs, const float &dt)
 	mWorld = glm::mat4();
 	bool canJump = false;
 
-	//mWeapon->update(dt);
 	mWeapon.update(dt);
 	speedY -= 25 * dt;
 	mSpeed *= 1 - 15 * dt;
 	if (mSpeed < 0)
 		mSpeed = 0;
-	//mSpeed = 0;
+
 	glm::vec3 tempLookat = glm::normalize(glm::vec3(mLookat.x, 0, mLookat.z));
 	glm::vec3 dir(0.0f, 0.0f, 0.0f);
 
 	attackReadyTimer += dt;
-	//buttonDown(0) == LMB
 	if (mSpeed < 0.5)
 	{
 		if (!inputs->buttonDown(0))
@@ -88,18 +86,6 @@ void Player::update(const Input* inputs, const float &dt)
 	if (inputs->buttonDown(0))
 	{
 		mStrength > 5 ? mStrength = 5 : mStrength += dt * 3 ;
-
-		if( mStrength > 0.25f && mAnimator.getCurrentTake() != ANIM_SHOOT )
-		{
-			//mAnimator.clear();
-			//if (true)//mSpeed > 0.5f) 
-			//{
-			//mAnimator.push( ANIM_SHOOT, false, 2.0f, 0.5f );
-			//}
-			//else {
-			//	mAnimator.push(11, false, 2.0f, 0.5f);
-			//}
-		}
 	}
 
 	if (inputs->buttonReleased(0))
@@ -111,18 +97,11 @@ void Player::update(const Input* inputs, const float &dt)
 			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
 			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset*2, 0);
 			glm::vec3 la = glm::normalize((mPosition + 10.0f*mLookat) - tempPos);
-			//glm::vec3 la = glm::normalize((mPosition + mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
 			
 		    float damage = (mStrength / 5) * 10.f;
 
 			mWeapon.shoot(tempPos, la, rotation, mStrength, damage);
-
-			/*mAnimator.push( 3, false, 5.0f );
-
-			mAnimator.clear();
-			mAnimator.push(ANIM_RUN, true, 1.0f);
-			mAnimator.push(ANIM_RELOAD, false, 1.0f);*/
 		}
 		mStrength = 0;
 	}
@@ -143,7 +122,6 @@ void Player::update(const Input* inputs, const float &dt)
 			if (!isLStrafeAttacking)
 			{
 				isLStrafeAttacking = true;
-				//mAnimator.clear();
 				mAnimator.push(24, true, mAnimationSpeed, 1.0f);
 				mAnimator.push(23, false, mAnimationSpeed, 0.5f);
 				mAnimator.push(22, false, mAnimationSpeed, 1.0f);
@@ -161,7 +139,6 @@ void Player::update(const Input* inputs, const float &dt)
 				isStrafingLeft = true;
 			}
 		}
-		/*	mAnimator.clear();*/
 		mSpeed = mMaxSpeed / 2;
 		float r = glm::pi<float>() * 0.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
@@ -191,7 +168,6 @@ void Player::update(const Input* inputs, const float &dt)
 			if (!isRStrafeAttacking)
 			{
 				isRStrafeAttacking = true;
-				//mAnimator.clear();
 				mAnimator.push(30, true, mAnimationSpeed, 1.0f);
 				mAnimator.push(29, false, mAnimationSpeed, 0.5f);
 				mAnimator.push(28, false, mAnimationSpeed, 1.0f);
@@ -207,7 +183,6 @@ void Player::update(const Input* inputs, const float &dt)
 				isStrafingRight = true;
 			}
 		}
-		/*	mAnimator.clear();*/
 		mSpeed = mMaxSpeed / 2;
 		float r = glm::pi<float>() * 1.5f;
 		dir += glm::vec3(cos(rotX - r), 0.0f, sin(rotX - r));
@@ -253,7 +228,6 @@ void Player::update(const Input* inputs, const float &dt)
 		{
 			if (attackReadyTimer > ATKRDYTIMER && !isRunning)
 			{
-				//mAnimator.clear();
 				mAnimator.push(1, true, mAnimationSpeed, 1);
 				isRunning = true;
 			}
@@ -265,7 +239,6 @@ void Player::update(const Input* inputs, const float &dt)
 		}
 
 		mSpeed = mMaxSpeed;
-		//dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 		dir += glm::vec3(cos(rotX), 0.0f, sin(rotX));
 	}
 	else
@@ -285,7 +258,6 @@ void Player::update(const Input* inputs, const float &dt)
 
 		if (inputs->buttonReleased(0))
 		{
-			//isBackAttacking = false;
 			mAnimator.clear();
 			mAnimator.push(13, true, mAnimationSpeed, 1.0f);
 			mAnimator.push(10, false, mAnimationSpeed, 1, 0.5f);
@@ -299,7 +271,6 @@ void Player::update(const Input* inputs, const float &dt)
 				mAnimator.clear();
 				mAnimator.push(11, true, mAnimationSpeed, 1, 0.f);
 				mAnimator.push(10, false, mAnimationSpeed, 0.5);
-				//mAnimator.push(9, false, mAnimationSpeed, 1, 0);
 			}
 		}
 		else
@@ -377,7 +348,6 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyPressed(SDLK_SPACE) && canJump)
 	{
-		//mAnimator.clear();
 		mAnimator.push(34, false, mAnimationSpeed, 1);
 		isJumping = true;	
 	}
@@ -438,9 +408,6 @@ void Player::update(const Input* inputs, const float &dt)
 		this->mLookat = glm::vec3(rotateAroundZ * glm::vec4(mLookat, 1));
 	}
 
-	//mLookat = glm::rotate(glm::quat(cosf(mRot),0,sinf(mRot),0), glm::vec3(0,1));
-
-	//this->mRotation.z = 
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
 	mWorld = rmat * glm::scale(mWorld, glm::vec3(0.1f, 0.1f, 0.1f));
 	mWorld[3][0] = mPosition.x;
@@ -469,8 +436,6 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 	}
 	return dir;
 }
-
-//void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
 
 void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
@@ -591,7 +556,6 @@ Player::Player() : PI(glm::pi<float>())
 Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : GameObject(), PI(glm::pi<float>())
 {
 	this->pGameData = data;
-	//mWeapon = new Weapon(true, data);
 	mWeapon.load( data, true, smokeEmitter);
 	mPosition = glm::vec3( 1, 1, 1 );
 	yoffset = -0.5f;
@@ -603,7 +567,6 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	mStrength = 0.0f;
 	mHealth = 100;
 	daIndex = 0;
-	//setScale( 0.1f );
 	mEmitter = *bloodEmitter;
 	mCounter = 0;
 	attackReadyTimer = 10.f;
@@ -631,5 +594,5 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 
 Player::~Player()
 {
-	//delete mWeapon;
+
 }

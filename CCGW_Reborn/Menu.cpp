@@ -462,11 +462,11 @@ bool Menu::checkIfHighscore(GameData* data) {
 			writeHighscore(data, i);
 			return true;
 		}
-		if (bestBaby > highScores[i].babies) {
+		if (bestBaby > highScores[i].babies && bestWave <= highScores[i].wave) {
 			writeHighscore(data, i);
 			return true;
 		}
-		if (bestGold > highScores[i].gold) {
+		if (bestGold > highScores[i].gold && bestBaby <= highScores[i].babies && bestWave <= highScores[i].wave) {
 			writeHighscore(data, i);
 			return true;
 		}
