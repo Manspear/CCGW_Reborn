@@ -98,8 +98,10 @@ Game::Game()
 	}
 
 	data.pGrid = new Grid(16, 48);
-	for( int i=0; i<16; i++ )
-		data.pGrid->setTile( i, 0, TILE_BLOCKED );
+	for (int i = 0; i < 16; i++) {
+		data.pGrid->setTile(i, 0, TILE_BLOCKED);
+		data.pGrid->setTile(i, 47, TILE_BLOCKED);
+	}
 
 	data.mTowers = 16*48;
 	data.pTowers = new Tower[data.mTowers];
@@ -213,8 +215,10 @@ void Game::restartGame()
 	data.pGold = gStartGold;
 	data.pPlayer->setAlive(true);
 	data.pPlayer->setHealth(10);
-	for (int i = 0; i<data.mTowers; i++)
+	for (int i = 0; i < data.mTowers; i++) {
 		data.pTowers[i].setAlive(false);
+		data.pTowers[i].setHasBallista(false);
+	}
 	delete data.pGrid;
 	data.pGrid = new Grid(16, 50);
 	for (int i = 0; i<16; i++)

@@ -1,5 +1,6 @@
 tata 2 25 77
 gaga 2 25 74
+asd 2 25 14
 haha 1 25 69
 afs 1 25 66
 gg 1 25 66
@@ -7,4 +8,3 @@ aaaa 1 24 71
 aaaa 6 23 71
 asd 7 24 70
 aaaa 6 25 71
-aaaa 0 0 0
