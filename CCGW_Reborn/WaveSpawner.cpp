@@ -54,7 +54,7 @@ void WaveSpawner::spawn()
 */
 	
 
-	if (mWave <= 3)
+	if (mWave <= 6)
 	{
 		if (waveLevel[0] == true)
 		{
@@ -71,7 +71,7 @@ void WaveSpawner::spawn()
 		mRatSpeed = 4.f;
 		mBatSpeed = 4.f;
 	}
-	if (mWave > 3 && mWave <= 8)
+	if (mWave > 6 && mWave <= 12)
 	{
 		if (waveLevel[1] == true)
 		{
@@ -88,7 +88,7 @@ void WaveSpawner::spawn()
 		mRatSpeed = 5.f;
 		mBatSpeed = 5.f;
 	}
-	if (mWave > 8)
+	if (mWave > 12)
 	{
 		if (waveLevel[2] == true)
 		{
@@ -97,12 +97,12 @@ void WaveSpawner::spawn()
 			mSpawnDelay = 0.1f;
 			waveLevel[2] = false;
 		}
-		mMoleRatWaveSize += 5;
-		mMoleBatWaveSize += 3;
+		mMoleRatWaveSize += 6;
+		mMoleBatWaveSize += 4;
 		mRatHP = 15.f;
 		mBatHP = 7.f;
-		mRatSpeed = 7.f;
-		mBatSpeed = 7.f;
+		mRatSpeed = 6.f;
+		mBatSpeed = 6.f;
 	}
 	mSpawnMoleratmen = mMoleRatWaveSize;
 	mSpawnMolebats = mMoleBatWaveSize;

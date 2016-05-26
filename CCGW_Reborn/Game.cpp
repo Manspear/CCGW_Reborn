@@ -168,7 +168,10 @@ Game::Game()
 	sound = data.pAssets->load<Sound>("Sounds/not_enough_gold.wav");
 	sound->setVolume(20);
 	data.pWavespawner->loadSound(sound, 26);
-	mDeltaTimer = 0.0f;
+	
+	sound = data.pAssets->load<Sound>("Sounds/music.mp3");
+	sound->setLooping(true);
+	sound->play();
 
 	mBoxModel = data.pAssets->load<Model>( "Models/wallBox.mole" );
 	mBoxModel->setDiffuse( 0, data.pAssets->load<Texture>( "Textures/sky.jpg" ) );

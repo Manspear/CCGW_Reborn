@@ -28,13 +28,12 @@ void Player::update(const Input* inputs, const float &dt)
 	mWorld = glm::mat4();
 	bool canJump = false;
 
-	//mWeapon->update(dt);
 	mWeapon.update(dt);
 	speedY -= 25 * dt;
 	mSpeed *= 1 - 15 * dt;
 	if (mSpeed < 0)
 		mSpeed = 0;
-	//mSpeed = 0;
+
 	glm::vec3 tempLookat = glm::normalize(glm::vec3(mLookat.x, 0, mLookat.z));
 	glm::vec3 dir(0.0f, 0.0f, 0.0f);
 
@@ -66,18 +65,11 @@ void Player::update(const Input* inputs, const float &dt)
 			glm::vec3 temp = { mLookat.x, 0, mLookat.z };
 			glm::vec3 tempPos = this->mPosition + glm::cross(glm::normalize(temp), glm::vec3(0, 1, 0)) / 4.f - glm::vec3(0, yoffset*2, 0);
 			glm::vec3 la = glm::normalize((mPosition + 10.0f*mLookat) - tempPos);
-			//glm::vec3 la = glm::normalize((mPosition + mLookat) - tempPos);
 			float rotation = rotX - glm::angle(glm::normalize(glm::vec3(la.x, 0, la.z)), tempLookat);
 			
 		    float damage = (mStrength / 5) * 10.f;
 
 			mWeapon.shoot(tempPos, la, rotation, mStrength, damage);
-
-			/*mAnimator.push( 3, false, 5.0f );
-
-			mAnimator.clear();
-			mAnimator.push(ANIM_RUN, true, 1.0f);
-			mAnimator.push(ANIM_RELOAD, false, 1.0f);*/
 		}
 		mStrength = 0;
 	}
@@ -845,7 +837,6 @@ void Player::update(const Input* inputs, const float &dt)
 
 	if (inputs->keyPressed(SDLK_SPACE) && canJump)
 	{
-		//mAnimator.clear();
 		mAnimator.push(34, false, mAnimationSpeed, 1);
 		isJumping = true;	
 	}
@@ -906,9 +897,6 @@ void Player::update(const Input* inputs, const float &dt)
 		this->mLookat = glm::vec3(rotateAroundZ * glm::vec4(mLookat, 1));
 	}
 
-	//mLookat = glm::rotate(glm::quat(cosf(mRot),0,sinf(mRot),0), glm::vec3(0,1));
-
-	//this->mRotation.z = 
 	this->mLookat = glm::vec3(rotatematrix * glm::vec4(mLookat, 1));
 	mWorld = rmat * glm::scale(mWorld, glm::vec3(0.1f, 0.1f, 0.1f));
 	mWorld[3][0] = mPosition.x;
@@ -938,8 +926,6 @@ glm::vec3 Player::tacticalUpdate(const Input * inputs, const float &dt, const Ga
 	return dir;
 }
 
-//void Player::render(const GLuint & programID, const glm::mat4 &viewMat)
-
 void Player::render( GLuint worldLocation, GLuint animationLocation )
 {
 	GameObject::renderAni(worldLocation, animationLocation);
@@ -950,7 +936,7 @@ void Player::renderArrows(GLuint worldLocation, GLuint tintLocation) {
 
 void Player::setAlive(bool amIalive)
 {
-	mHealth = 100;
+	mHealth = 10;
 }
 
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
@@ -1059,7 +1045,6 @@ Player::Player() : PI(glm::pi<float>())
 Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : GameObject(), PI(glm::pi<float>())
 {
 	this->pGameData = data;
-	//mWeapon = new Weapon(true, data);
 	mWeapon.load( data, true, smokeEmitter);
 	mPosition = glm::vec3( 1, 1, 1 );
 	yoffset = -0.5f;
@@ -1069,7 +1054,7 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
-	mHealth = 100;
+	mHealth = 10;
 	daIndex = 0;
 	state = 1;
 	//setScale( 0.1f );
@@ -1104,5 +1089,5 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 
 Player::~Player()
 {
-	//delete mWeapon;
+
 }

@@ -26,11 +26,11 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 	if( selectedTile.x < 0 )
 		selectedTile.x = 0;
 	else if( selectedTile.x >= gridWidth * gameData.boxScale )
-		selectedTile.x = gridWidth * gameData.boxScale;
+		selectedTile.x = (gridWidth * gameData.boxScale) - 1;
 	if( selectedTile.y < 0 )
 		selectedTile.y = 0;
 	else if( selectedTile.y >= gridHeight * gameData.boxScale )
-		selectedTile.y = gridHeight * gameData.boxScale;
+		selectedTile.y = (gridHeight * gameData.boxScale) - 1;
 
 	int curx = (int)(selectedTile.x / gameData.boxScale);
 	int cury = (int)(selectedTile.y / gameData.boxScale);
@@ -61,16 +61,6 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			{
 				gameData.pGrid->setTile(selectedTile.x / gameData.boxScale , selectedTile.y / gameData.boxScale, TILE_HOLD);
 				mMarkedIndex.push_back(selectedTile);
-				/*sNode start = { 0, 0 };
-				sNode end = { 8, 47 };
-				int mTargets = 0;
-				if (!gameData.pGrid->findPath(start, end, gameData.pGrid->getPath(), &mTargets)) {
-					mMarkedIndex.erase(mMarkedIndex.end() - 1);
-					gameData.pGrid->setTile(selectedTile.x / gameData.boxScale, selectedTile.y / gameData.boxScale, TILE_EMPTY);
-				}
-				else
-					gameData.pGold -= BOXCOST;*/
-
 				gameData.pGold -= BOXCOST;
 			}
 			else if( currentTile == TILE_BOX && mCanBuild && gameData.pGold >= BALLISTACOST)
@@ -105,8 +95,6 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 	{
 		buildTowers = true;
 		for (int i = 0; i < mMarkedIndex.size(); i++) {
-			//gameData.pGrid->setTile(mMarkedIndex[i].x / gameData.boxScale, mMarkedIndex[i].y / gameData.boxScale, TILE_BOX);
-
 			int x = mMarkedIndex[i].x / gameData.boxScale;
 			int y = mMarkedIndex[i].y / gameData.boxScale;
 			int gridWidth = gameData.pGrid->getWidth();
@@ -116,7 +104,6 @@ bool Marker::update(const Input * inputs, GameData &gameData)
 			{
 				gameData.pGrid->setTile( x, y, TILE_BOX );
 				gameData.pTowers[y*gridWidth+x].setAlive( true );
-				//gameData.pTowers[y*gridWidth+x].setHasBallista( true );
 
 				glm::vec3 ppos = gameData.pPlayer->getPosition();
 				if (!gameData.pPlayer->checkMove(ppos))
@@ -149,7 +136,6 @@ void Marker::render( GLuint worldLocation, GLuint tintLocation )
 	for( int i=0; i<3; i++ )
 		mWorld[i][i] = 1.0f;
 
-	//GLuint world = glGetUniformLocation(programID, "world");
 	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, &mWorld[0][0]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

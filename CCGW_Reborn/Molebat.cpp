@@ -26,7 +26,7 @@ void Molebat::update(float dt)
 		// play the molebats attack animation
 		mAnimator.push( 3, false, 2.0f );
 
-		pGameData->pPlayer->takeDamage(10);
+		pGameData->pPlayer->takeDamage(1);
 		mTimeSinceLastHit = 0;
 	}
 
