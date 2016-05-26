@@ -158,6 +158,7 @@ void Tower::renderAni( GLuint worldLocation, GLuint animationLocation )
 	mpModel->updateAnimation(mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed());
 	GameObject::renderAni( worldLocation, animationLocation );
 
+	mWorld[3][1] = -0.35f;
 	mpModel = mpMidCylinderModel;
 	mpModel->updateAnimation(mJointMatrixList, 1.0f, mAnimator.getCurrentTake(), mAnimator.getElapsed());
 	GameObject::renderAni( worldLocation, animationLocation );
