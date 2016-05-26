@@ -936,7 +936,7 @@ void Player::renderArrows(GLuint worldLocation, GLuint tintLocation) {
 
 void Player::setAlive(bool amIalive)
 {
-	mHealth = 100;
+	mHealth = 10;
 }
 
 glm::vec3 Player::getMovingDirection(glm::vec3 v1, glm::vec3 v2) {
@@ -1054,7 +1054,7 @@ Player::Player(GameData* data, Emitter* smokeEmitter, Emitter* bloodEmitter) : G
 	speedY = 0;
 	rotX = glm::pi<float>() * -0.5f;
 	mStrength = 0.0f;
-	mHealth = 100;
+	mHealth = 10;
 	daIndex = 0;
 	state = 1;
 	//setScale( 0.1f );

@@ -108,6 +108,8 @@ void Menu::buttonAction(int type, Input* inputs, GameData* data)
 
 	case 16:
 		activeMenu = MAIN_MENU;
+		data->pGame->restartGame();
+		healthBar();
 		break;
 	}
 }
@@ -131,7 +133,7 @@ void Menu::updateNumbers(GameData * data)
 	}
 	
 	if (activeMenu == ACTION_HUD) {
-		int hp = data->pPlayer->getHealth() / 10;
+		int hp = data->pPlayer->getHealth();
 		while (hp < mAllMenu[ACTION_HUD].theNumbers.size() - 7)
 			mAllMenu[ACTION_HUD].theNumbers.pop_back();
 	}
