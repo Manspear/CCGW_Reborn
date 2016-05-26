@@ -101,7 +101,6 @@ void Menu::buttonAction(int type, Input* inputs, GameData* data)
 		}
 		else {
 			data->pGame->restartGame();
-			healthBar();
 			buttonAction(0, inputs, data);
 			mActiveField = nullptr;
 			break;
@@ -141,6 +140,7 @@ void Menu::updateNumbers(GameData * data)
 void Menu::setPauseState(MENU theMenu, Input* inputs)
 {
 	mActive = true;
+	healthBar();
 	activeMenu = theMenu;
 	inputs->setMouseVisible(true);
 	inputs->setMouseLock(false);
@@ -462,11 +462,11 @@ bool Menu::checkIfHighscore(GameData* data) {
 			writeHighscore(data, i);
 			return true;
 		}
-		if (bestBaby > highScores[i].babies && bestWave <= highScores[i].wave) {
+		if (bestBaby > highScores[i].babies && bestWave >= highScores[i].wave) {
 			writeHighscore(data, i);
 			return true;
 		}
-		if (bestGold > highScores[i].gold && bestBaby <= highScores[i].babies && bestWave <= highScores[i].wave) {
+		if (bestGold > highScores[i].gold && bestBaby >= highScores[i].babies && bestWave >= highScores[i].wave) {
 			writeHighscore(data, i);
 			return true;
 		}
