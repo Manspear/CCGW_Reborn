@@ -17,7 +17,7 @@ uniform vec3 tint;
 
 void main (){
 	vec2 uv = vec2( uvOut2.s, 1 - uvOut2.t );
-	color = texture(texSampler, uv) * tint;
+	color = texture(texSampler, uv) *vec4( tint, 1);
 	specularTex = texture(specularSampler, uv).r;
 
 	normalTex = texture( normalSampler, uv ).rgb;
