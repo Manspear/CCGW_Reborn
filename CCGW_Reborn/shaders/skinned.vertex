@@ -23,10 +23,6 @@ void main()
 
 	//To get the 4th weight so that the sum of the weights add up to 1,
 	//we subtract 1 with the weights 0, 1, 2.
-	vw[0] = weights[0];
-	vw[1] = weights[1];
-	vw[2] = weights[2];
-	vw[3] = 1.0 - weights[0] - weights[1] - weights[2];
 
 	//vec4 vw = vec4( 0.0, 1.0, 0.0, 0.0 );
 	vec4 vpos = vec4( 0.0, 0.0, 0.0, 0.0 );

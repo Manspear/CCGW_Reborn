@@ -31,6 +31,7 @@ public:
 	void playAnimation( int animation, bool looping, float speed = 1.0f );
 	void loadSound(Sound* sound);
 	void playSound();
+	virtual void randomizeAnimation();
 
 	GameObject(const GameObject& ref);
 	GameObject(glm::vec3 position, float scale);

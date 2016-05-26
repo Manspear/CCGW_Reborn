@@ -466,17 +466,8 @@ void Model::recursiveUpdateJointMatrixList( std::vector<glm::mat4>& jointMatrixL
 	Model::sModelJoint& joint = mpJointList[currJointID];
 
 	mpJointList;
-	//glm::mat4 invBPose = glm::make_mat4(mpJointList[currJointID].jointData.globalBindPoseInverse);
 	glm::mat4 invBPose = glm::make_mat4( joint.jointData.globalBindPoseInverse );
 
-	//Now get the key-
-	//glm::mat4 keyRMatUnder = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
-	//glm::mat4 keySMatUnder = convertToScaleMat(tempFramesUnder[currJointID].keyScale);
-	//glm::mat4 keyTMatUnder = convertToTransMat(tempFramesUnder[currJointID].keyPos);
-
-	//glm::mat4 keyRMatOver = convertToRotMat(tempFramesOver[currJointID].keyRotate);
-	//glm::mat4 keySMatOver = convertToScaleMat(tempFramesOver[currJointID].keyScale);
-	//glm::mat4 keyTMatOver = convertToTransMat(tempFramesOver[currJointID].keyPos);
 	glm::mat4 interpolTrans;
 	glm::mat4 interpolRot;
 	glm::mat4 interpolScale;
@@ -484,80 +475,40 @@ void Model::recursiveUpdateJointMatrixList( std::vector<glm::mat4>& jointMatrixL
 	float newTranVals[3];
 	float newScaleVals[3];
 
-	//float diffKeys = tempFramesOver[currJointID].keyTime - tempFramesUnder[currJointID].keyTime;
 	float diffKeys = frameOver.keyTime - frameUnder.keyTime;
 	if (diffKeys == 0)
 	{
-		//convertToTransMat(tempFramesUnder[currJointID].keyPos, &interpolTrans);
-		//convertToRotMat(tempFramesUnder[currJointID].keyRotate, &interpolRot);
-		//convertToScaleMat(tempFramesUnder[currJointID].keyScale, &interpolScale);
-
 		convertToTransMat( frameUnder.keyPos, &interpolTrans );
 		convertToRotMat( frameUnder.keyRotate, &interpolRot );
 		convertToScaleMat( frameUnder.keyScale, &interpolScale );
 	}
 	else
 	{
-		//float diffUnderTime = abs(currTime - tempFramesUnder[currJointID].keyTime);
 		float diffUnderTime = abs( currTime - frameUnder.keyTime );
-
 		float underAffect = diffUnderTime / diffKeys;
-		//float overAffect = 1.f - underAffect;
-		//float overAffect = diffOverTime / diffKeys;
 
-		//myLerp(tempFramesUnder[currJointID].keyRotate, tempFramesOver[currJointID].keyRotate, newRotVals, underAffect);
 		myLerp( frameUnder.keyRotate, frameOver.keyRotate, newRotVals, underAffect );
 		convertToRotMat(newRotVals, &interpolRot);
 
-		//myLerp(tempFramesUnder[currJointID].keyPos, tempFramesOver[currJointID].keyPos, newTranVals, underAffect);
 		myLerp( frameUnder.keyPos, frameOver.keyPos, newTranVals, underAffect );
 		convertToTransMat(newTranVals, &interpolTrans);
 
-		//myLerp(tempFramesUnder[currJointID].keyScale, tempFramesOver[currJointID].keyScale, newScaleVals, underAffect);
 		myLerp( frameUnder.keyScale, frameOver.keyScale, newScaleVals, underAffect );
 		convertToScaleMat(newScaleVals, &interpolScale);
 	}
 
-	/*interpolTrans = convertToTransMat(tempFramesUnder[currJointID].keyPos);
-	interpolRot = convertToRotMat(tempFramesUnder[currJointID].keyRotate);
-	interpolScale = convertToScaleMat(tempFramesUnder[currJointID].keyScale);*/
-
-	//VVVVVVVVVVVVVVV THIS WORKS WELL REMEMBER
-	//glm::mat4 keyTransform = parentTransformMatrix *  keyTMat * keySMat * keyRMat;
-	//glm::mat4 TSRMat = convertToTSR(newTranVals, newScaleVals, newRotVals);
-	//glm::mat4 keyTransform1 = parentTransformMatrix *  TSRMat;
-
-	glm::mat4 keyTransform = parentTransformMatrix *interpolTrans * interpolScale * interpolRot;
-
-	//glm::mat4 keyTransform = TSRMat * parentTransformMatrix;
-	//glm::mat4 keyTransform = parentTransformMatrix * keyTMat * keySMat * keyRMat;
-	//Now "remove" the bindpose from the joint
+	glm::mat4 keyTransform = parentTransformMatrix * interpolTrans * interpolScale * interpolRot;
 
 	glm::mat4 finalTransform = keyTransform * invBPose;
-
-	//glm::mat4 pureKeyTransform = invBPose * keyTransform;
-
-	//glm::mat4 finalTransform = keyTransform;// * parentTransformMatrix;
 
 	jointMatrixList[currJointID] = finalTransform;
 
 	int nchildren = joint.jointChildren.size();
-	//for (int i = 0; i < mpJointList[currJointID].jointChildren.size(); i++)
+
 	for( int i=0; i<nchildren; i++ )
 	{
-		//glm::mat4 junky;
-		//recursiveUpdateJointMatrixList(junky, tempFrames, mpJointList[currJointID].jointChildren[i]);
-		//VVVVVVVVVVVVVVVVVVVVVVVVV THIS ONE WORKS WELL REMEMBER
-		//recursiveUpdateJointMatrixList(keyTransform, tempFrames, mpJointList[currJointID].jointChildren[i]);
-
 		recursiveUpdateJointMatrixList( jointMatrixList, keyTransform, tempFramesUnder, tempFramesOver, currTime, mpJointList[currJointID].jointChildren[i]);
-
-		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
-		//recursiveUpdateJointMatrixList(parentTransformMatrix, tempFrames, mpJointList[currJointID].jointChildren[i]);
 	}
-	/**
-	THink I've gotta transform the children so that they are in "spaces related to their parent's"
-	**/
 }
 
 //glm::mat4 Model::convertToTransMat(float inputArr[3])

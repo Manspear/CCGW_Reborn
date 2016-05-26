@@ -62,7 +62,7 @@ Game::Game()
 #if RENDER_TERRAIN
 	Model* terrainModel = data.pAssets->load<Model>("Models/terrain.mole");
 #endif
-	Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
+	//Model* boundingBoxModel = data.pAssets->load<Model>("Models/rotationCube3.mole");
 	Model* babyModel = data.pAssets->load<Model>("Models/baby.mole");
 
 	Model* towerModels[TOWER_MODELS] = {
